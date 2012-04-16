@@ -2,7 +2,7 @@ var assert = require("assert");
 var vows = require("vows");
 var config = require("./config");
 
-vows.describe('Config Reachability').addBatch({
+vows.describe('config').addBatch({
     'We can see values': {
         topic: config.wns_host,
             'wns_host is defined': function (topic) {
