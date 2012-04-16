@@ -1,8 +1,9 @@
 var assert = require("assert");
 var vows = require("vows");
+var config = require('./config');
 
-process.env.AZURE_STORAGE_ACCOUNT = 'brhregistrar';
-process.env.AZURE_STORAGE_ACCESS_KEY = 'oJjX+h537iMYUjm4pHicPOuWTM+FlrVhK+d3jPFlNGzsm/xCp0Ha2I+WAAjCUk9/963IT1u6GCW7Z+tDMdf3QQ==';
+process.env.AZURE_STORAGE_ACCOUNT = config.azure_storage_account;
+process.env.AZURE_STORAGE_ACCESS_KEY = config.aure_storage_access_key;
 
 var TemplateStore = require("./templateStore");
 var store = null;

@@ -12,6 +12,10 @@ module.exports = {
     'apns_service_port': 2195,
     'apns_root_certificate_file': 'EntrustRootCertificationAuthority.pem',
     'apns_client_private_key_file': 'NotificationHubTestDevPush_pkey.pem',
-    'apns_client_certificate_file': 'NotificationHubTestDevPush_cred.pem'
+    'apns_client_certificate_file': 'NotificationHubTestDevPush_cred.pem',
+
+    // Azure Table Store settings
+    'azure_storage_account': priv.azure_storage_account,
+    'azure_storage_access_key': priv.azure_storage_access_key
 };
 
