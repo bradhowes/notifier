@@ -1,37 +1,38 @@
 var express = require('express');
 var app = express.createServer();
 
-var Registrar = require('registrar');
-var Notifier = require('notifier');
-var TemplateStore = require('templateStore');
-var RegistrationStore = require('registrationStore');
-var PayloadGenerator = require('payloadGenerator');
+var config = require('./config.js');
+var Registrar = require('./registrar.js');
+var Notifier = require('./notifier.js');
+var TemplateStore = require('./templateStore.js');
+var RegistrationStore = require('./registrationStore.js');
+var PayloadGenerator = require('./payloadGenerator.js');
 
-process.env.AZURE_STORAGE_ACCOUNT = 'brhregistrar';
-process.env.AZURE_STORAGE_ACCESS_KEY = 'oJjX+h537iMYUjm4pHicPOuWTM+FlrVhK+d3jPFlNGzsm/xCp0Ha2I+WAAjCUk9/963IT1u6GCW7Z+tDMdf3QQ==';
+process.env.AZURE_STORAGE_ACCOUNT = config.azure_storage_account;
+process.env.AZURE_STORAGE_ACCESS_KEY = config.azure_storage_access_key;
 
 // Configuration
 app.configure(function(){
-  app.use(express.bodyParser());
-  app.use(app.router);
+    app.use(express.bodyParser());
+    app.use(app.router);
 });
 
 app.configure('development', function(){
-  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+    app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 });
 app.configure('production', function(){
-  app.use(express.errorHandler());
+    app.use(express.errorHandler());
 });
 
-var registrationStore = new RegistrationStore();
+var registrationStore = new RegistrationStore(config.registrations_table_name);
 var registrar = new Registrar(registrationStore);
-app.get('/registrations/:skypeId', registrar.getDevices.bind(registrar));
-app.post('/registrations/:skypeId', registrar.addDevice.bind(registrar));
-app.del('/registrations/:skypeId', registrar.deleteDevice.bind(registrar));
+app.get('/registrations/:userId', registrar.getRegistrations.bind(registrar));
+app.post('/registrations/:userId', registrar.addRegistration.bind(registrar));
+app.del('/registrations/:userId', registrar.deleteRegistration.bind(registrar));
 
-var templateStore = new TemplateStore();
+var templateStore = new TemplateStore(config.templates_table_name);
 var generator = new PayloadGenerator();
 var notifier = new Notifier(templateStore, registrationStore, generator);
-app.post("/postnotification:skypeId", notifier.postNotification.bind(notifier));
+app.post("/postnotification:userId", notifier.postNotification.bind(notifier));
 
 app.listen(process.env.port);

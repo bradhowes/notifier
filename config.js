@@ -16,6 +16,8 @@ module.exports = {
 
     // Azure Table Store settings
     'azure_storage_account': priv.azure_storage_account,
-    'azure_storage_access_key': priv.azure_storage_access_key
-};
+    'azure_storage_access_key': priv.azure_storage_access_key,
 
+    'registrations_table_name': 'notifierRegistrations',
+    'templates_table_name': 'notifierTemplates'
+};

@@ -1,9 +1,10 @@
-var assert = require("assert");
-var vows = require("vows");
 var config = require('./config');
 
 process.env.AZURE_STORAGE_ACCOUNT = config.azure_storage_account;
-process.env.AZURE_STORAGE_ACCESS_KEY = config.aure_storage_access_key;
+process.env.AZURE_STORAGE_ACCESS_KEY = config.azure_storage_access_key;
+
+var assert = require("assert");
+var vows = require("vows");
 
 var RegistrationStore = require("./registrationStore");
 var store = null;
@@ -11,10 +12,7 @@ var store = null;
 vows.describe('registrationStore').addBatch({
     'create an empty table': {
         topic: function () {
-            store = new RegistrationStore({
-                'name': 'registrationstest',
-                'callback': this.callback
-            });
+            store = new RegistrationStore('registrationstest', this.callback);
         },
         'succeeds without error': function (err, created, response) {
 //            console.log('new RegistrationStore: err:', err, "created:", created);
@@ -22,52 +20,53 @@ vows.describe('registrationStore').addBatch({
         },
         'then add registration': {
             topic: function () {
-                store.updateDeviceEntity('br.howes', 'mydevice', '1.0', 'en', 1,
-                                         [{'context':'*',
-                                           'credential':'123',
-                                           'expiration':456}], this.callback);
+                store.updateRegistrationEntity('br.howes', 'myregistration', '1.0', 'en', 'wns',
+                                         [{'name':'*',
+                                           'path':'123',
+                                           'secondsToLive':86400}], this.callback);
             },
             'succeeds without error': function (err, entity) {
-//                console.log('store.updateDeviceEntity: err:', err, "entity:", entity);
+//                console.log('store.updateRegistrationEntity: err:', err, "entity:", entity);
                 assert.isNull(err);
             },
-            'and returns the template entity': function (err, entity) {
+            'and returns the registration entity': function (err, entity) {
                 assert.isObject(entity);
             },
-            'then fetch devices': {
+            'then fetch registrations': {
                 topic: function () {
-                    store.getDevices('br.howes', this.callback);
+                    store.getRegistrations('br.howes', this.callback);
                 },
                 'succeeds without error': function (err, found) {
-//                    console.log('store.getDevices: err:', err, "found:", found);
+//                    console.log('store.getRegistrations: err:', err, "found:", found);
                     assert.isNull(err);
                 },
                 'found 1 match': function (err, found) {
                     assert.equal(found.length, 1);
                 },
-                'match contains mydevice': function (err, found) {
-                    var device = found[0];
-                    assert.equal(device.deviceId, 'mydevice');
-                    assert.equal(device.templateVersion, '1.0');
-                    assert.equal(device.templateLanguage, 'en');
-                    assert.equal(device.serviceType, 1);
-                    var route = device.routes[0];
+                'match contains myregistration': function (err, found) {
+                    var registration = found[0];
+//                    console.log('registration:', registration);
+                    assert.equal(registration.registrationId, 'myregistration');
+                    assert.equal(registration.templateVersion, '1.0');
+                    assert.equal(registration.templateLanguage, 'en');
+                    assert.equal(registration.contract, 'wns');
+                    var route = registration.routes[0];
 //                    console.log('route:', route);
-                    assert.equal(route.context, '*');
-                    assert.equal(route.credential, '123');
-                    assert.equal(route.expiration, 456);
+                    assert.equal(route.name, '*');
+                    assert.equal(route.path, '123');
+//                    assert.equal(route.expiration, 456);
                 },
-                'then delete device': {
+                'then delete registration': {
                     topic: function () {
-                        store.deleteDeviceEntity('br.howes', 'mydevice', this.callback);
+                        store.deleteRegistrationEntity('br.howes', 'myregistration', this.callback);
                     },
                     'succeeds without error': function (err, found) {
-//                        console.log('store.deleteDeviceEntity: err:', err, "found:", found);
+//                        console.log('store.deleteRegistrationEntity: err:', err, "found:", found);
                         assert.isNull(err);
                     },
-                    'then fetch non-existant device': {
+                    'then fetch non-existant registration': {
                         topic: function () {
-                            store.getDevices('br.howes', this.callback);
+                            store.getRegistrations('br.howes', this.callback);
                         },
                        'succeeds without error': function (err, found) {
 //                            console.log('store.getDevices: err:', err, "found:", found);
@@ -75,7 +74,7 @@ vows.describe('registrationStore').addBatch({
                         },
                         'found 0 matches': function (err, found) {
                             assert.equal(found.length, 0);
-                        },
+                        }
                     }
                 }
             }

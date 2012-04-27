@@ -1,203 +1,235 @@
 /**
  * @file
- * Store prototype definition.
+ * RegistrationStore prototype definition.
  */
-
-var azure = require("azure");
 
 module.exports = RegistrationStore;
 
+var azure = require("azure");
+
 /**
- * Store constructor.
- * 
- * A store provides an interface to an Azure Table Store for managing
- * device definitions for a given Skype ID. Here we use skypeId for the table
- * PartitionKey and deviceId for RowKey.
+ * RegistrationStore constructor.
  */
-function RegistrationStore(settings) {
-    if (settings === undefined) settings = {
-        'name': 'registrations',
-        'callback': function (err) { console.log('TemplateStore err:', err); }
+function RegistrationStore(name, callback) {
+    if (name === undefined)  name = 'registrations';
+    if (callback === undefined) callback = function (err) {
+        if (err) console.log('createTableIfNotExists: name:', name, 'err:', err);
     };
 
-    this.tableName = settings.name;
+    this.tableName = name;
     this.store = azure.createTableService();
-    this.store.createTableIfNotExists(this.tableName, settings.callback);
+    this.store.createTableIfNotExists(name, callback);
 }
 
 /**
  * Store prototype.
- * 
+ *
  * Defines the methods available to a Store instance.
  */
 RegistrationStore.prototype = {
 
     /**
-     * Obtain all device entities for a given Skype user.
+     * Obtain all registration entities for a given user.
      *
-     * @param skypeId
-     *   The Skype user to look for.
+     * @param userId
+     *   The user to look for.
      *
      * @param callback
      *   Method to invoke when the query is done
      *   - err: if not null, definition of the error that took place
-     *   - found: array of found device entities for the user
+     *   - found: array of found registration entities for the user
      */
-    getAllDeviceEntities: function (skypeId, callback) {
+    getAllRegistrationEntities: function (userId, callback) {
         var query = azure.TableQuery.select()
             .from(this.tableName)
-            .where("PartitionKey eq ?", skypeId);
+            .where("PartitionKey eq ?", userId);
         this.store.queryEntities(query, callback);
     },
 
-    getDevices: function(skypeId, callback) {
-        this.getAllDeviceEntities(skypeId, function(err, devEnts) {
-            if (err !== null) callback(err, null);
-            if (devEnts.length === 0) callback(null, devEnts);
-            var devices = [];
-            for (var index in devEnts) {
-                var deviceEntity = devEnts[index];
-                var device = {
-                    'deviceId': deviceEntity.RowKey,
-                    'templateVersion': deviceEntity.TemplateVersion,
-                    'templateLanguage': deviceEntity.TemplateLanguage,
-                    'serviceType': deviceEntity.ServiceType,
-                    'routes': []
-                };
-                
-                var routes = JSON.parse(deviceEntity.Routes);
-                for (var context in routes) {
-                    var z = routes[context];
-//                    console.log('context:', context, 'z:', z);
-                    device.routes.push(z);
-                }
-
-                devices.push(device);
-            }
-            callback(null, devices);
-        });
-    },
-    
     /**
-     * Obtain a specific device entity for a given Skype user.
+     * Obtain a specific registration for a given user.
      *
-     * @param skypeId
-     *   The Skype user to look for.
+     * @param userId
+     *   The user to look for.
      *
-     * @param deviceId
-     *   The device entity to look for.
+     * @param registrationId
+     *   The registration to look for.
      *
      * @param callback
      *   Method to invoke when the query is done
      *   - err: if not null, definition of the error that took place
-     *   - found: if no error, the existing device entity
+     *   - found: if no error, the existing registration entity
      */
-    getDeviceEntity: function (skypeId, deviceId, callback) {
-        this.store.queryEntity(this.tableName, skypeId, deviceId,
-                               callback);
+    getRegistrationEntity: function (userId, registrationId, callback) {
+        this.store.queryEntity(this.tableName, userId, registrationId, callback);
+    },
+
+    getRegistration: function (registrationEntity) {
+        var registration = {
+            'registrationId': registrationEntity.RowKey,
+            'templateVersion': registrationEntity.TemplateVersion.substr(1),
+            'templateLanguage': registrationEntity.TemplateLanguage,
+            'contract': registrationEntity.Contract,
+            'expiration': registrationEntity.Expiration,
+            'routes': null
+        };
+
+        var now = new Date();
+        now = now.toISOString();
+
+        var routes = JSON.parse(registrationEntity.Routes);
+        var valid = [];
+        for (var each in routes) {
+            var route = routes[each];
+            if (route.Expiration > now) {
+                valid.push( {
+                                'name': route.Name,
+                                'path': route.Path,
+                                'expiration': route.Expiration
+                            } );
+            }
+        }
+        registration.routes = valid;
+        return registration;
+    },
+
+    getRegistrations: function(userId, callback) {
+        var self = this;
+        this.getAllRegistrationEntities(userId, function(err, registrationEntities)
+        {
+            if (err !== null) callback(err, null);
+            if (registrationEntities.length === 0) callback(null, registrationEntities);
+            var now = new Date();
+            now = now.toISOString();
+//            console.log('now:', now);
+
+            var registrations = [];
+            for (var index in registrationEntities) {
+                var registrationEntity = registrationEntities[index];
+                if (registrationEntity.Expiration <= now) {
+                    self.deleteRegistrationEntity(userId, registrationEntity.RowKey, function (err)
+                    {
+                        if (err) console.log("deleteRegistrationEntity: err:", err);
+                    });
+                }
+                else {
+                    registrations.push(self.getRegistration(registrationEntity));
+                }
+            }
+            callback(null, registrations);
+        });
     },
 
     /**
-     * Update a specific device entity for a given Skype user.
+     * Update a specific registration for a given user.
      *
-     * @param skypeId
-     *   The Skype user to update.
+     * @param userId
+     *   The user to update.
      *
-     * @param deviceId
-     *   The device entity to add or update.
+     * @param registrationId
+     *   The registration to add or update.
      *
      * @param templateVersion
-     *   The template version that this device expects.
+     *   The template version that this registration expects.
      *
      * @param templateLanguage
-     *   The text language that this device expects.
+     *   The text language that this registration expects.
      *
-     * @param serviceType
+     * @param context
      *   The service that will handle final notification delivery.
      *
      * @param routes
-     *   Array of one or more notification routes for this device.
+     *   Array of one or more notification routes for this registration.
      *
      * @param callback
      *   Method to invoke when the query is done
      *   - err: if not null, definition of the error that took place
-     *   - found: if no error, the existing device entity
+     *   - found: if no error, the existing registration entity
      */
-    updateDeviceEntity: function(skypeId, deviceId, templateVersion, 
-                                 templateLanguage, serviceType, routes,
-                                 callback) {
+    updateRegistrationEntity: function(userId, registrationId, templateVersion, templateLanguage, contract, routes,
+                                       callback) {
         var self = this;
-        self.getDeviceEntity(skypeId, deviceId, function (err, found) {
-//            console.log('getDeviceEntity: err:', err, 'found:', found);
-            var deviceEntity = {
-                "PartitionKey": skypeId,
-                "RowKey": deviceId,
+        self.getRegistrationEntity(userId, registrationId, function (err, found) {
+            var registrationEntity = {
+                "PartitionKey": userId,
+                "RowKey": registrationId,
                 "TemplateLanguage": templateLanguage,
-                "TemplateVersion": templateVersion,
-                "ServiceType": serviceType
+                "TemplateVersion": 'v' + templateVersion,
+                "Contract": contract,
+                "Expiration": null,
+                "Routes": null
             };
 
+            var now = new Date();
+            var oldest = now;
+            now = now.getTime();
+            for (var index in routes) {
+                var route = routes[index];
+                var expiration = new Date(now + route.secondsToLive * 1000);
+                if (oldest < expiration) {
+                    oldest = expiration;
+                }
+                route = {
+                    "Name": route.name,
+                    "Path": route.path,
+                    "Expiration": expiration.toISOString()
+                };
+//                console.log('new route:', route);
+                routes[index] = route;
+            }
+
+            registrationEntity.Expiration = oldest.toISOString();
+            registrationEntity.Routes = JSON.stringify(routes);
             if (! found) {
-                deviceEntity.Routes = JSON.stringify(routes);
-                self.store.insertEntity(self.tableName, deviceEntity, callback);
+                self.store.insertEntity(self.tableName, registrationEntity, callback);
             }
             else {
-                var activeRoutes = JSON.parse(found.Routes);
-                activeRoutes = {};
-                for (var index in routes) {
-                    var route = routes[index];
-                    activeRoutes[route.context] = {
-                        "credential": route.credential,
-                        "expiration": route.expiration
-                    };
-                }
-                deviceEntity.Routes = JSON.stringify(activeRoutes);
-                self.store.updateEntity(self.tableName, deviceEntity, callback);
+                self.store.updateEntity(self.tableName, registrationEntity, callback);
             }
-	    });
+	});
     },
 
     /**
-     * Delete a specific device entity for a given Skype user.
+     * Delete a specific registration for a given user.
      *
-     * @param skypeId
-     *   The Skype user to look for.
+     * @param userId
+     *   The user to look for.
      *
-     * @param deviceId
-     *   The device entity to delete.
+     * @param registrationId
+     *   The registration to delete.
      *
      * @param callback
      *   Method to invoke when the deletion is done.
      *   - err: if not null, definition of the error that took place
      */
-    deleteDeviceEntity: function (skypeId, deviceId, callback) {
-        var entity = {
-            "PartitionKey": skypeId,
-            "RowKey": deviceId
+    deleteRegistrationEntity: function (userId, registrationId, callback) {
+        var registrationEntity = {
+            "PartitionKey": userId,
+            "RowKey": registrationId
         };
-        this.store.deleteEntity(this.tableName, entity, callback);
+        this.store.deleteEntity(this.tableName, registrationEntity, callback);
     },
 
     /**
-     * Delete all device entities for a given Skype user.
+     * Delete all registrations for a given user.
      *
-     * @param skypeId
-     *   The Skype user to delete.
+     * @param userId
+     *   The user to delete.
      *
      * @param callback
      *   Method to invoke when the deletion is done.
      *   - err: if not null, definition of the error that took place
      */
-    deleteAllDeviceEntities: function (skypeId, callback) {
+    deleteAllRegistrationEntities: function (userId, callback) {
         var self = this;
-        self.getAllDeviceEntities(skypeId, function (err, deviceEntities) {
-            if (err || deviceEntities.length === 0) {
+        self.getAllRegistrationEntities(userId, function (err, registrationEntities) {
+            if (err || registrationEntities.length === 0) {
                 callback(err);
             }
             else {
-                for (var index in deviceEntities) {
-                    var deviceId = deviceEntities[index].RowKey;
-                    self.deleteDeviceEntity(skypeId, deviceId,
+                for (var index in registrationEntities) {
+                    var registrationId = registrationEntities[index].RowKey;
+                    self.deleteRegistrationEntity(userId, registrationId,
                         function (err) {
                         if (err) console.log(err);
                     });

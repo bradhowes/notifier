@@ -1,16 +1,24 @@
-var azure = require("azure");
+/**
+ * @file
+ * TemplateStore prototype definition.
+ */
 
 module.exports = TemplateStore;
 
-function TemplateStore(settings) {
-    if (settings === undefined) settings = {
-        'name': 'templates',
-        'callback': function (err) { console.log('TemplateStore err:', err); }
+var azure = require("azure");
+
+/**
+ * TemplateStore constructor.
+ */
+function TemplateStore(name, callback) {
+    if (name === undefined)  name = 'templates';
+    if (callback === undefined) callback = function (err) {
+        if (err) console.log('createTableIfNotExists: name:', name, 'err:', err);
     };
 
-    this.tableName = settings.name;
+    this.tableName = name;
     this.store = azure.createTableService();
-    this.store.createTableIfNotExists(this.tableName, settings.callback);
+    this.store.createTableIfNotExists(name, callback);
 }
 
 TemplateStore.prototype = {
@@ -24,7 +32,7 @@ TemplateStore.prototype = {
 
         this.store.queryEntities(query, function(err, found) {
             if (err) {
-                callback(err, null); return; 
+                callback(err, null); return;
             }
             else if (found.length === 0) {
                 callback(null, found); return;
@@ -50,8 +58,8 @@ TemplateStore.prototype = {
             callback(null, matches);
         });
     },
-    
-    addTemplate: function(eventId, notificationId, routeName, tempVers, 
+
+    addTemplate: function(eventId, notificationId, routeName, tempVers,
                           tempLang, content, callback) {
         var self = this;
         var rowKey = self.makeRowKey(routeName, tempVers, tempLang);
@@ -70,7 +78,7 @@ TemplateStore.prototype = {
             }
         });
     },
-    
+
     removeTemplate: function(eventId, notificationId, routeName, tempVers,
         tempLang, callback) {
         var self = this;

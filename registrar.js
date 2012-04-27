@@ -2,160 +2,153 @@ module.exports = Registrar;
 
 /**
  * Registrar constructor.
- * 
+ *
  * A registrar allows for querying, updating, and deleting of registrations for
- * a given Skype ID.
+ * a given user ID.
  */
-function Registrar(store) {
-    // Create connection to Azure Table Store and create a our registrations
-    // tables if necessary.
-    this.store = store;
+function Registrar(registrationStore) {
+    this.registrationStore = registrationStore;
 }
 
 /**
  * Registrar prototype.
- * 
+ *
  * Defines the methods available to a Registrar instance.
  */
 Registrar.prototype = {
 
     /**
-     * Obtain the current registrations for a given Skype user.
-     * 
+     * Obtain the current registrations for a given user.
+     *
      * @param req
      *   Contents of the incoming request
-     * 
+     *
      * @param res
      *   Response generator for the request. Generates JSON output if the
      *   client requested JSON.
      */
-    getDevices: function (req, res) {
-        var skypeId = req.params.skypeId;
-        if (skypeId === "") {
+    getRegistrations: function (req, res) {
+        var userId = req.params.userId;
+        if (userId === '') {
             res.send(null, null, 400);
             return;
         }
 
         var start = new Date();
-        this.store.getDevices(skypeId, function (err, devices) {
-	        var end = new Date();
-	        var duration = end.getTime() - start.getTime();
-	        if (err !== null || devices.length === 0) {
+        this.registrationStore.getRegistrations(userId, function (err, registrations) {
+            var end = new Date();
+            var duration = end.getTime() - start.getTime();
+            if (err !== null || registrations.length === 0) {
                 console.log('error:', err);
-		        res.send(null, null, 404);
-	        }
-	        else {
+                res.send(null, null, 404);
+            }
+            else {
                 var tmp = {
-                    "devices": devices,
+                    "registrations": registrations,
                     "tableStoreDuration": duration
                 };
-		        res.json(tmp);
-	        }
-	        console.log('getDevices', skypeId, duration);
+                res.json(tmp);
+            }
+            console.log('getRegistrations', userId, duration);
         });
     },
 
     /**
-     * Add or update a device for a given Skype user.
-     * 
+     * Add or update a registration for a given user.
+     *
      * @param req
      *   Contents of the incoming request. Expects a body in JSON format.
-     *   - req.params.skypeId: the Skype user to look for
-     *   - req.body.DeviceId: the device to add/update.
-     *   - req.body.TemplateVersion: the template version for this device.
-     *   - req.body.TemplateLanguage: the template language for this device.
-     *   - req.body.ServiceType: the notification service for this device.
-     *   - req.body.Routes: array of one or more route dicts with keys:
-     *     - Name: the unique name of the route for this device.
-     *     - Path: service-specific way to reach the device for notifications.
-     *     - Expiration: the time when the Path is no longer valid.
+     *   - req.params.userId: the user to look for
+     *   - req.body.registrationId: the registration to add/update.
+     *   - req.body.templateVersion: the template version for this registration.
+     *   - req.body.templateLanguage: the template language for this registration.
+     *   - req.body.contract: the notification service for this registration.
+     *   - req.body.routes: array of one or more route dicts with keys:
+     *     - name: the unique name of the route for this registration.
+     *     - path: service-specific way to reach the user for notifications.
+     *     - secondsToLive: the number of seconds into the future the path is valid.
      *
      * @param res
      *   Response generator for the request. Generates JSON output if the
      *   client requested JSON.
      */
-    addDevice: function (req, res) {
+    addRegistration: function (req, res) {
+        var self = this;
         var body = req.body;
-        var skypeId = req.params.skypeId;
-        if (skypeId === "") {
+        var userId = req.params.userId;
+        if (userId === "") {
             res.send(null, null, 400);
             return;
         }
 
-        var deviceId = body.DeviceId;
-        if (deviceId === "") {
+        var registrationId = body.registrationId;
+        if (registrationId === "") {
             res.send(null, null, 400);
             return;
         }
 
-        var templateVersion = body.TemplateVersion;
+        var templateVersion = body.templateVersion;
         if (templateVersion === "") {
             res.send(null, null, 400);
             return;
         }
 
-        var templateLanguage = body.TemplateLanguage;
+        var templateLanguage = body.templateLanguage;
         if (templateLanguage === "") {
             res.send(null, null, 400);
             return;
         }
 
-        var serviceType = body.ServiceType;
-        if (serviceType === "") {
+        var contract = body.contract;
+        if (contract === "") {
             res.send(null, null, 400);
             return;
         }
 
-        var routes = body.Routes;
+        var routes = body.routes;
         if (routes.length === 0) {
             res.send(null, null, 400);
             return;
         }
 
-	    var start = new Date();
-        this.store.updateDeviceEntity(skypeId, deviceId, templateVersion, 
-                                      templateLanguage, serviceType, routes,
-                                      function (err, deviceEntity) {
-	        if (err) {
+        var start = new Date();
+        this.registrationStore.updateRegistrationEntity(userId, registrationId, templateVersion,
+                                                        templateLanguage, contract, routes,
+                                                        function (err, registrationEntity)
+        {
+            if (err) {
                 console.log('error:', err);
-		        res.send(null, null, 404);
-	        }
+                res.send(null, null, 404);
+            }
             else {
-                console.log('ok:', deviceEntity);
                 var end = new Date();
                 var duration = end.getTime() - start.getTime();
-                var tmp = {
-                    "DeviceId": deviceEntity.RowKey,
-                    "TemplateVersion": deviceEntity.TemplateVersion,
-                    "TemplateLanguage": deviceEntity.TemplateLanguage,
-                    "ServiceType": deviceEntity.ServiceType,
-                    "Routes": JSON.parse(deviceEntity.Routes),
-                    "TableStoreDuration": duration
-                };
+                var tmp = self.registrationStore.getRegistration(registrationEntity);
+                tmp.tableStoreDuration = duration;
                 res.json(tmp);
-	            console.log('addDevice', skypeId, duration);
+                console.log('addRegistration', userId, duration);
             }
         });
     },
 
     /**
-     * Delete a device or all devices for a given Skype user. If a JSON 
-     * payload exits with a DeviceId attribute, only delete the one device
-     * matching the DeviceId value. Otherwise, delete all devices under the
+     * Delete a registration or all registrations for a given user. If a JSON
+     * payload exits with a registrationId attribute, only delete the one entity
+     * matching the registrationId value. Otherwise, delete all registrations for the
      * user.
-     * 
+     *
      * @param req
      *   Contents of the incoming request.
-     *   - req.params.skypeId: the Skype user to look for
-     *   - req.body.DeviceId (optional): the device to delete
+     *   - req.params.userId: the user to look for
+     *   - req.body.registrationId (optional): the registration to delete
      *
      * @param res
      *   Response generator for the request. Generates JSON output if the
      *   client requested JSON.
      */
-    deleteDevice: function (req, res) {
-        var skypeId = req.params.skypeId;
-        if (skypeId === "") {
+    deleteRegistration: function (req, res) {
+        var userId = req.params.userId;
+        if (userId === "") {
             res.send(null, null, 400);
             return;
         }
@@ -169,12 +162,12 @@ Registrar.prototype = {
             }
         };
 
-        var deviceId = req.body.DeviceId;
-        if (deviceId === undefined) {
-            this.store.deleteAllDeviceEntities(skypeId, callback);
+        var registrationId = req.body.registrationId;
+        if (registrationId === undefined) {
+            this.registrationStore.deleteAllRegistrationEntities(userId, callback);
         }
         else {
-            this.store.deleteDeviceEntity(skypeId, deviceId, callback);
+            this.registrationStore.deleteRegistrationEntity(userId, registrationId, callback);
         }
     }
 };

@@ -1,9 +1,10 @@
-var assert = require("assert");
-var vows = require("vows");
 var config = require('./config');
 
 process.env.AZURE_STORAGE_ACCOUNT = config.azure_storage_account;
-process.env.AZURE_STORAGE_ACCESS_KEY = config.aure_storage_access_key;
+process.env.AZURE_STORAGE_ACCESS_KEY = config.azure_storage_access_key;
+
+var assert = require("assert");
+var vows = require("vows");
 
 var TemplateStore = require("./templateStore");
 var store = null;
@@ -11,12 +12,10 @@ var store = null;
 vows.describe('templateStore').addBatch({
     'create an empty table': {
         topic: function () {
-            store = new TemplateStore({
-                'name': 'templatetest',
-                'callback': this.callback
-            });
+            store = new TemplateStore('templatetest', this.callback);
         },
         'succeeds without error': function (err, created, response) {
+            console.log('new TemplateStore: err:', err, "created:", created);
             assert.equal(err, null);
         },
         'then add template': {
