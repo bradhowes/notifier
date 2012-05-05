@@ -31,8 +31,13 @@ app.post('/registrations/:userId', registrar.addRegistration.bind(registrar));
 app.del('/registrations/:userId', registrar.deleteRegistration.bind(registrar));
 
 var templateStore = new TemplateStore(config.templates_table_name);
+var templateManager = new TemplateManager(templateStore);
+app.get("/templates", templateManager.getTemplates.bind(templateManager));
+app.post("/templates", templateManager.addTemplate.bind(templateManager));
+app.del("/templates", templateManager.deleteTemplate.bind(templateManager));
+
 var generator = new PayloadGenerator();
 var notifier = new Notifier(templateStore, registrationStore, generator);
-app.post("/postnotification:userId", notifier.postNotification.bind(notifier));
+app.post("/postnotification/:userId", notifier.postNotification.bind(notifier));
 
 app.listen(process.env.port);

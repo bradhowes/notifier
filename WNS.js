@@ -1,8 +1,7 @@
-var config = require("./config");
-
 module.exports = WNS;
 
-var request = require('request');
+var config = require("./config");
+var request = require("request");
 
 /** Constructor for WNS objects.
  *
@@ -44,11 +43,7 @@ WNS.prototype = {
                 'form': params
             },
             function(err, resp, body) {
-                if (err !== null) {
-                    console.log('fetchAccessToken err:', err);
-                }
-                else {
-                    console.log('fetchAccessToken status:', resp.statusCode);
+                if (err === null) {
                     if (resp.statusCode == 200) {
                         body = JSON.parse(body);
                         self.accessToken = body.access_token;
@@ -58,7 +53,8 @@ WNS.prototype = {
             });
     },
 
-    sendNotification: function(content, credential, callback) {
+    sendNotification: function(path, content, callback) {
+        content = JSON.parse(content);
         this.validateAccessToken(
             function(err, accessToken) {
                 var headers = {
@@ -77,15 +73,9 @@ WNS.prototype = {
                     },
                     function(err, resp, body) {
                         if (err !== null) {
-                            console.log('sendNotification err:', err);
                             callback(err, -1);
                         }
                         else {
-                            console.log('sendNotification status:', resp.statusCode);
-                            if (resp.statusCode != 200) {
-                                console.log('resp:', resp);
-                                console.log('body:', body);
-                            }
                             callback(null, resp.statusCode);
                         }
                     });

@@ -97,12 +97,18 @@ RegistrationStore.prototype = {
         var self = this;
         this.getAllRegistrationEntities(userId, function(err, registrationEntities)
         {
-            if (err !== null) callback(err, null);
-            if (registrationEntities.length === 0) callback(null, registrationEntities);
+            if (err !== null) {
+                callback(err, null);
+                return;
+            }
+
+            if (registrationEntities.length === 0) {
+                callback(null, registrationEntities);
+                return;
+            }
+
             var now = new Date();
             now = now.toISOString();
-//            console.log('now:', now);
-
             var registrations = [];
             for (var index in registrationEntities) {
                 var registrationEntity = registrationEntities[index];

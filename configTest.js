@@ -4,7 +4,7 @@ var config = require("./config");
 
 vows.describe('config').addBatch({
     'We can see values': {
-        topic: config.wns_host,
+        topic: config.wns_package_sid,
             'wns_host is defined': function (topic) {
                 assert.isString(topic);
             },
