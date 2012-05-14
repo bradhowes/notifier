@@ -1,7 +1,7 @@
 var assert = require("assert");
 var vows = require("vows");
-var WNS = require('./WNS');
 
+var WNS = require('./WNS');
 var wns = new WNS();
 
 var suite = vows.describe('WNS');

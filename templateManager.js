@@ -109,9 +109,14 @@ TemplateManager.prototype = {
 
         var contract = body.contract;
 
+        var reg = {
+            'templateVersion': '' + templateVersion,
+            'templateLanguage': templateLanguage,
+            'contract': contract,
+            'routes': [ {'name':routeName, 'path':''} ]
+        };
         var start = new Date();
-        this.templateStore.locate(eventId, routeName, templateVersion, templateLanguage, contract,
-                                  function (err, templates)
+        this.templateStore.findTemplates(eventId, [reg], function (err, templates)
         {
             var end = new Date();
             var duration = end.getTime() - start.getTime();

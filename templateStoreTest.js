@@ -42,7 +42,13 @@ suite.addBatch({
 suite.addBatch({
     'find en-US template': {
         topic: function () {
-            store.locate(200, '*', '1.0', 'en-US', 'wns', this.callback);
+            var reg = {
+                'templateVersion':'1.0',
+                'templateLanguage':'en-US',
+                'contract':'wns',
+                'routes':[{'name':'*', 'path':'http://a.b.c'}]
+            };
+            store.findTemplates(200, [reg], this.callback);
         },
         'succeeds without error': function (err, found) {
             assert.isNull(err);
@@ -53,7 +59,13 @@ suite.addBatch({
     },
     'find en template': {
         topic: function () {
-            store.locate(200, '*', '1.0', 'en', 'wns', this.callback);
+            var reg = {
+                'templateVersion':'1.0',
+                'templateLanguage':'en',
+                'contract':'wns',
+                'routes':[{'name':'*', 'path':'http://a.b.c'}]
+            };
+            store.findTemplates(200, [reg], this.callback);
         },
         'succeeds without error': function (err, found) {
             assert.isNull(err);
@@ -64,7 +76,13 @@ suite.addBatch({
     },
     'fail to locate 1.1 template': {
         topic: function () {
-            store.locate(200, '*', '1.1', 'en', 'wns', this.callback);
+            var reg = {
+                'templateVersion':'1.1',
+                'templateLanguage':'en',
+                'contract':'wns',
+                'routes':[{'name':'*', 'path':'http://a.b.c'}]
+            };
+            store.findTemplates(200, [reg], this.callback);
         },
         'succeeds without error': function (err, found) {
             assert.isNull(err);
@@ -75,7 +93,13 @@ suite.addBatch({
     },
     'find en template as default for de one': {
         topic: function () {
-            store.locate(200, '*', '1.0', 'de-AU', 'wns', this.callback);
+            var reg = {
+                'templateVersion':'1.0',
+                'templateLanguage':'de-AU',
+                'contract':'wns',
+                'routes':[{'name':'*', 'path':'http://a.b.c'}]
+            };
+            store.findTemplates(200, [reg], this.callback);
         },
         'succeeds without error': function (err, found) {
             assert.isNull(err);
@@ -86,7 +110,13 @@ suite.addBatch({
     },
     'fail to locate 201 template': {
         topic: function () {
-            store.locate(201, '*', '1.0', 'en', 'wns', this.callback);
+            var reg = {
+                'templateVersion':'1.0',
+                'templateLanguage':'en',
+                'contract':'wns',
+                'routes':[{'name':'*', 'path':'http://a.b.c'}]
+            };
+            store.findTemplates(201, [reg], this.callback);
         },
         'succeeds without error': function (err, found) {
             assert.isNull(err);

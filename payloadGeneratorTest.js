@@ -1,6 +1,7 @@
 var assert = require("assert");
 var vows = require("vows");
-var PayloadGenerator =require("./payloadGenerator");
+
+var PayloadGenerator =require("./payloadGenerator.js");
 var pg = new PayloadGenerator();
 
 vows.describe('payloadGenerator').addBatch({

@@ -52,7 +52,6 @@ suite.addBatch({
             templateManager.addTemplate(req, new Response('addTemplate', this.callback));
         },
         'succeeds without error': function (out, err) {
-            console.log(out);
             assert.strictEqual(err, undefined);
             assert.isObject(out);
         }

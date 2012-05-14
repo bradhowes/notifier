@@ -23,7 +23,7 @@ function TemplateStore(name, callback) {
 
 TemplateStore.prototype = {
 
-    locate: function(eventId, routeName, templateVersion, templateLanguage, contract, callback) {
+    findTemplates: function(eventId, registrations, callback) {
         var self = this;
         var query = azure.TableQuery
             .select()
@@ -41,29 +41,76 @@ TemplateStore.prototype = {
                 return;
             }
 
-            var keys = [];
-            keys.push(self.makeKey(routeName, templateVersion, templateLanguage, contract));
-
-            var pos = templateLanguage.indexOf('-');
-            if (pos > 0) {
-                keys.push(self.makeKey(routeName, templateVersion, templateLanguage.substr(0, pos), contract));
-            }
-
-            if (templateLanguage.substr(0, pos) != 'en') {
-                keys.push(self.makeKey(routeName, templateVersion, 'en', contract));
+            var foundMap = {};
+            for (var foundIndex in found) {
+                var entity = found[foundIndex];
+                var bits = self.getKeyBits(entity.RowKey);
+                var routeName = bits[0];
+                var templateVersion = bits[1];
+                var templateLanguage = bits[2];
+                var contract = bits[3];
+                var key = self.makeKey(routeName, templateVersion, templateLanguage, contract);
+                foundMap[key] = entity;
             }
 
             var matches = [];
-            for (var index in found) {
-                var entity = found[index];
-                var rowKey = entity.RowKey;
-                for (var inner in keys) {
-                    if (rowKey.indexOf(keys[inner]) == 0) {
-                        matches.push(entity.Content);
-                        break;
+            for (var registrationIndex in registrations) {
+                var registration = registrations[registrationIndex];
+                var templateVersion = registration.templateVersion;
+                var templateLanguage = registration.templateLanguage;
+                var contract = registration.contract;
+                var routes = registration.routes;
+                for (var routeIndex in routes) {
+                    var route = routes[routeIndex];
+                    var routeName = route.name;
+                    var key = self.makeKey(routeName, templateVersion, templateLanguage, contract);
+                    var match = foundMap[key];
+                    if (match !== undefined) {
+
+                        // Exact match
+                        match = {
+                            'contract': contract,
+                            'path': route.path,
+                            'template': match.Content
+                        };
+                        matches.push(match);
+                        continue;
+                    }
+
+                    var pos = templateLanguage.indexOf('-');
+                    if (pos > 0) {
+
+                        // Strip off language specialization and search.
+                        key = self.makeKey(routeName, templateVersion, templateLanguage.substr(0, pos), contract);
+                        match = foundMap[key];
+                        if (match !== undefined) {
+                            match = {
+                                'contract': contract,
+                                'path': route.path,
+                                'template': match.Content
+                            };
+                            matches.push(match);
+                            continue;
+                        }
+                    }
+
+                    if (templateLanguage.substr(0, pos) != 'en') {
+
+                        // Try for default English match
+                        key = self.makeKey(routeName, templateVersion, 'en', contract);
+                        match = foundMap[key];
+                        if (match !== undefined) {
+                            match = {
+                                'contract': contract,
+                                'path': route.path,
+                                'template': match.Content
+                            };
+                            matches.push(match);
+                        }
                     }
                 }
             }
+
             callback(null, matches);
         });
     },
@@ -76,7 +123,10 @@ TemplateStore.prototype = {
         var templateEntity = {
             'PartitionKey': eventId.toString(),
             'RowKey': rowKey,
-            'Contract': contract,
+            'RouteName': routeName.toString(),
+            'TemplateVersion': templateVersion.toString(),
+            'TemplateLanguage': templateLanguage.toString(),
+            'Contract': contract.toString(),
             'Content': content
         };
 
@@ -99,6 +149,7 @@ TemplateStore.prototype = {
             'PartitionKey': eventId.toString(),
             'RowKey': rowKey
         };
+
         self.store.deleteEntity(self.tableName, templateEntity, function(err, tmp) {
             console.log('err:', err, 'tmp:', tmp);
             callback(err, tmp);
@@ -111,5 +162,9 @@ TemplateStore.prototype = {
 
     makeRowKey: function(notificationId, routeName, templateVersion, templateLanguage, contract) {
         return this.makeKey(routeName, templateVersion, templateLanguage, contract) + notificationId.toString();
+    },
+
+    getKeyBits: function(rowKey) {
+        return rowKey.split('_');
     }
 };
