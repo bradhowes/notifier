@@ -1,3 +1,5 @@
+"use strict";
+
 var config = require('./config');
 
 process.env.AZURE_STORAGE_ACCOUNT = config.azure_storage_account;
@@ -79,7 +81,7 @@ suite.addBatch({
                     'substitutions': {}
                 } };
             var res = new Response('post notification', this.callback);
-            senders['wns'] = res;
+            senders.wns = res;
             notifier.postNotification(req, res);
         },
         'succeeds without error': function (out, err, res) {

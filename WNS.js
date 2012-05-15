@@ -67,7 +67,7 @@ WNS.prototype = {
                 request(
                     {
                         'method': 'POST',
-                        'uri': credential,
+                        'uri': path,
                         'body': content.text,
                         'headers': headers
                     },

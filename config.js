@@ -1,3 +1,5 @@
+module.exports = undefined;
+
 var priv = require('./private/config.js');
 
 module.exports = {

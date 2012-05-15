@@ -1,9 +1,12 @@
+"use strict";
+
 var express = require('express');
 var app = express.createServer();
 
 var config = require('./config.js');
 var Registrar = require('./registrar.js');
 var Notifier = require('./notifier.js');
+var TemplateManager = require('./templateManager.js');
 var TemplateStore = require('./templateStore.js');
 var RegistrationStore = require('./registrationStore.js');
 var PayloadGenerator = require('./payloadGenerator.js');

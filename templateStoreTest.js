@@ -1,3 +1,5 @@
+"use strict";
+
 var config = require('./config');
 
 process.env.AZURE_STORAGE_ACCOUNT = config.azure_storage_account;
