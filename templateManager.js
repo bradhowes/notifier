@@ -47,8 +47,8 @@ TemplateManager.prototype = {
             return;
         }
 
-        var contract = body.contract;
-        if (contract === "") {
+        var service = body.service;
+        if (service === "") {
             res.send(null, null, 400);
             return;
         }
@@ -60,7 +60,7 @@ TemplateManager.prototype = {
         }
 
         var start = new Date();
-        this.templateStore.addTemplate(eventId, notificationId, routeName, templateVersion, templateLanguage, contract,
+        this.templateStore.addTemplate(eventId, notificationId, routeName, templateVersion, templateLanguage, service,
                                        content, function (err, templateEntity)
         {
             if (err) {
@@ -107,14 +107,14 @@ TemplateManager.prototype = {
             return;
         }
 
-        var contract = body.contract;
-
+        var service = body.service;
         var reg = {
             'templateVersion': '' + templateVersion,
             'templateLanguage': templateLanguage,
-            'contract': contract,
-            'routes': [ {'name':routeName, 'path':''} ]
+            'service': service,
+            'routes': [ {'name':routeName, 'token':''} ]
         };
+
         var start = new Date();
         this.templateStore.findTemplates(eventId, [reg], function (err, templates)
         {
@@ -171,14 +171,14 @@ TemplateManager.prototype = {
             return;
         }
 
-        var contract = body.contract;
-        if (contract === "") {
+        var service = body.service;
+        if (service === "") {
             res.send(null, null, 400);
             return;
         }
 
         this.templateStore.removeTemplate(eventId, notificationId, routeName, templateVersion, templateLanguage,
-                                          contract, function (err, templateEntity)
+                                          service, function (err, templateEntity)
         {
             if (err !== null) {
                 res.send(null, null, 404);

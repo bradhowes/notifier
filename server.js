@@ -35,7 +35,7 @@ app.del('/registrations/:userId', registrar.deleteRegistration.bind(registrar));
 
 var templateStore = new TemplateStore(config.templates_table_name);
 var templateManager = new TemplateManager(templateStore);
-app.get("/templates", templateManager.getTemplates.bind(templateManager));
+app.get("/templates/:eventId", templateManager.getTemplates.bind(templateManager));
 app.post("/templates", templateManager.addTemplate.bind(templateManager));
 app.del("/templates", templateManager.deleteTemplate.bind(templateManager));
 

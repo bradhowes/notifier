@@ -48,7 +48,7 @@ suite.addBatch({
                 'templateVersion':'1.0',
                 'templateLanguage':'en-US',
                 'contract':'wns',
-                'routes':[{'name':'*', 'path':'http://a.b.c'}]
+                'routes':[{'name':'*', 'token':'http://a.b.c'}]
             };
             store.findTemplates(200, [reg], this.callback);
         },
@@ -65,7 +65,7 @@ suite.addBatch({
                 'templateVersion':'1.0',
                 'templateLanguage':'en',
                 'contract':'wns',
-                'routes':[{'name':'*', 'path':'http://a.b.c'}]
+                'routes':[{'name':'*', 'token':'http://a.b.c'}]
             };
             store.findTemplates(200, [reg], this.callback);
         },
@@ -82,7 +82,7 @@ suite.addBatch({
                 'templateVersion':'1.1',
                 'templateLanguage':'en',
                 'contract':'wns',
-                'routes':[{'name':'*', 'path':'http://a.b.c'}]
+                'routes':[{'name':'*', 'token':'http://a.b.c'}]
             };
             store.findTemplates(200, [reg], this.callback);
         },
@@ -99,7 +99,7 @@ suite.addBatch({
                 'templateVersion':'1.0',
                 'templateLanguage':'de-AU',
                 'contract':'wns',
-                'routes':[{'name':'*', 'path':'http://a.b.c'}]
+                'routes':[{'name':'*', 'token':'http://a.b.c'}]
             };
             store.findTemplates(200, [reg], this.callback);
         },
@@ -116,7 +116,7 @@ suite.addBatch({
                 'templateVersion':'1.0',
                 'templateLanguage':'en',
                 'contract':'wns',
-                'routes':[{'name':'*', 'path':'http://a.b.c'}]
+                'routes':[{'name':'*', 'token':'http://a.b.c'}]
             };
             store.findTemplates(201, [reg], this.callback);
         },

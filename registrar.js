@@ -62,11 +62,11 @@ Registrar.prototype = {
      *   - req.body.registrationId: the registration to add/update.
      *   - req.body.templateVersion: the template version for this registration.
      *   - req.body.templateLanguage: the template language for this registration.
-     *   - req.body.contract: the notification service for this registration.
+     *   - req.body.service: the notification service for this registration.
      *   - req.body.routes: array of one or more route dicts with keys:
      *     - name: the unique name of the route for this registration.
-     *     - path: service-specific way to reach the user for notifications.
-     *     - secondsToLive: the number of seconds into the future the path is valid.
+     *     - token: service-specific way to reach the user for notifications.
+     *     - secondsToLive: the number of seconds into the future the token is valid.
      *
      * @param res
      *   Response generator for the request. Generates JSON output if the
@@ -99,8 +99,8 @@ Registrar.prototype = {
             return;
         }
 
-        var contract = body.contract;
-        if (contract === "") {
+        var service = body.service;
+        if (service === "") {
             res.send(null, null, 400);
             return;
         }
@@ -113,7 +113,7 @@ Registrar.prototype = {
 
         var start = new Date();
         this.registrationStore.updateRegistrationEntity(userId, registrationId, templateVersion,
-                                                        templateLanguage, contract, routes,
+                                                        templateLanguage, service, routes,
                                                         function (err, registrationEntity)
         {
             if (err) {

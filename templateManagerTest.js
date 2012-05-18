@@ -47,7 +47,7 @@ suite.addBatch({
                     'routeName': '*',
                     'templateVersion': '1.0',
                     'templateLanguage': 'en',
-                    'contract': 'wns',
+                    'service': 'wns',
                     'content': JSON.stringify({'kind': 'wns/badge',
                                                'text': '<?xml version="1.0" encoding="utf-8"?><badge value="3"/>'})
                 } };
@@ -70,7 +70,7 @@ suite.addBatch({
                     'routeName': '*',
                     'templateVersion': '1.0',
                     'templateLanguage': 'en-US',
-                    'contract': 'wns'
+                    'service': 'wns'
                 } };
             templateManager.getTemplates(req, new Response('addTemplate', this.callback));
         },
@@ -92,7 +92,7 @@ suite.addBatch({
                     'routeName': '*',
                     'templateVersion': '1.0',
                     'templateLanguage': 'de-GR',
-                    'contract': 'wns'
+                    'service': 'wns'
                 } };
             templateManager.getTemplates(req, new Response('addTemplate', this.callback));
         },
@@ -114,7 +114,7 @@ suite.addBatch({
                     'routeName': '*',
                     'templateVersion': '1.1',
                     'templateLanguage': 'de-GR',
-                    'contract': 'wns'
+                    'service': 'wns'
                 } };
             templateManager.getTemplates(req, new Response('getTemplates', this.callback));
         },
@@ -136,7 +136,7 @@ suite.addBatch({
                     'routeName': '*',
                     'templateVersion': '1.0',
                     'templateLanguage': 'en-US',
-                    'contract': 'wns'
+                    'service': 'wns'
                 } };
             templateManager.deleteTemplate(req, new Response('deleteTemplate', this.callback));
         },
@@ -158,7 +158,7 @@ suite.addBatch({
                     'routeName': '*',
                     'templateVersion': '1.0',
                     'templateLanguage': 'en',
-                    'contract': 'wns'
+                    'service': 'wns'
                 } };
             templateManager.deleteTemplate(req, new Response('deleteTemplate', this.callback));
         },
@@ -180,7 +180,7 @@ suite.addBatch({
                     'routeName': '*',
                     'templateVersion': '1.0',
                     'templateLanguage': 'en',
-                    'contract': 'wns'
+                    'service': 'wns'
                 } };
             templateManager.deleteTemplate(req, new Response('deleteTemplate', this.callback));
         },
