@@ -132,7 +132,7 @@ The USER is the identifier for a given user.
   'templateVersion': '1.0', 
   'templateLanguage': 'en-US',
   'service': 'wns',
-  'routes': [ {'name': 'main', 'token': 'https://example.com/...'} ]
+  'routes': [ {'name': 'main', 'token': 'https://example.com/...', secondsToLive: 86400} ]
 }
 ```
 
