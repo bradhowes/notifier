@@ -1,4 +1,3 @@
-
 # Notifier
 
 This is a collection of classes that provide three services:
@@ -51,13 +50,15 @@ Each template is associated with an notifiable event (see Notification Generatio
   * body – the XML contents for the template
 
 ### Example: 
-```{ 'eventId': 100, 
-        'notificationId': 1,
-        'routeName': 'main',
-        'templateVersion': '1.0', 
-        'templateLanguage': 'en-US',
-        'service': 'wns', 
-        'content': {'kind': 'wns/badge', 'body': '<xml>...</xml>}
+```
+{
+  'eventId': 100, 
+  'notificationId': 1,
+  'routeName': 'main',
+  'templateVersion': '1.0',
+  'templateLanguage': 'en-US',
+  'service': 'wns', 
+  'content': {'kind': 'wns/badge', 'body': '<xml>...</xml>'}
 }
 ```
 
@@ -75,8 +76,16 @@ Each template is associated with an notifiable event (see Notification Generatio
   * apns – deliver notifications using Apple's APNs
 
 ### Example: 
-```{'eventId': 100, 'notificationId': 1, 'routeName': 'main', 'templateVersion': '1.0', 'templateLanguage': 'en-US',
-'service': 'wns'}```
+```
+{
+  'eventId': 100, 
+  'notificationId': 1,
+  'routeName': 'main',
+  'templateVersion': '1.0',
+  'templateLanguage': 'en-US',
+  'service': 'wns'
+}
+```
 
 ## Delete Template
 
@@ -92,8 +101,16 @@ Each template is associated with an notifiable event (see Notification Generatio
   * apns – deliver notifications using Apple's APNs
 
 ### Example: 
-```{'eventId': 100, 'notificationId': 1, 'routeName': 'main', 'templateVersion': '1.0', 'templateLanguage': 'en-US',
-'service': 'wns'}```
+```
+{
+  'eventId': 100,
+  'notificationId': 1, 
+  'routeName': 'main', 
+  'templateVersion': '1.0',
+  'templateLanguage': 'en-US',
+  'service': 'wns'
+}
+```
 
 # Registrar API
 
@@ -123,8 +140,15 @@ The USER is the identifier for a given user.
 
 ### Example:
 
-```{'registrationId': 'abc-123-456', 'templateVersion': '1.0', 'templateLanguage': 'en-US', 'service': 'wns',
-'routes': [ {'name': 'main', 'token': 'https://example.com/...'} ] }```
+```
+{
+  'registrationId': 'abc-123-456',
+  'templateVersion': '1.0', 
+  'templateLanguage': 'en-US',
+  'service': 'wns',
+  'routes': [ {'name': 'main', 'token': 'https://example.com/...'} ]
+}
+```
 
 ## Get Registrations
 
@@ -142,4 +166,9 @@ Returns all of the valid registrations for a given USER.
 
 ### Example:
 
-```{'eventId': 100, 'substitutions': {'NAME':, 'John Doe', 'PHONE': '+1 800 555-1212'} }```
+```
+{
+  'eventId': 100, 
+  'substitutions': {'NAME':, 'John Doe', 'PHONE': '+1 800 555-1212'}
+}
+```
