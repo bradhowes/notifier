@@ -81,33 +81,31 @@ TemplateManager.prototype = {
     },
 
     getTemplates: function (req, res) {
-        var body = req.body;
-
-        var eventId = body.eventId;
+        var eventId = req.param('eventId', '');
         if (eventId === "") {
             res.send(null, null, 400);
             return;
         }
 
-        var routeName = body.routeName;
-        if (routeName === "") {
-            res.send(null, null, 400);
-            return;
-        }
-
-        var templateVersion = body.templateVersion;
+        var templateVersion = req.param('templateVersion', '');
         if (templateVersion === "") {
             res.send(null, null, 400);
             return;
         }
 
-        var templateLanguage = body.templateLanguage;
+        var templateLanguage = req.param('templateLanguage', '');
         if (templateLanguage === "") {
             res.send(null, null, 400);
             return;
         }
 
-        var service = body.service;
+        var service = req.param('service', '');
+        if (service === "") {
+            res.send(null, null, 400);
+            return;
+        }
+
+        var routeName = req.param('routeName', '');
         var reg = {
             'templateVersion': '' + templateVersion,
             'templateLanguage': templateLanguage,
@@ -139,43 +137,37 @@ TemplateManager.prototype = {
     },
 
     deleteTemplate: function (req, res) {
-        var body = req.body;
-
-        var eventId = body.eventId;
+        var eventId = req.param('eventId', '');
         if (eventId === "") {
             res.send(null, null, 400);
             return;
         }
 
-        var notificationId = body.notificationId;
+        var notificationId = req.param('notificationId', '');
         if (notificationId === "") {
             res.send(null, null, 400);
             return;
         }
 
-        var routeName = body.routeName;
-        if (routeName === "") {
-            res.send(null, null, 400);
-            return;
-        }
-
-        var templateVersion = body.templateVersion;
+        var templateVersion = req.param('templateVersion', '');
         if (templateVersion === "") {
             res.send(null, null, 400);
             return;
         }
 
-        var templateLanguage = body.templateLanguage;
+        var templateLanguage = req.param('templateLanguage', '');
         if (templateLanguage === "") {
             res.send(null, null, 400);
             return;
         }
 
-        var service = body.service;
+        var service = req.param('service', '');
         if (service === "") {
             res.send(null, null, 400);
             return;
         }
+
+        var routeName = req.param('routeName', '');
 
         this.templateStore.removeTemplate(eventId, notificationId, routeName, templateVersion, templateLanguage,
                                           service, function (err, templateEntity)

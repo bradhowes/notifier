@@ -102,7 +102,7 @@ TemplateStore.prototype = {
                         if (match !== undefined) {
                             match = {
                                 'service': service,
-                                'token': token.token,
+                                'token': route.token,
                                 'template': match.Content
                             };
                             matches.push(match);
