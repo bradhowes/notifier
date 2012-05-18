@@ -64,9 +64,9 @@ Each template is associated with an notifiable event (see Notification Generatio
 
 ## Get Templates
 
-### HTTP GET http://SERVER/templates
+### HTTP GET http://SERVER/templates?
 
-### Json Attributes:
+### Query Attributes:
 * eventId – identifier of the notifiable event to fetch
 * routeName – which notification service route to fetch
 * templateVersion – the version of the template to fetch
@@ -77,21 +77,14 @@ Each template is associated with an notifiable event (see Notification Generatio
 
 ### Example: 
 ```
-{
-  'eventId': 100, 
-  'notificationId': 1,
-  'routeName': 'main',
-  'templateVersion': '1.0',
-  'templateLanguage': 'en-US',
-  'service': 'wns'
-}
+http://SERVER/templates?eventId=100&notification=1&routeName=main&templateVersion=1.0&templateLanguage=en-US&service=wns
 ```
 
 ## Delete Template
 
-### HTTP DEL http://SERVER/templates
+### HTTP DEL http://SERVER/templates?
 
-### Json Attributes:
+### Query Attributes:
 * eventId – identifier of the notifiable event to fetch
 * routeName – which notification service route to fetch
 * templateVersion – the version of the template to fetch
@@ -102,14 +95,7 @@ Each template is associated with an notifiable event (see Notification Generatio
 
 ### Example: 
 ```
-{
-  'eventId': 100,
-  'notificationId': 1, 
-  'routeName': 'main', 
-  'templateVersion': '1.0',
-  'templateLanguage': 'en-US',
-  'service': 'wns'
-}
+http://SERVER/templates?eventId=100&notification=1&routeName=main&templateVersion=1.0&templateLanguage=en-US&service=wns
 ```
 
 # Registrar API
