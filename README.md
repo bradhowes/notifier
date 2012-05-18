@@ -19,6 +19,13 @@ work, in particular WNS notifications and Azure Table Store access.
 % node server.js
 ```
 
+# Unit Tests
+```
+% for i in *Test.js; do echo $i; node $i; done
+```
+
+(Too lazy right now to do the right thing and use vows to run tests in a directory.)
+
 # Template Manager API
 
 Notification templates contain the body of the template payload that will be sent out to a specific notification
