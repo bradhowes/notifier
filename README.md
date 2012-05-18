@@ -14,6 +14,11 @@ Currently there is only support for WNS.
 See the config.js file. Note that some sensitive settings must be added to a private/config.js file before things will
 work, in particular WNS notifications and Azure Table Store access.
 
+# Running
+```
+% node server.js
+```
+
 # Template Manager API
 
 Notification templates contain the body of the template payload that will be sent out to a specific notification
