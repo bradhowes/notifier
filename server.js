@@ -43,4 +43,4 @@ var generator = new PayloadGenerator();
 var notifier = new Notifier(templateStore, registrationStore, generator);
 app.post("/postnotification/:userId", notifier.postNotification.bind(notifier));
 
-app.listen(process.env.port);
+app.listen(process.env.PORT);
