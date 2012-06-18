@@ -47,8 +47,8 @@ TemplateManager.prototype = {
             return;
         }
 
-        var contract = body.contract;
-        if (contract === "") {
+        var service = body.service;
+        if (service === "") {
             res.send(null, null, 400);
             return;
         }
@@ -60,7 +60,7 @@ TemplateManager.prototype = {
         }
 
         var start = new Date();
-        this.templateStore.addTemplate(eventId, notificationId, routeName, templateVersion, templateLanguage, contract,
+        this.templateStore.addTemplate(eventId, notificationId, routeName, templateVersion, templateLanguage, service,
                                        content, function (err, templateEntity)
         {
             if (err) {
@@ -81,40 +81,38 @@ TemplateManager.prototype = {
     },
 
     getTemplates: function (req, res) {
-        var body = req.body;
-
-        var eventId = body.eventId;
+        var eventId = req.param('eventId', '');
         if (eventId === "") {
             res.send(null, null, 400);
             return;
         }
 
-        var routeName = body.routeName;
-        if (routeName === "") {
-            res.send(null, null, 400);
-            return;
-        }
-
-        var templateVersion = body.templateVersion;
+        var templateVersion = req.param('templateVersion', '');
         if (templateVersion === "") {
             res.send(null, null, 400);
             return;
         }
 
-        var templateLanguage = body.templateLanguage;
+        var templateLanguage = req.param('templateLanguage', '');
         if (templateLanguage === "") {
             res.send(null, null, 400);
             return;
         }
 
-        var contract = body.contract;
+        var service = req.param('service', '');
+        if (service === "") {
+            res.send(null, null, 400);
+            return;
+        }
 
+        var routeName = req.param('routeName', '');
         var reg = {
             'templateVersion': '' + templateVersion,
             'templateLanguage': templateLanguage,
-            'contract': contract,
-            'routes': [ {'name':routeName, 'path':''} ]
+            'service': service,
+            'routes': [ {'name':routeName, 'token':''} ]
         };
+
         var start = new Date();
         this.templateStore.findTemplates(eventId, [reg], function (err, templates)
         {
@@ -139,46 +137,40 @@ TemplateManager.prototype = {
     },
 
     deleteTemplate: function (req, res) {
-        var body = req.body;
-
-        var eventId = body.eventId;
+        var eventId = req.param('eventId', '');
         if (eventId === "") {
             res.send(null, null, 400);
             return;
         }
 
-        var notificationId = body.notificationId;
+        var notificationId = req.param('notificationId', '');
         if (notificationId === "") {
             res.send(null, null, 400);
             return;
         }
 
-        var routeName = body.routeName;
-        if (routeName === "") {
-            res.send(null, null, 400);
-            return;
-        }
-
-        var templateVersion = body.templateVersion;
+        var templateVersion = req.param('templateVersion', '');
         if (templateVersion === "") {
             res.send(null, null, 400);
             return;
         }
 
-        var templateLanguage = body.templateLanguage;
+        var templateLanguage = req.param('templateLanguage', '');
         if (templateLanguage === "") {
             res.send(null, null, 400);
             return;
         }
 
-        var contract = body.contract;
-        if (contract === "") {
+        var service = req.param('service', '');
+        if (service === "") {
             res.send(null, null, 400);
             return;
         }
 
+        var routeName = req.param('routeName', '');
+
         this.templateStore.removeTemplate(eventId, notificationId, routeName, templateVersion, templateLanguage,
-                                          contract, function (err, templateEntity)
+                                          service, function (err, templateEntity)
         {
             if (err !== null) {
                 res.send(null, null, 404);

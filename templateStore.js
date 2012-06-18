@@ -48,8 +48,8 @@ TemplateStore.prototype = {
                 var routeName = bits[0];
                 var templateVersion = bits[1];
                 var templateLanguage = bits[2];
-                var contract = bits[3];
-                var key = self.makeKey(routeName, templateVersion, templateLanguage, contract);
+                var service = bits[3];
+                var key = self.makeKey(routeName, templateVersion, templateLanguage, service);
                 foundMap[key] = entity;
             }
 
@@ -58,19 +58,19 @@ TemplateStore.prototype = {
                 var registration = registrations[registrationIndex];
                 var templateVersion = registration.templateVersion;
                 var templateLanguage = registration.templateLanguage;
-                var contract = registration.contract;
+                var service = registration.service;
                 var routes = registration.routes;
                 for (var routeIndex in routes) {
                     var route = routes[routeIndex];
                     var routeName = route.name;
-                    var key = self.makeKey(routeName, templateVersion, templateLanguage, contract);
+                    var key = self.makeKey(routeName, templateVersion, templateLanguage, service);
                     var match = foundMap[key];
                     if (match !== undefined) {
 
                         // Exact match
                         match = {
-                            'contract': contract,
-                            'path': route.path,
+                            'service': service,
+                            'token': route.token,
                             'template': match.Content
                         };
                         matches.push(match);
@@ -81,12 +81,12 @@ TemplateStore.prototype = {
                     if (pos > 0) {
 
                         // Strip off language specialization and search.
-                        key = self.makeKey(routeName, templateVersion, templateLanguage.substr(0, pos), contract);
+                        key = self.makeKey(routeName, templateVersion, templateLanguage.substr(0, pos), service);
                         match = foundMap[key];
                         if (match !== undefined) {
                             match = {
-                                'contract': contract,
-                                'path': route.path,
+                                'service': service,
+                                'token': route.token,
                                 'template': match.Content
                             };
                             matches.push(match);
@@ -97,12 +97,12 @@ TemplateStore.prototype = {
                     if (templateLanguage.substr(0, pos) != 'en') {
 
                         // Try for default English match
-                        key = self.makeKey(routeName, templateVersion, 'en', contract);
+                        key = self.makeKey(routeName, templateVersion, 'en', service);
                         match = foundMap[key];
                         if (match !== undefined) {
                             match = {
-                                'contract': contract,
-                                'path': route.path,
+                                'service': service,
+                                'token': route.token,
                                 'template': match.Content
                             };
                             matches.push(match);
@@ -115,10 +115,10 @@ TemplateStore.prototype = {
         });
     },
 
-    addTemplate: function(eventId, notificationId, routeName, templateVersion, templateLanguage, contract, content,
+    addTemplate: function(eventId, notificationId, routeName, templateVersion, templateLanguage, service, content,
                           callback) {
         var self = this;
-        var rowKey = self.makeRowKey(notificationId, routeName, templateVersion, templateLanguage, contract);
+        var rowKey = self.makeRowKey(notificationId, routeName, templateVersion, templateLanguage, service);
 
         var templateEntity = {
             'PartitionKey': eventId.toString(),
@@ -126,7 +126,7 @@ TemplateStore.prototype = {
             'RouteName': routeName.toString(),
             'TemplateVersion': templateVersion.toString(),
             'TemplateLanguage': templateLanguage.toString(),
-            'Contract': contract.toString(),
+            'Service': service.toString(),
             'Content': content
         };
 
@@ -140,10 +140,10 @@ TemplateStore.prototype = {
         });
     },
 
-    removeTemplate: function(eventId, notificationId, routeName, templateVersion, templateLanguage, contract,
+    removeTemplate: function(eventId, notificationId, routeName, templateVersion, templateLanguage, service,
                              callback) {
         var self = this;
-        var rowKey = self.makeRowKey(notificationId, routeName, templateVersion, templateLanguage, contract);
+        var rowKey = self.makeRowKey(notificationId, routeName, templateVersion, templateLanguage, service);
 
         var templateEntity = {
             'PartitionKey': eventId.toString(),
@@ -156,12 +156,12 @@ TemplateStore.prototype = {
         });
     },
 
-    makeKey: function(routeName, templateVersion, templateLanguage, contract) {
-        return routeName + '_' + templateVersion + '_' + templateLanguage + '_' + contract + '_';
+    makeKey: function(routeName, templateVersion, templateLanguage, service) {
+        return routeName + '_' + templateVersion + '_' + templateLanguage + '_' + service + '_';
     },
 
-    makeRowKey: function(notificationId, routeName, templateVersion, templateLanguage, contract) {
-        return this.makeKey(routeName, templateVersion, templateLanguage, contract) + notificationId.toString();
+    makeRowKey: function(notificationId, routeName, templateVersion, templateLanguage, service) {
+        return this.makeKey(routeName, templateVersion, templateLanguage, service) + notificationId.toString();
     },
 
     getKeyBits: function(rowKey) {

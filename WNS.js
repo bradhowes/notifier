@@ -53,7 +53,7 @@ WNS.prototype = {
             });
     },
 
-    sendNotification: function(path, content, callback) {
+    sendNotification: function(token, content, callback) {
         content = JSON.parse(content);
         this.validateAccessToken(
             function(err, accessToken) {
@@ -67,7 +67,7 @@ WNS.prototype = {
                 request(
                     {
                         'method': 'POST',
-                        'uri': path,
+                        'uri': token,
                         'body': content.text,
                         'headers': headers
                     },

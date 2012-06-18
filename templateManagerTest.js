@@ -13,6 +13,16 @@ var TemplateManager = require("./templateManager");
 var store = null;
 var templateManager = null;
 
+function RequestParam(name, defaultValue) {
+    if (this.body && undefined !== this.body[name])
+        return this.body[name];
+    if (this.params && this.params.hasOwnProperty(name) && undefined !== this.params[name])
+        return this.params[name];
+    if (undefined !== this.query[name])
+        return this.query[name];
+    return defaultValue;
+};
+
 function Response(t, cb) {
     this.tag = t;
     this.cb = cb;
@@ -27,7 +37,7 @@ var suite = vows.describe('templateManager');
 suite.addBatch({
     'create an empty table': {
         topic: function () {
-            store = new TemplateStore('templatestest', this.callback);
+            store = new TemplateStore('templateManagerTest', this.callback);
         },
         'succeeds without error': function (err, created, response) {
             assert.equal(err, null);
@@ -40,6 +50,7 @@ suite.addBatch({
     'add template': {
         topic: function () {
             var req = {
+                'query': {},
                 'params': {},
                 'body': {
                     'eventId': 200,
@@ -47,10 +58,11 @@ suite.addBatch({
                     'routeName': '*',
                     'templateVersion': '1.0',
                     'templateLanguage': 'en',
-                    'contract': 'wns',
+                    'service': 'wns',
                     'content': JSON.stringify({'kind': 'wns/badge',
                                                'text': '<?xml version="1.0" encoding="utf-8"?><badge value="3"/>'})
                 } };
+            req.param = RequestParam;
             templateManager.addTemplate(req, new Response('addTemplate', this.callback));
         },
         'succeeds without error': function (out, err) {
@@ -64,14 +76,16 @@ suite.addBatch({
     'get templates': {
         topic: function () {
             var req = {
+                'body': {},
                 'params': {},
-                'body': {
+                'query': {
                     'eventId': 200,
                     'routeName': '*',
                     'templateVersion': '1.0',
                     'templateLanguage': 'en-US',
-                    'contract': 'wns'
+                    'service': 'wns'
                 } };
+            req.param = RequestParam;
             templateManager.getTemplates(req, new Response('addTemplate', this.callback));
         },
         'succeeds without error': function (out, err) {
@@ -86,14 +100,16 @@ suite.addBatch({
     'get default en template': {
         topic: function () {
             var req = {
+                'body': {},
                 'params': {},
-                'body': {
+                'query': {
                     'eventId': 200,
                     'routeName': '*',
                     'templateVersion': '1.0',
                     'templateLanguage': 'de-GR',
-                    'contract': 'wns'
+                    'service': 'wns'
                 } };
+            req.param = RequestParam;
             templateManager.getTemplates(req, new Response('addTemplate', this.callback));
         },
         'succeeds without error': function (out, err) {
@@ -108,14 +124,16 @@ suite.addBatch({
     'no match': {
         topic: function () {
             var req = {
+                'body': {},
                 'params': {},
-                'body': {
+                'query': {
                     'eventId': 200,
                     'routeName': '*',
                     'templateVersion': '1.1',
                     'templateLanguage': 'de-GR',
-                    'contract': 'wns'
+                    'service': 'wns'
                 } };
+            req.param = RequestParam;
             templateManager.getTemplates(req, new Response('getTemplates', this.callback));
         },
         'raises 404 Not Found error': function (out, err) {
@@ -129,15 +147,17 @@ suite.addBatch({
     'delete non-existant template': {
         topic: function () {
             var req = {
+                'body': {},
                 'params': {},
-                'body': {
+                'query': {
                     'eventId': 200,
                     'notificationId': 2000,
                     'routeName': '*',
                     'templateVersion': '1.0',
                     'templateLanguage': 'en-US',
-                    'contract': 'wns'
+                    'service': 'wns'
                 } };
+            req.param = RequestParam;
             templateManager.deleteTemplate(req, new Response('deleteTemplate', this.callback));
         },
         'returns 404 Not Found': function (out, err) {
@@ -158,8 +178,9 @@ suite.addBatch({
                     'routeName': '*',
                     'templateVersion': '1.0',
                     'templateLanguage': 'en',
-                    'contract': 'wns'
+                    'service': 'wns'
                 } };
+            req.param = RequestParam;
             templateManager.deleteTemplate(req, new Response('deleteTemplate', this.callback));
         },
         'returns 204 No Content': function (out, err) {
@@ -173,15 +194,17 @@ suite.addBatch({
     'delete template again': {
         topic: function () {
             var req = {
+                'body': {},
                 'params': {},
-                'body': {
+                'query': {
                     'eventId': 200,
                     'notificationId': 2000,
                     'routeName': '*',
                     'templateVersion': '1.0',
                     'templateLanguage': 'en',
-                    'contract': 'wns'
+                    'service': 'wns'
                 } };
+            req.param = RequestParam;
             templateManager.deleteTemplate(req, new Response('deleteTemplate', this.callback));
         },
         'returns 404 Not Found': function (out, err) {

@@ -15,7 +15,7 @@ var suite = vows.describe('templateStore');
 suite.addBatch({
     'create an empty table': {
         topic: function () {
-            store = new TemplateStore('templatetest', this.callback);
+            store = new TemplateStore('templateStoreTest', this.callback);
         },
         'succeeds without error': function (err, created, response) {
             assert.equal(err, null);
@@ -47,8 +47,8 @@ suite.addBatch({
             var reg = {
                 'templateVersion':'1.0',
                 'templateLanguage':'en-US',
-                'contract':'wns',
-                'routes':[{'name':'*', 'path':'http://a.b.c'}]
+                'service':'wns',
+                'routes':[{'name':'*', 'token':'http://a.b.c'}]
             };
             store.findTemplates(200, [reg], this.callback);
         },
@@ -64,8 +64,8 @@ suite.addBatch({
             var reg = {
                 'templateVersion':'1.0',
                 'templateLanguage':'en',
-                'contract':'wns',
-                'routes':[{'name':'*', 'path':'http://a.b.c'}]
+                'service':'wns',
+                'routes':[{'name':'*', 'token':'http://a.b.c'}]
             };
             store.findTemplates(200, [reg], this.callback);
         },
@@ -81,8 +81,8 @@ suite.addBatch({
             var reg = {
                 'templateVersion':'1.1',
                 'templateLanguage':'en',
-                'contract':'wns',
-                'routes':[{'name':'*', 'path':'http://a.b.c'}]
+                'service':'wns',
+                'routes':[{'name':'*', 'token':'http://a.b.c'}]
             };
             store.findTemplates(200, [reg], this.callback);
         },
@@ -98,8 +98,8 @@ suite.addBatch({
             var reg = {
                 'templateVersion':'1.0',
                 'templateLanguage':'de-AU',
-                'contract':'wns',
-                'routes':[{'name':'*', 'path':'http://a.b.c'}]
+                'service':'wns',
+                'routes':[{'name':'*', 'token':'http://a.b.c'}]
             };
             store.findTemplates(200, [reg], this.callback);
         },
@@ -115,8 +115,8 @@ suite.addBatch({
             var reg = {
                 'templateVersion':'1.0',
                 'templateLanguage':'en',
-                'contract':'wns',
-                'routes':[{'name':'*', 'path':'http://a.b.c'}]
+                'service':'wns',
+                'routes':[{'name':'*', 'token':'http://a.b.c'}]
             };
             store.findTemplates(201, [reg], this.callback);
         },
@@ -125,6 +125,27 @@ suite.addBatch({
         },
         'found 1 match': function (err, found) {
             assert.equal(found.length, 0);
+        }
+    }
+});
+
+suite.addBatch({
+    'delete template': {
+        topic: function () {
+            store.removeTemplate(200, 2000, '*', '1.0', 'en', 'wns', this.callback);
+        },
+        'succeeds without error': function (err, entity) {
+            assert.isNull(err);
+        },
+        'delete template again': {
+            topic: function () {
+                store.removeTemplate(200, 2000, '*', '1.0', 'en', 'wns', this.callback);
+            },
+            'fails with error': function (err, entity) {
+                console.log(err, entity);
+                assert.isNotNull(err);
+                assert.equal(err.code, "ResourceNotFound");
+            }
         }
     }
 });

@@ -43,8 +43,8 @@ suite.addBatch({
                     'registrationId': 'myregistration',
                     'templateVersion': '3.0',
                     'templateLanguage': 'en',
-                    'contract': 'wns',
-                    'routes': [ { 'name': '*', 'path': '123', 'secondsToLive': 86400 } ]
+                    'service': 'wns',
+                    'routes': [ { 'name': '*', 'token': '123', 'secondsToLive': 86400 } ]
                 } };
             registrar.addRegistration(req, new Response('addRegistration', this.callback));
         },
@@ -56,10 +56,10 @@ suite.addBatch({
             assert.equal(out.registrationId, 'myregistration');
             assert.equal(out.templateVersion, '3.0');
             assert.equal(out.templateLanguage, 'en');
-            assert.equal(out.contract, 'wns');
+            assert.equal(out.service, 'wns');
             assert.equal(out.routes.length, 1);
             assert.equal(out.routes[0].name, '*');
-            assert.equal(out.routes[0].path, '123');
+            assert.equal(out.routes[0].token, '123');
             assert.equal(out.routes[0].expiration, out.expiration);
         }
     }
@@ -82,10 +82,10 @@ suite.addBatch({
             assert.equal(out.registrationId, 'myregistration');
             assert.equal(out.templateVersion, '3.0');
             assert.equal(out.templateLanguage, 'en');
-            assert.equal(out.contract, 'wns');
+            assert.equal(out.service, 'wns');
             assert.equal(out.routes.length, 1);
             assert.equal(out.routes[0].name, '*');
-            assert.equal(out.routes[0].path, '123');
+            assert.equal(out.routes[0].token, '123');
             assert.equal(out.routes[0].expiration, out.expiration);
         }
     }

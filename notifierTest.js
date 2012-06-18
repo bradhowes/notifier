@@ -25,12 +25,12 @@ var notifier = new Notifier(templateStore, registrationStore, generator, senders
 function Response(t, cb) {
     this.tag = t;
     this.cb = cb;
-    this.path = null;
+    this.token = null;
     this.content = null;
 }
 
 Response.prototype = {
-    'sendNotification': function(a,b) { this.path = a; this.content = b;},
+    'sendNotification': function(a,b) { this.token = a; this.content = b;},
     'send': function (a,b,c) { this.cb(undefined, c, this); },
     'json': function (a) { this.cb(a, undefined, this); }
 };
@@ -41,7 +41,7 @@ suite.addBatch({
         topic: function () {
             registrationStore.updateRegistrationEntity('br.howes', 'myregistration', '1.0', 'en', 'wns',
                                                        [{'name':'*',
-                                                         'path':'123',
+                                                         'token':'123',
                                                          'secondsToLive':86400}], this.callback);
         },
         'succeeds without error': function (err, entity) {

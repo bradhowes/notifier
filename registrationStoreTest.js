@@ -28,7 +28,7 @@ suite.addBatch({
         topic: function () {
             store.updateRegistrationEntity('br.howes', 'myregistration', '1.0', 'en', 'wns',
                                            [{'name':'*',
-                                             'path':'123',
+                                             'token':'123',
                                              'secondsToLive':86400}], this.callback);
         },
         'succeeds without error': function (err, entity) {
@@ -57,10 +57,10 @@ suite.addBatch({
             assert.equal(registration.registrationId, 'myregistration');
             assert.equal(registration.templateVersion, '1.0');
             assert.equal(registration.templateLanguage, 'en');
-            assert.equal(registration.contract, 'wns');
+            assert.equal(registration.service, 'wns');
             var route = registration.routes[0];
             assert.equal(route.name, '*');
-            assert.equal(route.path, '123');
+            assert.equal(route.token, '123');
         }
     }
 });

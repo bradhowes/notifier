@@ -69,7 +69,7 @@ RegistrationStore.prototype = {
             'registrationId': registrationEntity.RowKey,
             'templateVersion': registrationEntity.TemplateVersion.substr(1),
             'templateLanguage': registrationEntity.TemplateLanguage,
-            'contract': registrationEntity.Contract,
+            'service': registrationEntity.Service,
             'expiration': registrationEntity.Expiration,
             'routes': null
         };
@@ -84,7 +84,7 @@ RegistrationStore.prototype = {
             if (route.Expiration > now) {
                 valid.push( {
                                 'name': route.Name,
-                                'path': route.Path,
+                                'token': route.Token,
                                 'expiration': route.Expiration
                             } );
             }
@@ -152,7 +152,7 @@ RegistrationStore.prototype = {
      *   - err: if not null, definition of the error that took place
      *   - found: if no error, the existing registration entity
      */
-    updateRegistrationEntity: function(userId, registrationId, templateVersion, templateLanguage, contract, routes,
+    updateRegistrationEntity: function(userId, registrationId, templateVersion, templateLanguage, service, routes,
                                        callback) {
         var self = this;
         self.getRegistrationEntity(userId, registrationId, function (err, found) {
@@ -161,7 +161,7 @@ RegistrationStore.prototype = {
                 "RowKey": registrationId,
                 "TemplateLanguage": templateLanguage,
                 "TemplateVersion": 'v' + templateVersion,
-                "Contract": contract,
+                "Service": service,
                 "Expiration": null,
                 "Routes": null
             };
@@ -177,7 +177,7 @@ RegistrationStore.prototype = {
                 }
                 route = {
                     "Name": route.name,
-                    "Path": route.path,
+                    "Token": route.token,
                     "Expiration": expiration.toISOString()
                 };
 //                console.log('new route:', route);

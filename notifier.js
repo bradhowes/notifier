@@ -72,14 +72,14 @@ Notifier.prototype = {
                     var match = matches[index];
                     var template = match.template;
                     var content = self.generator.transform(template, substitutions);
-                    self.deliver(match.contract, match.path, content);
+                    self.deliver(match.service, match.token, content);
                 }
                 res.send(null, null, 202);
             });
         });
     },
 
-    deliver: function(contract, path, content) {
-        this.senders[contract].sendNotification(path, content);
+    deliver: function(service, token, content) {
+        this.senders[service].sendNotification(token, content);
     }
 };
