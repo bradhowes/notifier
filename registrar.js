@@ -35,21 +35,21 @@ Registrar.prototype = {
         }
 
         var start = new Date();
-        this.registrationStore.getRegistrations(userId, function (err, registrations) {
+        this.registrationStore.getRegistrations(userId, function (err, regs) {
             var end = new Date();
             var duration = end.getTime() - start.getTime();
-            if (err !== null || registrations.length === 0) {
+            if (err !== null || typeof(regs) === "undefined" || regs.length === 0) {
                 console.log('error:', err);
                 res.send(null, null, 404);
             }
             else {
                 var tmp = {
-                    "registrations": registrations,
+                    "registrations": regs,
                     "tableStoreDuration": duration
                 };
                 res.json(tmp);
+                console.log('getRegistrations', userId, duration);
             }
-            console.log('getRegistrations', userId, duration);
         });
     },
 
@@ -76,37 +76,41 @@ Registrar.prototype = {
         var self = this;
         var body = req.body;
         var userId = req.params.userId;
+        function isUndefined(value) {
+            return typeof(value) === "undefined" || value === "";
+        }
+        
         if (userId === "") {
             res.send(null, null, 400);
             return;
         }
 
         var registrationId = body.registrationId;
-        if (registrationId === "") {
+        if (isUndefined(registrationId)) {
             res.send(null, null, 400);
             return;
         }
 
         var templateVersion = body.templateVersion;
-        if (templateVersion === "") {
+        if (isUndefined(templateVersion)) {
             res.send(null, null, 400);
             return;
         }
 
         var templateLanguage = body.templateLanguage;
-        if (templateLanguage === "") {
+        if (isUndefined(templateLanguage)) {
             res.send(null, null, 400);
             return;
         }
 
         var service = body.service;
-        if (service === "") {
+        if (isUndefined(service)) {
             res.send(null, null, 400);
             return;
         }
 
         var routes = body.routes;
-        if (routes.length === 0) {
+        if (typeof(routes) === "undefined" || routes.length === 0) {
             res.send(null, null, 400);
             return;
         }
@@ -153,14 +157,14 @@ Registrar.prototype = {
             return;
         }
 
-        var callback = function (err) {
+        function callback(err) {
             if (err) {
                 res.send(null, null, 404);
             }
             else {
                 res.send(null, null, 204);
             }
-        };
+        }
 
         var registrationId = req.body.registrationId;
         if (registrationId === undefined) {

@@ -95,28 +95,29 @@ RegistrationStore.prototype = {
 
     getRegistrations: function(userId, callback) {
         var self = this;
-        this.getAllRegistrationEntities(userId, function(err, registrationEntities)
+        this.getAllRegistrationEntities(userId, function(err, regs)
         {
             if (err !== null) {
                 callback(err, null);
                 return;
             }
 
-            if (registrationEntities.length === 0) {
-                callback(null, registrationEntities);
+            var registrations = [];
+
+            if (regs.length === 0) {
+                callback(null, registrations);
                 return;
             }
 
             var now = new Date();
             now = now.toISOString();
-            var registrations = [];
-            for (var index in registrationEntities) {
-                var registrationEntity = registrationEntities[index];
+            function deleteRegistrationCallback (err) {
+                if (err) console.log("deleteRegistrationEntity: err:", err);
+            }
+            for (var index in regs) {
+                var registrationEntity = regs[index];
                 if (registrationEntity.Expiration <= now) {
-                    self.deleteRegistrationEntity(userId, registrationEntity.RowKey, function (err)
-                    {
-                        if (err) console.log("deleteRegistrationEntity: err:", err);
-                    });
+                    self.deleteRegistrationEntity(userId, registrationEntity.RowKey, deleteRegistrationCallback);
                 }
                 else {
                     registrations.push(self.getRegistration(registrationEntity));
