@@ -53,7 +53,7 @@ WNS.prototype = {
             });
     },
 
-    sendNotification: function(token, content, callback) {
+    sendNotification: function(token, content, invalidRegistrationCallback) {
         content = JSON.parse(content);
         this.validateAccessToken(
             function(err, accessToken) {
@@ -73,10 +73,13 @@ WNS.prototype = {
                     },
                     function(err, resp, body) {
                         if (err !== null) {
-                            callback(err, -1);
+                            console.log("WNS.sendNotification:", err);
                         }
                         else {
-                            callback(null, resp.statusCode);
+                            console.log("WNS.sendNotification:", resp.statusCode);
+                            if (resp.statusCode === 410) { // registration is no longer valid
+                                invalidRegistrationCallback(token);
+                            }
                         }
                     });
             });

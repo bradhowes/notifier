@@ -68,18 +68,28 @@ Notifier.prototype = {
                     return;
                 }
 
+                var invalidRegistrationCallback = function (token) {
+                    console.log("notifier.deliverCallback:", userId, token);
+                    self.registrationStore.deleteRegistrationEntity(userId, token,
+                                                                    function (err) {
+                                                                        console.log(
+                                                                            "notifier.deliverCallback:", err);
+                                                                    });
+                };
+
                 for (var index in matches) {
                     var match = matches[index];
                     var template = match.template;
                     var content = self.generator.transform(template, substitutions);
-                    self.deliver(match.service, match.token, content);
+                    self.deliver(match.service, match.token, content, invalidRegistrationCallback);
                 }
+
                 res.send(null, null, 202);
             });
         });
     },
 
-    deliver: function(service, token, content) {
-        this.senders[service].sendNotification(token, content);
+    deliver: function(service, token, content, invalidRegistrationCallback) {
+        this.senders[service].sendNotification(token, content, invalidRegistrationCallback);
     }
 };
