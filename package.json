@@ -1,0 +1,15 @@
+{
+    "name": "notifier",
+    "description": "Notification service for WNS",
+    "author": "Brad Howes <bhowes@microsoft.com>",
+    "version": "1.0.0",
+    "dependencies": {
+        "azure": "0.5.x",
+        "express": "2.5.x",
+        "request": "2.9.x"
+    },
+    "devDependencies": {
+        "vows": "0.6.x"
+    },
+    "engine": "node >= 0.6.12"
+}
