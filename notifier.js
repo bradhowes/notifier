@@ -8,14 +8,14 @@ function Barrier(res, callback) {
 Barrier.prototype = {
     gotRegistrations: function(err, registrations) {
         this.registrations = registrations;
-        if (this.templates != undefined) {
+        if (this.templates !== undefined) {
             this.callback(this.res, this.registrations, this.templates);
         }
     },
 
     gotTemplates: function(err, templates) {
         this.templates = templates;
-        if (this.registrations != undefined) {
+        if (this.registrations !== undefined) {
             this.callback(this.res, this.registrations, this.templates);
         }
     }
@@ -46,7 +46,7 @@ Notifier.prototype = {
                 return;
             }
 
-            if (registrations.length == 0) {
+            if (registrations.length === 0) {
                 res.send(null, null, 202);
                 return;
             }
@@ -63,7 +63,7 @@ Notifier.prototype = {
                     return;
                 }
 
-                if (matches.length == 0) {
+                if (matches.length === 0) {
                     res.send(null, null, 202);
                     return;
                 }
