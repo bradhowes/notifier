@@ -1,6 +1,6 @@
 module.exports = PayloadGenerator;
 
-var XRegExp = require("xregexp");
+var XRegExp = require("xregexp").XRegExp;
 
 function PayloadGenerator() {
     this.regexp =  XRegExp("@@([A-Za-z0-9_]+)(=([^@]*))?@@");
