@@ -7,7 +7,7 @@ This is a collection of classes that provide three services:
 * Notification Generation -- generate notifications from templates and send them to the correct service
   (WNS, APNs, etc.)
 
-Currently there is only support for WNS.
+Currently there is only support for WNS and APNs.
 
 # Configuration
 
@@ -19,12 +19,14 @@ work, in particular WNS notifications and Azure Table Store access.
 % node server.js
 ```
 
+# Code Documentation
+
+http://bradhowes.github.com/notifier/index.html
+
 # Unit Tests
 ```
-% for i in *Test.js; do echo $i; node $i; done
+% vows test/*.js
 ```
-
-(Too lazy right now to do the right thing and use vows to run tests in a directory.)
 
 # Template Manager API
 
