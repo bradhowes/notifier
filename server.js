@@ -51,6 +51,8 @@ app.del("/templates", templateManager.deleteTemplate.bind(templateManager));
 var generator = new PayloadGenerator();
 var senders = {"wns": new WNS(), "apns": new APNs()};
 var notifier = new Notifier(templateStore, registrationStore, generator, senders);
-app.post("/postnotification/:userId", notifier.postNotification.bind(notifier));
+app.post("/post/:userId", notifier.postNotification.bind(notifier));
 
-app.listen(process.env.PORT);
+var port = process.env.PORT|| 4465;
+console.log('port:', port);
+app.listen(port);

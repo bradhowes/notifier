@@ -98,8 +98,9 @@ APNs.prototype = {
         content = JSON.parse(content);
         var notification = new apn.Notification();
         notification.callback = callback;
-        notification.device = new apn.Device(token);
-        notification.payload = content.content;
+        notification.device = new apn.Device(new Buffer(token, 'base64'));
+        notification.payload = content;
+        console.log('payload:', content);
         this.connection.sendNotification(notification);
     }
 };

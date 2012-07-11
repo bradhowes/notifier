@@ -55,12 +55,12 @@ suite.addBatch({
                 'body': {
                     'eventId': 200,
                     'notificationId': 2000,
-                    'routeName': '*',
+                    'route': '*',
                     'templateVersion': '1.0',
                     'templateLanguage': 'en',
                     'service': 'wns',
-                    'content': JSON.stringify({'kind': 'wns/badge',
-                                               'text': '<?xml version="1.0" encoding="utf-8"?><badge value="3"/>'})
+                    'template': JSON.stringify({'kind': 'wns/badge',
+                                                'text': '<?xml version="1.0" encoding="utf-8"?><badge value="3"/>'})
                 } };
             req.param = RequestParam;
             templateManager.addTemplate(req, new Response('addTemplate', this.callback));
@@ -80,7 +80,7 @@ suite.addBatch({
                 'params': {},
                 'query': {
                     'eventId': 200,
-                    'routeName': '*',
+                    'route': '*',
                     'templateVersion': '1.0',
                     'templateLanguage': 'en-US',
                     'service': 'wns'
@@ -104,7 +104,7 @@ suite.addBatch({
                 'params': {},
                 'query': {
                     'eventId': 200,
-                    'routeName': '*',
+                    'route': '*',
                     'templateVersion': '1.0',
                     'templateLanguage': 'de-GR',
                     'service': 'wns'
@@ -128,7 +128,7 @@ suite.addBatch({
                 'params': {},
                 'query': {
                     'eventId': 200,
-                    'routeName': '*',
+                    'route': '*',
                     'templateVersion': '1.1',
                     'templateLanguage': 'de-GR',
                     'service': 'wns'
@@ -152,7 +152,7 @@ suite.addBatch({
                 'query': {
                     'eventId': 200,
                     'notificationId': 2000,
-                    'routeName': '*',
+                    'route': '*',
                     'templateVersion': '1.0',
                     'templateLanguage': 'en-US',
                     'service': 'wns'
@@ -175,7 +175,7 @@ suite.addBatch({
                 'body': {
                     'eventId': 200,
                     'notificationId': 2000,
-                    'routeName': '*',
+                    'route': '*',
                     'templateVersion': '1.0',
                     'templateLanguage': 'en',
                     'service': 'wns'
@@ -199,7 +199,7 @@ suite.addBatch({
                 'query': {
                     'eventId': 200,
                     'notificationId': 2000,
-                    'routeName': '*',
+                    'route': '*',
                     'templateVersion': '1.0',
                     'templateLanguage': 'en',
                     'service': 'wns'

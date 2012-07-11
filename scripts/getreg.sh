@@ -1,5 +1,8 @@
 #!/bin/bash
 
+SERVER="localhost:4465"
+#SERVER="notifier.bradhowes.c9"
+
 function usage
 {
     cat << +EOF+
@@ -10,14 +13,11 @@ USER: fetch registrations for this user ID
     exit 1
 }
 
-if (( $# < 1 )); then
+if (( $# != 1 )); then
     usage
 fi
 
-userId="${1}"
-
 curl -w "\nTime: %{time_total}s Response: %{http_code} Content-Type: %{content_type}" \
-    -H 'Content-Type: application/json' \
-    http://notifier.bradhowes.c9.io/registrations/${userId}
-
+     -X GET \
+     -H 'Content-Type: application/json' http://${SERVER}/registrations/${1}
 echo

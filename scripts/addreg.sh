@@ -1,5 +1,8 @@
 #!/bin/bash
 
+SERVER="localhost:4465"
+#SERVER="notifier.bradhowes.c9"
+
 function usage
 {
     cat << +EOF+
@@ -21,23 +24,24 @@ if (( $# < 8 )); then
     usage
 fi
 
-userId="${1}"
-json="{\"registrationId\":\"${2}\",\"templateVersion\":\"${3}\",\"templateLanguage\":\"${4}\",\"service\":\"${5}\","
-json="${json}\"routes\":["
+USERID="${1}"
+JSON="{\"registrationId\":\"${2}\",\"templateVersion\":\"${3}\",\"templateLanguage\":\"${4}\",\"service\":\"${5}\","
+JSON="${JSON}\"routes\":["
 shift 5
-comma=""
+COMMA=""
 while (( $# > 0 ))
 do
     if (( $# < 3 )); then
         usage
     fi
-    json="${json}${comma}{\"name\":\"${1}\",\"token\":\"${2}\",\"secondsToLive\":${3}}"
-    comma=","
+    JSON="${JSON}${COMMA}{\"name\":\"${1}\",\"token\":\"${2}\",\"secondsToLive\":${3}}"
+    COMMA=","
     shift 3
 done
 
-json="${json}]}"
+JSON="${JSON}]}"
 
-curl -H 'Content-Type: application/json' -d "${json}" http://notifier.bradhowes.c9.io/registrations/${userId}
-
+curl -w "\nTime: %{time_total}s Response: %{http_code} Content-Type: %{content_type}" \
+     -X POST \
+     -H 'Content-Type: application/json' -d "${JSON}" http://${SERVER}/registrations/${USERID}
 echo

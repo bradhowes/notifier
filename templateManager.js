@@ -35,8 +35,8 @@ TemplateManager.prototype = {
             return;
         }
 
-        var routeName = body.routeName;
-        if (routeName === "") {
+        var route = body.route;
+        if (route === "") {
             res.send(null, null, 400);
             return;
         }
@@ -59,15 +59,15 @@ TemplateManager.prototype = {
             return;
         }
 
-        var content = body.content;
-        if (content === "") {
+        var template = body.template;
+        if (template === "") {
             res.send(null, null, 400);
             return;
         }
 
         var start = new Date();
-        this.templateStore.addTemplate(eventId, notificationId, routeName, templateVersion, templateLanguage, service,
-                                       content, function (err, templateEntity)
+        this.templateStore.addTemplate(eventId, notificationId, route, templateVersion, templateLanguage, service,
+                                       template, function (err, templateEntity)
         {
             if (err) {
                 console.log('error:', err);
@@ -114,12 +114,12 @@ TemplateManager.prototype = {
             return;
         }
 
-        var routeName = req.param('routeName', '');
+        var route = req.param('route', '');
         var reg = {
             'templateVersion': '' + templateVersion,
             'templateLanguage': templateLanguage,
             'service': service,
-            'routes': [ {'name':routeName, 'token':''} ]
+            'routes': [ {'name':route, 'token':''} ]
         };
 
         var start = new Date();
@@ -179,9 +179,9 @@ TemplateManager.prototype = {
             return;
         }
 
-        var routeName = req.param('routeName', '');
+        var route = req.param('route', '');
 
-        this.templateStore.removeTemplate(eventId, notificationId, routeName, templateVersion, templateLanguage,
+        this.templateStore.removeTemplate(eventId, notificationId, route, templateVersion, templateLanguage,
                                           service, function (err, templateEntity)
         {
             if (err !== null) {
