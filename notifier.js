@@ -48,6 +48,7 @@ Notifier.prototype = {
             var body = req.body;
             var eventId = body.eventId;
             var substitutions = body.substitutions;
+            var token = null;
 
             self.templateStore.findTemplates(eventId, registrations, function(err, matches)
             {
@@ -63,7 +64,7 @@ Notifier.prototype = {
                 }
 
                 var callback = function (result) {
-                    console.log("postNotificatioin.callback:", userId, token, result);
+                    console.log("postNotification.callback:", userId, token, result);
                     if (result.invalidToken) {
                         self.registrationStore.deleteRegistrationEntity(userId, token,
                                                                         function (err) {
@@ -77,6 +78,7 @@ Notifier.prototype = {
                     var match = matches[index];
                     var template = match.template;
                     var content = self.generator.transform(template, substitutions);
+                    token = match.token;
                     self.deliver(match.service, match.token, content, callback);
                 }
 
