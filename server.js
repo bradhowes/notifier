@@ -1,3 +1,7 @@
+/**
+ * @fileOverview Main nodejs server. Provides three kinds of services: a registrar, a template manager, and a notifier.
+ */
+
 "use strict";
 
 var express = require('express');
@@ -27,18 +31,21 @@ app.configure('production', function(){
     app.use(express.errorHandler());
 });
 
+// Registrar bindings
 var registrationStore = new RegistrationStore(config.registrations_table_name);
 var registrar = new Registrar(registrationStore);
 app.get('/registrations/:userId', registrar.getRegistrations.bind(registrar));
 app.post('/registrations/:userId', registrar.addRegistration.bind(registrar));
 app.del('/registrations/:userId', registrar.deleteRegistration.bind(registrar));
 
+// Template Manager bindings
 var templateStore = new TemplateStore(config.templates_table_name);
 var templateManager = new TemplateManager(templateStore);
 app.get("/templates", templateManager.getTemplates.bind(templateManager));
 app.post("/templates", templateManager.addTemplate.bind(templateManager));
 app.del("/templates", templateManager.deleteTemplate.bind(templateManager));
 
+// Notifier bindings
 var generator = new PayloadGenerator();
 var notifier = new Notifier(templateStore, registrationStore, generator);
 app.post("/postnotification/:userId", notifier.postNotification.bind(notifier));

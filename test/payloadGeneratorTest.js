@@ -1,7 +1,7 @@
 var assert = require("assert");
 var vows = require("vows");
 
-var PayloadGenerator =require("./payloadGenerator.js");
+var PayloadGenerator =require("../payloadGenerator.js");
 var pg = new PayloadGenerator();
 
 vows.describe('payloadGenerator').addBatch({
@@ -32,4 +32,4 @@ vows.describe('payloadGenerator').addBatch({
             assert.equal(topic, 'foo bar');
         }
     }
-}).run();
+}).export(module);

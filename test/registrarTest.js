@@ -1,4 +1,4 @@
-var config = require('./config');
+var config = require('../config');
 
 process.env.AZURE_STORAGE_ACCOUNT = config.azure_storage_account;
 process.env.AZURE_STORAGE_ACCESS_KEY = config.azure_storage_access_key;
@@ -6,8 +6,8 @@ process.env.AZURE_STORAGE_ACCESS_KEY = config.azure_storage_access_key;
 var assert = require("assert");
 var vows = require("vows");
 
-var RegistrationStore = require("./registrationStore");
-var Registrar = require("./registrar");
+var RegistrationStore = require("../registrationStore");
+var Registrar = require("../registrar");
 var store = null;
 var registrar = null;
 
@@ -122,4 +122,4 @@ suite.addBatch({
     }
 });
 
-suite.run();
+suite.export(module);

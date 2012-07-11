@@ -1,20 +1,33 @@
 /**
- * @file
- * TemplateStore prototype definition.
+ * @fileOverview Defines the TemplateStore prototype and its methods.
  */
-
 module.exports = TemplateStore;
 
 var azure = require("azure");
 
 /**
- * TemplateStore constructor.
+ * Initializes a new TemplateStore object. A TemplateStore reads from and writes to an Azure table store.
+ *
+ * @class TemplateStore
+ *
+ * @param {String} name the name of the table store to use/create
+ * @param {Function} callback the function to invoke when the table store exits
  */
 function TemplateStore(name, callback) {
-    if (name === undefined)  name = 'templates';
-    if (callback === undefined) callback = function (err) {
+    if (name === undefined) {
+        name = 'templates';
+    }
+
+    /**
+     * Default callback function for new TemplateStore instances. Simply logs to the console any errors it sees.
+     */
+    function defaultCallback(err) {
         if (err) console.log('createTableIfNotExists: name:', name, 'err:', err);
-    };
+    }
+
+    if (callback === undefined) {
+        callback = defaultCallback;
+    }
 
     this.tableName = name;
     this.store = azure.createTableService();
@@ -23,6 +36,9 @@ function TemplateStore(name, callback) {
 
 TemplateStore.prototype = {
 
+    /**
+     * Find templates that match the given parameters.
+     */
     findTemplates: function(eventId, registrations, callback) {
         var self = this;
         var query = azure.TableQuery
@@ -115,6 +131,9 @@ TemplateStore.prototype = {
         });
     },
 
+    /**
+     * Add a new template to the table store.
+     */
     addTemplate: function(eventId, notificationId, routeName, templateVersion, templateLanguage, service, content,
                           callback) {
         var self = this;
@@ -140,6 +159,9 @@ TemplateStore.prototype = {
         });
     },
 
+    /**
+     * Remove a template from the table store.
+     */
     removeTemplate: function(eventId, notificationId, routeName, templateVersion, templateLanguage, service,
                              callback) {
         var self = this;
@@ -156,14 +178,23 @@ TemplateStore.prototype = {
         });
     },
 
+    /**
+     * Make a template key
+     */
     makeKey: function(routeName, templateVersion, templateLanguage, service) {
         return routeName + '_' + templateVersion + '_' + templateLanguage + '_' + service + '_';
     },
 
+    /**
+     * Make a table store row key
+     */
     makeRowKey: function(notificationId, routeName, templateVersion, templateLanguage, service) {
         return this.makeKey(routeName, templateVersion, templateLanguage, service) + notificationId.toString();
     },
 
+    /**
+     * Convert a key into its individual components
+     */
     getKeyBits: function(rowKey) {
         return rowKey.split('_');
     }

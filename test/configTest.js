@@ -2,9 +2,11 @@
 
 var assert = require("assert");
 var vows = require("vows");
-var config = require("./config");
+var config = require("../config");
 
-vows.describe('config').addBatch({
+var suite = vows.describe('config');
+
+suite.addBatch({
     'We can see values': {
         topic: config.wns_package_sid,
             'wns_host is defined': function (topic) {
@@ -14,4 +16,6 @@ vows.describe('config').addBatch({
                 assert.notEqual(topic.length, 0);
             }
     }
-}).run();
+});
+
+suite.export(module);

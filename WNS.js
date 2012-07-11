@@ -1,11 +1,15 @@
+/**
+ * @fileOverview Defines the WNS prototype and its methods.
+ */
 module.exports = WNS;
 
 var config = require("./config");
 var request = require("request");
 
-/** Constructor for WNS objects.
+/**
+ * Initialize a new WNS instance. A WNS object sends XML payloads to a WNS server for delivery to a specific device.
  *
- * Initially starts out without an access token for application notifications.
+ * @class
  */
 function WNS() {
     this.accessToken = null;
@@ -13,12 +17,13 @@ function WNS() {
     this.connection = null;
 }
 
-/** Prototype definition for WNS
- *
- * Defines the methods available for WNS instances.
- */
 WNS.prototype = {
 
+    /**
+     * Check for a valid access token. If none found, fetch a new one.
+     *
+     * @param {Function} callback function to call when a valid token is obtained
+     */
     validateAccessToken: function (callback) {
         if (this.accessToken === null) {
             this.fetchAccessToken(callback);
@@ -28,6 +33,11 @@ WNS.prototype = {
         }
     },
 
+    /**
+     * Fetch a new access token from WNS.
+     *
+     * @param {Function} callback function to call when WNS returns a response.
+     */
     fetchAccessToken: function(callback) {
         var self = this;
         var params = {
@@ -53,7 +63,16 @@ WNS.prototype = {
             });
     },
 
-    sendNotification: function(token, content, invalidRegistrationCallback) {
+    /**
+     * Send a notification to a client via WNS.
+     *
+     * @param {String} token the identifier of the client to notify
+     *
+     * @param {String} content the notification payload to send
+     *
+     * @param {Function} callback function to call when WNS returns a response.
+     */
+    sendNotification: function(token, content, callback) {
         content = JSON.parse(content);
         this.validateAccessToken(
             function(err, accessToken) {
@@ -74,14 +93,14 @@ WNS.prototype = {
                     function(err, resp, body) {
                         if (err !== null) {
                             console.log("WNS.sendNotification:", err);
+                            callback({"retry":true, "invalidToken":false});
                         }
                         else {
                             console.log("WNS.sendNotification:", resp.statusCode);
-                            if (resp.statusCode === 410) { // registration is no longer valid
-                                invalidRegistrationCallback(token);
-                            }
+                            callback({"retry":false, "invalidToken":resp.statusCode == 410});
                         }
-                    });
+                    }
+                );
             });
     }
 };

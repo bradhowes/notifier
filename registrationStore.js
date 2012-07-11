@@ -1,14 +1,14 @@
 /**
- * @file
- * RegistrationStore prototype definition.
+ * @fileOverview Defines the RegistrationStore prototype and its methods.
  */
-
 module.exports = RegistrationStore;
 
 var azure = require("azure");
 
 /**
  * RegistrationStore constructor.
+ *
+ * @class RegistrationStore
  */
 function RegistrationStore(name, callback) {
     if (name === undefined)  name = 'registrations';

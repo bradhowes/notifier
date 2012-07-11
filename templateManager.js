@@ -1,19 +1,25 @@
+/**
+ * @fileOverview Defines the TemplateManager prototype and its methods.
+ */
 module.exports = TemplateManager;
 
 /**
- * TemplateManager constructor.
+ * Initializes a new TemplateManager object. A TemplateManager stores and retrieves notification template definitions.
+ * It relies on a TemplateStore object to provide the actual storage.
+ *
+ * @class TemplateManager
+ *
+ * @param {TemplateStore} templateStore the TemplateStore instance to rely on
  */
 function TemplateManager(templateStore) {
     this.templateStore = templateStore;
 }
 
-/**
- * TemplateManager prototype.
- *
- * Defines the methods available to a TemplateManager instance.
- */
 TemplateManager.prototype = {
 
+    /**
+     * Add a template to the store.
+     */
     addTemplate: function (req, res) {
         var body = req.body;
 
@@ -80,6 +86,9 @@ TemplateManager.prototype = {
         });
     },
 
+    /**
+     * Get a template.
+     */
     getTemplates: function (req, res) {
         var eventId = req.param('eventId', '');
         if (eventId === "") {
@@ -136,6 +145,9 @@ TemplateManager.prototype = {
         });
     },
 
+    /**
+     * Delete a template.
+     */
     deleteTemplate: function (req, res) {
         var eventId = req.param('eventId', '');
         if (eventId === "") {

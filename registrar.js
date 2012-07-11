@@ -1,8 +1,13 @@
+/**
+ * @fileOverview Defines the Registrar prototype and its methods.
+ */
 module.exports = Registrar;
 
 /**
  * Registrar constructor.
  *
+ * @class Registrar
+ * 
  * A registrar allows for querying, updating, and deleting of registrations for
  * a given user ID.
  */
@@ -79,7 +84,7 @@ Registrar.prototype = {
         function isUndefined(value) {
             return typeof(value) === "undefined" || value === "";
         }
-        
+
         if (userId === "") {
             res.send(null, null, 400);
             return;

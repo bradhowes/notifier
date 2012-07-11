@@ -1,31 +1,18 @@
+/**
+ * @fileOverview Defines the Notifier prototype and its methods.
+ */
 module.exports = Notifier;
 
-function Barrier(res, callback) {
-    this.res = res;
-    this.callback = callback;
-}
-
-Barrier.prototype = {
-    gotRegistrations: function(err, registrations) {
-        this.registrations = registrations;
-        if (this.templates !== undefined) {
-            this.callback(this.res, this.registrations, this.templates);
-        }
-    },
-
-    gotTemplates: function(err, templates) {
-        this.templates = templates;
-        if (this.registrations !== undefined) {
-            this.callback(this.res, this.registrations, this.templates);
-        }
-    }
-};
-
 /**
- * Notifier constructor.
+ * Initialize a new Notifier instance. A Notifier matches notification templates to user registrations and emits those
+ * that match.
  *
- * A notifier sends out notifications to a give user using templates that match the settings found in the user's
- * registrations.
+ * @class
+ *
+ * @param {TemplateStore} templateStore the repository of notification templates to rely on
+ * @param {RegistrationStore} registrationStore the repository of user registrations to rely on
+ * @param {PayloadGenerator} generator the notification generator to use for template processing
+ * @param {Hash} senders a mapping of notification service tags to objects that provide a sendNotification method
  */
 function Notifier(templateStore, registrationStore, generator, senders) {
     this.templateStore = templateStore;
@@ -36,6 +23,13 @@ function Notifier(templateStore, registrationStore, generator, senders) {
 
 Notifier.prototype = {
 
+    /**
+     * Post a notification to a user.
+     *
+     * @param {Request} req incoming HTTP request settings and values
+     *
+     * @param {Response} res outgoing HTTP response values
+     */
     postNotification: function(req, res) {
         var self = this;
         var userId = req.params.userId;
@@ -68,20 +62,22 @@ Notifier.prototype = {
                     return;
                 }
 
-                var invalidRegistrationCallback = function (token) {
-                    console.log("notifier.deliverCallback:", userId, token);
-                    self.registrationStore.deleteRegistrationEntity(userId, token,
-                                                                    function (err) {
-                                                                        console.log(
-                                                                            "notifier.deliverCallback:", err);
-                                                                    });
+                var callback = function (result) {
+                    console.log("postNotificatioin.callback:", userId, token, result);
+                    if (result.invalidToken) {
+                        self.registrationStore.deleteRegistrationEntity(userId, token,
+                                                                        function (err) {
+                                                                            console.log(
+                                                                                "notifier.deliverCallback:", err);
+                                                                        });
+                    }
                 };
 
                 for (var index in matches) {
                     var match = matches[index];
                     var template = match.template;
                     var content = self.generator.transform(template, substitutions);
-                    self.deliver(match.service, match.token, content, invalidRegistrationCallback);
+                    self.deliver(match.service, match.token, content, callback);
                 }
 
                 res.send(null, null, 202);
@@ -89,7 +85,19 @@ Notifier.prototype = {
         });
     },
 
-    deliver: function(service, token, content, invalidRegistrationCallback) {
-        this.senders[service].sendNotification(token, content, invalidRegistrationCallback);
+    /**
+     * Deliver a generated notification to a specific service.
+     *
+     * @param {string} service the notification service tag
+     *
+     * @param {string} token the client token used for notification delivery
+     *
+     * @param {string} content what to send as a notification payload
+     *
+     * @param {Function} callback function to call with the results of the notification delivery. Takes one argument,
+     * an object with two attributes: retry and invalidToken.
+     */
+    deliver: function(service, token, content, callback) {
+        this.senders[service].sendNotification(token, content, callback);
     }
 };

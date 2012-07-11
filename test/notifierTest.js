@@ -1,6 +1,6 @@
 "use strict";
 
-var config = require('./config');
+var config = require('../config');
 
 process.env.AZURE_STORAGE_ACCOUNT = config.azure_storage_account;
 process.env.AZURE_STORAGE_ACCESS_KEY = config.azure_storage_access_key;
@@ -8,10 +8,10 @@ process.env.AZURE_STORAGE_ACCESS_KEY = config.azure_storage_access_key;
 var assert = require("assert");
 var vows = require("vows");
 
-var TemplateStore = require("./templateStore");
-var RegistrationStore = require("./registrationStore");
-var PayloadGenerator = require("./payloadGenerator");
-var Notifier = require("./notifier");
+var TemplateStore = require("../templateStore");
+var RegistrationStore = require("../registrationStore");
+var PayloadGenerator = require("../payloadGenerator");
+var Notifier = require("../notifier");
 
 var templateStore = new TemplateStore('templatestest');
 var registrationStore = new RegistrationStore('registrationstest');
@@ -90,4 +90,5 @@ suite.addBatch({
         }
     }
 });
-suite.run();
+
+suite.export(module);
