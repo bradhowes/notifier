@@ -15,7 +15,7 @@ function RegistrationStore(name, callback) {
 
     if (name === undefined)  name = 'registrations';
     if (callback === undefined) callback = function (err) {
-        if (err) log.error('createTableIfNotExists failed: name:', name, 'err:', err);
+        if (err) this.log.error('createTableIfNotExists failed: name:', name, 'err:', err);
     };
 
     this.tableName = name;
@@ -68,7 +68,8 @@ RegistrationStore.prototype = {
      *   - found: if no error, the existing registration entity
      */
     getRegistrationEntity: function (userId, registrationId, callback) {
-        this.store.queryEntity(this.tableName, userId, registrationId, callback);
+        this.store.queryEntity(this.tableName, encodeURIComponent(userId),
+            registrationId, callback);
     },
 
     getRegistration: function (registrationEntity) {
@@ -76,7 +77,7 @@ RegistrationStore.prototype = {
         log.BEGIN(registrationEntity);
 
         var registration = {
-            'registrationId': registrationEntity.RowKey,
+            'registrationId': decodeURIComponent(registrationEntity.RowKey),
             'templateVersion': registrationEntity.TemplateVersion.substr(1),
             'templateLanguage': registrationEntity.TemplateLanguage,
             'service': registrationEntity.Service,
@@ -187,11 +188,11 @@ RegistrationStore.prototype = {
         var self = this;
         var log = self.log.child('updateRegistrationEntity');
         log.BEGIN(userId, registrationId, templateVersion, templateLanguage, service, routes);
-
+        
         self.getRegistrationEntity(userId, registrationId, function (err, found) {
             var registrationEntity = {
-                "PartitionKey": userId,
-                "RowKey": registrationId,
+                "PartitionKey": encodeURIComponent(userId),
+                "RowKey": encodeURIComponent(registrationId),
                 "TemplateLanguage": templateLanguage,
                 "TemplateVersion": 'v' + templateVersion,
                 "Service": service,

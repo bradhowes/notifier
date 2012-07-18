@@ -100,12 +100,16 @@ Registrar.prototype = {
             return;
         }
 
+        log.debug('userId:', userId);
+        
         var registrationId = body.registrationId;
         if (isUndefined(registrationId)) {
             log.error('missing registrationId');
             res.send(null, null, 400);
             return;
         }
+
+        log.debug('registrationId:', registrationId);
 
         var templateVersion = body.templateVersion;
         if (isUndefined(templateVersion)) {
@@ -114,12 +118,16 @@ Registrar.prototype = {
             return;
         }
 
+        log.debug('templateVersion:', templateVersion);
+
         var templateLanguage = body.templateLanguage;
         if (isUndefined(templateLanguage)) {
             log.error('missing templateLanguage');
             res.send(null, null, 400);
             return;
         }
+
+        log.debug('templateLanguage:', templateLanguage);
 
         var service = body.service;
         if (isUndefined(service)) {
@@ -128,12 +136,16 @@ Registrar.prototype = {
             return;
         }
 
+        log.debug('service:', service);
+
         var routes = body.routes;
         if (typeof(routes) === "undefined" || routes.length === 0) {
             log.error('missing routes');
             res.send(null, null, 400);
             return;
         }
+
+        log.debug('routes:', routes);
 
         var start = new Date();
         this.registrationStore.updateRegistrationEntity(userId, registrationId, templateVersion,

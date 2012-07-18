@@ -54,6 +54,8 @@ TemplateStore.prototype = {
 
         this.store.queryEntities(query, function(err, found)
         {
+            var entity, bits, routeName, templateVersion, templateLanguage,
+                service, key, matches, routes, routeIndex, route;
             if (err) {
                 log.error('queryEntities error:', err);
                 callback(err, null);
@@ -68,27 +70,27 @@ TemplateStore.prototype = {
 
             var foundMap = {};
             for (var foundIndex in found) {
-                var entity = found[foundIndex];
-                var bits = self.getKeyBits(entity.RowKey);
-                var routeName = bits[0];
-                var templateVersion = bits[1];
-                var templateLanguage = bits[2];
-                var service = bits[3];
-                var key = self.makeKey(routeName, templateVersion, templateLanguage, service);
+                entity = found[foundIndex];
+                bits = self.getKeyBits(entity.RowKey);
+                routeName = bits[0];
+                templateVersion = bits[1];
+                templateLanguage = bits[2];
+                service = bits[3];
+                key = self.makeKey(routeName, templateVersion, templateLanguage, service);
                 foundMap[key] = entity;
             }
 
-            var matches = [];
+            matches = [];
             for (var registrationIndex in registrations) {
                 var registration = registrations[registrationIndex];
-                var templateVersion = registration.templateVersion;
-                var templateLanguage = registration.templateLanguage;
-                var service = registration.service;
-                var routes = registration.routes;
-                for (var routeIndex in routes) {
-                    var route = routes[routeIndex];
-                    var routeName = route.name;
-                    var key = self.makeKey(routeName, templateVersion, templateLanguage, service);
+                templateVersion = registration.templateVersion;
+                templateLanguage = registration.templateLanguage;
+                service = registration.service;
+                routes = registration.routes;
+                for (routeIndex in routes) {
+                    route = routes[routeIndex];
+                    routeName = route.name;
+                    key = self.makeKey(routeName, templateVersion, templateLanguage, service);
 
                     log.debug('looking for:', key);
                     var match = foundMap[key];
