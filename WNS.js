@@ -43,6 +43,7 @@ WNS.prototype = {
         var self = this;
         var log = this.log.child('fetchAccessToken');
         log.BEGIN();
+
         var params = {
             'grant_type': 'client_credentials',
             'client_id': config.wns_package_sid,
@@ -79,6 +80,7 @@ WNS.prototype = {
     sendNotification: function(token, content, callback) {
         var log = this.log.child('sendNotification');
         log.BEGIN(token);
+
         content = JSON.parse(content);
 
         log.debug('content.kind:', content.kind);

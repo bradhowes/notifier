@@ -31,18 +31,25 @@ GCM.prototype = {
      */
     sendNotification: function(token, content, callback) {
         var log = this.log.child('sendNotification');
-        log.BEGIN(token);
+        log.BEGIN(token, content);
+
+        content = JSON.parse(content);
+
+        content.registration_ids = [token];
+        log.debug(content);
 
         var headers = {
             'Content-Type': 'application/json',
-            'Authorization': self.authorizationKey
+            'Authorization': this.authorizationKey
         };
+
+        log.debug(headers);
 
         request(
             {
                 'method': 'POST',
                 'uri': config.gcm_uri,
-                'body': content,
+                'body': JSON.stringify(content),
                 'headers': headers
             },
             function(err, resp, body) {
