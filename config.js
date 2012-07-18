@@ -127,5 +127,15 @@ module.exports = {
     'azure_storage_access_key': priv.azure_storage_access_key,
 
     'registrations_table_name': 'notifierRegistrations',
-    'templates_table_name': 'notifierTemplates'
+    'templates_table_name': 'notifierTemplates',
+
+    /**
+     * The authorization key from Google for sending GCM messages
+     */
+    'gcm_authorization_key': priv.gcm_authorization_key,
+
+    /**
+     * The URI for the GCM server
+     */
+    'gcm_uri': 'https://android.googleapis.com/gcm/send'
 };
