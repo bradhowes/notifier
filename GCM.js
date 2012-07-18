@@ -7,10 +7,11 @@ var config = require("./config");
 var request = require("request");
 
 /**
- * Initialize a new GCM instance. A GCM object sends JSON payloads to a GCM server for delivery to a specific Android
- * device.
+ * GCM constructor.
  *
  * @class
+ *
+ * A GCM object sends JSON payloads to a GCM server for delivery to a specific Android device.
  */
 function GCM() {
     this.log = config.log('GCM');
@@ -18,10 +19,15 @@ function GCM() {
     this.authorizationKey = 'key=' + config.gcm_authorization_key;
 }
 
+/**
+ * GCM prototype.
+ *
+ * Defines the methods available to a GCM instance.
+ */
 GCM.prototype = {
 
     /**
-     * Send a notification to a client via GCM.
+     * Send a notification to a client via GCM. See http://developer.android.com/guide/google/gcm/gcm.html
      *
      * @param {String} token the identifier of the client to notify
      *

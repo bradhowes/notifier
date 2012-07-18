@@ -4,10 +4,11 @@
 module.exports = Notifier;
 
 /**
- * Initialize a new Notifier instance. A Notifier matches notification templates to user registrations and emits those
- * that match.
+ * Notifier constructor
  *
  * @class
+ *
+ * A Notifier pairs notification templates to user registrations and emits those that match.
  *
  * @param {TemplateStore} templateStore the repository of notification templates to rely on
  * @param {RegistrationStore} registrationStore the repository of user registrations to rely on
@@ -22,6 +23,11 @@ function Notifier(templateStore, registrationStore, generator, senders) {
     this.senders = senders;
 }
 
+/**
+ * APNs prototype.
+ *
+ * Defines the methods available to an APNs instance.
+ */
 Notifier.prototype = {
 
     /**

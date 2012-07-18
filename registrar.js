@@ -6,10 +6,9 @@ module.exports = Registrar;
 /**
  * Registrar constructor.
  *
- * @class Registrar
+ * @class
  *
- * A registrar allows for querying, updating, and deleting of registrations for
- * a given user ID.
+ * A registrar allows for querying, updating, and deleting of registrations for a given user ID.
  */
 function Registrar(registrationStore) {
     this.log = require('./config.js').log('registrar');

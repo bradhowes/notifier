@@ -6,10 +6,12 @@ module.exports = PayloadGenerator;
 var XRegExp = require("xregexp").XRegExp;
 
 /**
- * Initializes a new PayloadGenerator object. A PayloadGenerator transforms notification template into notification
- * payloads, replacing any placeholdes with live data.
+ * PayloadGenerator constructor.
  *
- * @class PayloadGenerator
+ * @class
+ *
+ * A PayloadGenerator transforms notification template into notification payloads, replacing any placeholdes with live
+ * data.
  */
 function PayloadGenerator() {
     this.log = require('./config.js').log('payloadGenerator');
@@ -21,6 +23,11 @@ function PayloadGenerator() {
     this.regexp =  XRegExp("@@([A-Za-z0-9_]+)(=([^@]*))?@@");
 }
 
+/**
+ * PayloadGenerator prototype.
+ *
+ * Defines the methods available to a PayloadGenerator instance.
+ */
 PayloadGenerator.prototype = {
 
     /**

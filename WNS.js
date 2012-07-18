@@ -7,9 +7,11 @@ var config = require("./config");
 var request = require("request");
 
 /**
- * Initialize a new WNS instance. A WNS object sends XML payloads to a WNS server for delivery to a specific device.
+ * WNS constructor.
  *
  * @class
+ *
+ * A WNS object sends XML payloads to a WNS server for delivery to a specific Windows 8 device.
  */
 function WNS() {
     this.log = config.log('WNS');
@@ -18,6 +20,11 @@ function WNS() {
     this.connection = null;
 }
 
+/**
+ * WNS prototype.
+ *
+ * Defines the methods available to a WNS instance.
+ */
 WNS.prototype = {
 
     /**

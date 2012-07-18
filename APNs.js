@@ -7,10 +7,11 @@ var config = require("./config");
 var apn = require("apn");
 
 /**
- * Initialize a new APNs instance. An APNs object sends JSON payloads to an APNs server for delivery to a specific
- * device. Relies on the node-apn module for connectivity to APNs server.
+ * APNs constructor.
  *
  * @class
+ *
+ * An APNs object sends JSON payloads to an APNs server for delivery to a specific iOS device.
  */
 function APNs() {
     this.log = config.log('APNs');
@@ -79,9 +80,10 @@ function APNs() {
     }.bind(this);
 }
 
-/** Prototype definition for APNs
+/**
+ * APNs prototype.
  *
- * Defines the methods available for APNs instances.
+ * Defines the methods available to an APNs instance.
  */
 APNs.prototype = {
 
