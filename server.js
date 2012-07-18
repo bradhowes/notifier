@@ -20,8 +20,10 @@ var TemplateManager = require('./templateManager.js');
 var TemplateStore = require('./templateStore.js');
 var RegistrationStore = require('./registrationStore.js');
 var PayloadGenerator = require('./payloadGenerator.js');
-var WNS = require("./WNS.js");
+
 var APNs = require("./APNs.js");
+var GCM = require("./GCM.js");
+var WNS = require("./WNS.js");
 
 process.env.AZURE_STORAGE_ACCOUNT = config.azure_storage_account;
 process.env.AZURE_STORAGE_ACCESS_KEY = config.azure_storage_access_key;
@@ -55,7 +57,7 @@ app.del("/templates", templateManager.deleteTemplate.bind(templateManager));
 
 // Notifier bindings
 var generator = new PayloadGenerator();
-var senders = {"wns": new WNS(), "apns": new APNs()};
+var senders = {"wns": new WNS(), "apns": new APNs(), "gcm": new GCM()};
 var notifier = new Notifier(templateStore, registrationStore, generator, senders);
 app.post("/post/:userId", notifier.postNotification.bind(notifier));
 
