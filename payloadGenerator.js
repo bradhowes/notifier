@@ -12,6 +12,7 @@ var XRegExp = require("xregexp").XRegExp;
  * @class PayloadGenerator
  */
 function PayloadGenerator() {
+    this.log = require('./config.js').log('payloadGenerator');
 
     /**
      * The regular expression that matches a placeholder in a template.
@@ -32,16 +33,21 @@ PayloadGenerator.prototype = {
      * @return {String} notification payload
      */
     transform: function(template, substitutions) {
+        var log = this.log.child('transform');
         while (1) {
             var match = this.regexp.exec(template);
             if (match === null) break;
+            log.debug('found', match[0]);
             var value = substitutions[match[1]];
             if (value === undefined) {
+                log.debug('not in substitutions');
                 value = match[3];
                 if (value === undefined) {
+                    log.debug('no default value defined');
                     value = "";
                 }
             }
+            log.debug('substituting with', value);
             template = template.replace(match[0], value);
         }
         return template;

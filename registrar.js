@@ -7,11 +7,12 @@ module.exports = Registrar;
  * Registrar constructor.
  *
  * @class Registrar
- * 
+ *
  * A registrar allows for querying, updating, and deleting of registrations for
  * a given user ID.
  */
 function Registrar(registrationStore) {
+    this.log = require('./config.js').log('registrar');
     this.registrationStore = registrationStore;
 }
 
@@ -33,18 +34,23 @@ Registrar.prototype = {
      *   client requested JSON.
      */
     getRegistrations: function (req, res) {
+        var log = this.log.child('getRegistrations');
+        log.BEGIN();
+
         var userId = req.params.userId;
         if (userId === '') {
+            log.error('missing userId');
             res.send(null, null, 400);
             return;
         }
+
+        log.info('userId:', userId);
 
         var start = new Date();
         this.registrationStore.getRegistrations(userId, function (err, regs) {
             var end = new Date();
             var duration = end.getTime() - start.getTime();
             if (err !== null || typeof(regs) === "undefined" || regs.length === 0) {
-                console.log('error:', err);
                 res.send(null, null, 404);
             }
             else {
@@ -52,9 +58,10 @@ Registrar.prototype = {
                     "registrations": regs,
                     "tableStoreDuration": duration
                 };
+                log.debug(tmp);
                 res.json(tmp);
-                console.log('getRegistrations', userId, duration);
             }
+            log.END(duration, 'msec');
         });
     },
 
@@ -79,6 +86,9 @@ Registrar.prototype = {
      */
     addRegistration: function (req, res) {
         var self = this;
+        var log = this.log.child('addRegistration');
+        log.BEGIN();
+
         var body = req.body;
         var userId = req.params.userId;
         function isUndefined(value) {
@@ -86,36 +96,42 @@ Registrar.prototype = {
         }
 
         if (userId === "") {
+            log.error('missing userId');
             res.send(null, null, 400);
             return;
         }
 
         var registrationId = body.registrationId;
         if (isUndefined(registrationId)) {
+            log.error('missing registrationId');
             res.send(null, null, 400);
             return;
         }
 
         var templateVersion = body.templateVersion;
         if (isUndefined(templateVersion)) {
+            log.error('missing templateVersion');
             res.send(null, null, 400);
             return;
         }
 
         var templateLanguage = body.templateLanguage;
         if (isUndefined(templateLanguage)) {
+            log.error('missing templateLanguage');
             res.send(null, null, 400);
             return;
         }
 
         var service = body.service;
         if (isUndefined(service)) {
+            log.error('missing service');
             res.send(null, null, 400);
             return;
         }
 
         var routes = body.routes;
         if (typeof(routes) === "undefined" || routes.length === 0) {
+            log.error('missing routes');
             res.send(null, null, 400);
             return;
         }
@@ -125,18 +141,19 @@ Registrar.prototype = {
                                                         templateLanguage, service, routes,
                                                         function (err, registrationEntity)
         {
+            var end = new Date();
+            var duration = end.getTime() - start.getTime();
             if (err) {
-                console.log('error:', err);
+                log.error('RegistrationStore.updateRegistrationEntity error:', err);
                 res.send(null, null, 404);
             }
             else {
-                var end = new Date();
-                var duration = end.getTime() - start.getTime();
                 var tmp = self.registrationStore.getRegistration(registrationEntity);
                 tmp.tableStoreDuration = duration;
+                log.debug(tmp);
                 res.json(tmp);
-                console.log('addRegistration', userId, duration);
             }
+            log.END(userId, duration, 'msec');
         });
     },
 
@@ -156,22 +173,36 @@ Registrar.prototype = {
      *   client requested JSON.
      */
     deleteRegistration: function (req, res) {
+        var log = this.log.child('deleteRegistration');
+        log.BEGIN();
+
         var userId = req.params.userId;
         if (userId === "") {
+            log.error('missing userId');
             res.send(null, null, 400);
             return;
         }
 
+        log.info('userId:', userId);
+
+        var registrationId = req.body.registrationId;
+        log.info('registrationId:', registrationId);
+
+        var start = new Date();
+
         function callback(err) {
+            var end = new Date();
+            var duration = end.getTime() - start.getTime();
             if (err) {
+                log.error('RegistrationStore.deleteAllRegistrationEntities error:', err);
                 res.send(null, null, 404);
             }
             else {
                 res.send(null, null, 204);
             }
+            log.END(userId, registrationId, duration, 'msec');
         }
 
-        var registrationId = req.body.registrationId;
         if (registrationId === undefined) {
             this.registrationStore.deleteAllRegistrationEntities(userId, callback);
         }

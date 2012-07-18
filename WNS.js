@@ -12,6 +12,7 @@ var request = require("request");
  * @class
  */
 function WNS() {
+    this.log = config.log('WNS');
     this.accessToken = null;
     this.accessTokenTimestamp = null;
     this.connection = null;
@@ -40,6 +41,8 @@ WNS.prototype = {
      */
     fetchAccessToken: function(callback) {
         var self = this;
+        var log = this.log.child('fetchAccessToken');
+        log.BEGIN();
         var params = {
             'grant_type': 'client_credentials',
             'client_id': config.wns_package_sid,
@@ -60,6 +63,7 @@ WNS.prototype = {
                     }
                 }
                 callback(undefined, self.accessToken);
+                log.END();
             });
     },
 
@@ -73,7 +77,12 @@ WNS.prototype = {
      * @param {Function} callback function to call when WNS returns a response.
      */
     sendNotification: function(token, content, callback) {
+        var log = this.log.child('sendNotification');
+        log.BEGIN(token);
         content = JSON.parse(content);
+
+        log.debug('content.kind:', content.kind);
+
         this.validateAccessToken(
             function(err, accessToken) {
                 var headers = {
@@ -92,13 +101,14 @@ WNS.prototype = {
                     },
                     function(err, resp, body) {
                         if (err !== null) {
-                            console.log("WNS.sendNotification:", err);
+                            log.error("POST error:", err);
                             callback({"retry":true, "invalidToken":false});
                         }
                         else {
-                            console.log("WNS.sendNotification:", resp.statusCode);
+                            log.info("POST response:", resp.statusCode);
                             callback({"retry":false, "invalidToken":resp.statusCode == 410});
                         }
+                        log.END();
                     }
                 );
             });

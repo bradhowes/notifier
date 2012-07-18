@@ -15,6 +15,7 @@ module.exports = Notifier;
  * @param {Hash} senders a mapping of notification service tags to objects that provide a sendNotification method
  */
 function Notifier(templateStore, registrationStore, generator, senders) {
+    this.log = require('./config.js').log('notifier');
     this.templateStore = templateStore;
     this.registrationStore = registrationStore;
     this.generator = generator;
@@ -32,48 +33,76 @@ Notifier.prototype = {
      */
     postNotification: function(req, res) {
         var self = this;
+        var log = self.log.child('postNotification');
+
+        log.BEGIN();
+
         var userId = req.params.userId;
+        log.debug('userId:', userId);
+        if (userId === "undefined" || userId === "") {
+            log.error('missing userId');
+            res.send(null, null, 400);
+            return;
+        }
+
+        var body = req.body;
+        var eventId = body.eventId;
+        log.debug('eventId:', eventId);
+        if (eventId === "undefined" || eventId === "") {
+            log.error('missing eventId');
+            res.send(null, null, 400);
+            return;
+        }
+
+        var substitutions = body.substitutions;
+        log.debug('substitutions:', substitutions);
+
+        var start = new Date();
+
+        // Fetch the registrations for the given user
         this.registrationStore.getRegistrations(userId, function(err, registrations)
         {
             if (err !== null) {
+                log.error('RegistrationStore.getRegistrations error:', err);
                 res.send(null, null, 500);
                 return;
             }
 
             if (registrations.length === 0) {
+                log.info('no registrations exist for user', userId);
                 res.send(null, null, 202);
                 return;
             }
 
-            var body = req.body;
-            var eventId = body.eventId;
-            var substitutions = body.substitutions;
-            var token = null;
-
+            // Find the templates that apply for the given registrations
             self.templateStore.findTemplates(eventId, registrations, function(err, matches)
             {
+                var token = null;
+
                 if (err !== null) {
-                    console.log(err);
+                    log.error('TemplateStore.findTemplates error:', err);
                     res.send(null, null, 500);
                     return;
                 }
 
                 if (matches.length === 0) {
+                    log.info('TemplateStore.findTemplates returned no matches');
                     res.send(null, null, 202);
                     return;
                 }
 
                 var callback = function (result) {
-                    console.log("postNotification.callback:", userId, token, result);
+                    log("callback:", userId, token, result);
                     if (result.invalidToken) {
-                        self.registrationStore.deleteRegistrationEntity(userId, token,
-                                                                        function (err) {
-                                                                            console.log(
-                                                                                "notifier.deliverCallback:", err);
-                                                                        });
+                        self.registrationStore.deleteRegistrationEntity(
+                            userId, token,
+                            function (err) {
+                                log.error("deliverCallback:", err);
+                            });
                     }
                 };
 
+                // For each template, generate a notification payload and send it on its way.
                 for (var index in matches) {
                     var match = matches[index];
                     var template = match.template;
@@ -82,7 +111,11 @@ Notifier.prototype = {
                     self.deliver(match.service, match.token, content, callback);
                 }
 
+                var end = new Date();
+                var duration = end.getTime() - start.getTime();
+
                 res.send(null, null, 202);
+                log.END(duration, 'msecs');
             });
         });
     },

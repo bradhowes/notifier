@@ -4,10 +4,16 @@
 
 "use strict";
 
+var config = require('./config.js');
+
+var log = config.log('server');
+var port = process.env.PORT|| 4465;
+
+log.info('starting up');
+
 var express = require('express');
 var app = express.createServer();
 
-var config = require('./config.js');
 var Registrar = require('./registrar.js');
 var Notifier = require('./notifier.js');
 var TemplateManager = require('./templateManager.js');
@@ -53,6 +59,6 @@ var senders = {"wns": new WNS(), "apns": new APNs()};
 var notifier = new Notifier(templateStore, registrationStore, generator, senders);
 app.post("/post/:userId", notifier.postNotification.bind(notifier));
 
-var port = process.env.PORT|| 4465;
-console.log('port:', port);
+log.info('listening on port', port);
+
 app.listen(port);

@@ -11,9 +11,11 @@ var azure = require("azure");
  * @class RegistrationStore
  */
 function RegistrationStore(name, callback) {
+    this.log = require('./config.js').log('registrationStore');
+
     if (name === undefined)  name = 'registrations';
     if (callback === undefined) callback = function (err) {
-        if (err) console.log('createTableIfNotExists: name:', name, 'err:', err);
+        if (err) log.error('createTableIfNotExists failed: name:', name, 'err:', err);
     };
 
     this.tableName = name;
@@ -40,10 +42,15 @@ RegistrationStore.prototype = {
      *   - found: array of found registration entities for the user
      */
     getAllRegistrationEntities: function (userId, callback) {
+        var log = this.log.child('getAllRegistrationEntities');
+        log.BEGIN(userId);
+
         var query = azure.TableQuery.select()
             .from(this.tableName)
             .where("PartitionKey eq ?", userId);
         this.store.queryEntities(query, callback);
+
+        log.END();
     },
 
     /**
@@ -65,6 +72,9 @@ RegistrationStore.prototype = {
     },
 
     getRegistration: function (registrationEntity) {
+        var log = this.log.child('getRegistration');
+        log.BEGIN(registrationEntity);
+
         var registration = {
             'registrationId': registrationEntity.RowKey,
             'templateVersion': registrationEntity.TemplateVersion.substr(1),
@@ -78,6 +88,8 @@ RegistrationStore.prototype = {
         now = now.toISOString();
 
         var routes = JSON.parse(registrationEntity.Routes);
+        log.debug('routes:', routes);
+
         var valid = [];
         for (var each in routes) {
             var route = routes[each];
@@ -88,16 +100,28 @@ RegistrationStore.prototype = {
                                 'expiration': route.Expiration
                             } );
             }
+            else {
+                log.info('route', route.Name, 'is no longer active');
+            }
         }
+
+        log.debug('valid routes:', valid);
         registration.routes = valid;
+
+        log.END(registration);
         return registration;
     },
 
     getRegistrations: function(userId, callback) {
         var self = this;
+        var log = self.log.child('getRegistrations');
+
+        log.BEGIN(userId);
+
         this.getAllRegistrationEntities(userId, function(err, regs)
         {
             if (err !== null) {
+                log.error('getAllRegistrationEntities error:', err);
                 callback(err, null);
                 return;
             }
@@ -105,18 +129,22 @@ RegistrationStore.prototype = {
             var registrations = [];
 
             if (regs.length === 0) {
+                log.info('getRegistrations: no registrations found');
                 callback(null, registrations);
                 return;
             }
 
             var now = new Date();
             now = now.toISOString();
+
             function deleteRegistrationCallback (err) {
-                if (err) console.log("deleteRegistrationEntity: err:", err);
+                if (err) log.error("deleteRegistrationEntity error:", err);
             }
+
             for (var index in regs) {
                 var registrationEntity = regs[index];
                 if (registrationEntity.Expiration <= now) {
+                    log.info('getRegistrations: registration has expired:', registrationEntity.RowKey);
                     self.deleteRegistrationEntity(userId, registrationEntity.RowKey, deleteRegistrationCallback);
                 }
                 else {
@@ -124,6 +152,7 @@ RegistrationStore.prototype = {
                 }
             }
             callback(null, registrations);
+            log.END();
         });
     },
 
@@ -156,6 +185,9 @@ RegistrationStore.prototype = {
     updateRegistrationEntity: function(userId, registrationId, templateVersion, templateLanguage, service, routes,
                                        callback) {
         var self = this;
+        var log = self.log.child('updateRegistrationEntity');
+        log.BEGIN(userId, registrationId, templateVersion, templateLanguage, service, routes);
+
         self.getRegistrationEntity(userId, registrationId, function (err, found) {
             var registrationEntity = {
                 "PartitionKey": userId,
@@ -181,7 +213,9 @@ RegistrationStore.prototype = {
                     "Token": route.token,
                     "Expiration": expiration.toISOString()
                 };
-//                console.log('new route:', route);
+
+                log.debug('new route:', route);
+
                 routes[index] = route;
             }
 
@@ -194,6 +228,8 @@ RegistrationStore.prototype = {
                 self.store.updateEntity(self.tableName, registrationEntity, callback);
             }
 	});
+
+        log.END();
     },
 
     /**
@@ -210,11 +246,19 @@ RegistrationStore.prototype = {
      *   - err: if not null, definition of the error that took place
      */
     deleteRegistrationEntity: function (userId, registrationId, callback) {
+        var log = this.log.child('deleteRegistrationEntity');
+        log.BEGIN(userId, registrationId);
+
         var registrationEntity = {
             "PartitionKey": userId,
             "RowKey": registrationId
         };
-        this.store.deleteEntity(this.tableName, registrationEntity, callback);
+
+        this.store.deleteEntity(this.tableName, registrationEntity,
+                                function (err) {
+                                    callback(err);
+                                    log.END();
+                                });
     },
 
     /**
@@ -229,8 +273,12 @@ RegistrationStore.prototype = {
      */
     deleteAllRegistrationEntities: function (userId, callback) {
         var self = this;
+        var log = self.log.child('deleteAllRegistrationEntities');
+        log.BEGIN(userId);
+
         self.getAllRegistrationEntities(userId, function (err, registrationEntities) {
             if (err || registrationEntities.length === 0) {
+                if (err) log.error('getAllRegistrationEntities error:', err);
                 callback(err);
             }
             else {
@@ -238,11 +286,12 @@ RegistrationStore.prototype = {
                     var registrationId = registrationEntities[index].RowKey;
                     self.deleteRegistrationEntity(userId, registrationId,
                         function (err) {
-                        if (err) console.log(err);
+                        if (err) log.error('deleteRegistrationEntity error:', err);
                     });
                 }
                 callback(null);
             }
+            log.END();
         });
     }
 };

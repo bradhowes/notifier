@@ -13,6 +13,7 @@ var apn = require("apn");
  * @class
  */
 function APNs() {
+    this.log = config.log('APNs');
 
     // Terrible attempt to support a callback when notification gets sent out.
     this.lastSentNotification = null;
@@ -25,7 +26,7 @@ function APNs() {
      * @param {apn.Notification} notification the Notification instance that triggered he error
      */
     var errorCallback = function (errNum, notification) {
-        console.log("APNs.errorCallback:", errNum, notification);
+        this.log.debug("APNs.errorCallback:", errNum, notification);
         this.lastSentNotification = null;
         if (notification !== null && typeof notification.callback === "function") {
             notification.callback({"retry":false, "invalidToken":errNum === 8});
@@ -55,7 +56,7 @@ function APNs() {
     * @type Function
     */
     this.connection.socketDrained = function () {
-        console.log("APNs.socketDrained");
+        this.log.debug("APNs.socketDrained");
         if (this.lastSentNotification !== null) {
             var notification = this.lastSentNotification;
             if (notification !== null) {
@@ -95,12 +96,15 @@ APNs.prototype = {
      * error encountered.
      */
     sendNotification: function(token, content, callback) {
+        var log = this.log.child('sendNotification');
+        log.BEGIN();
         content = JSON.parse(content);
         var notification = new apn.Notification();
         notification.callback = callback;
         notification.device = new apn.Device(new Buffer(token, 'base64'));
         notification.payload = content;
-        console.log('payload:', content);
+        log.debug('payload:', content);
         this.connection.sendNotification(notification);
+        log.END();
     }
 };

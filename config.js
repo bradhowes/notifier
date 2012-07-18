@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * @fileOverview Defines the configuration parameters for the service.
  */
@@ -5,8 +7,52 @@ module.exports = undefined;
 
 // Load in sensitive parameters
 var priv = require('./private/config.js');
+var slice = Array.prototype.slice;
 
 module.exports = {
+
+    'log': (function () {
+                var log4js = require('log4js');
+                log4js.configure(
+                    {
+                        // Define the log appenders to use. These apply to all loggers.
+                        "appenders": [
+                            {
+                                "type": "file",
+                                "filename": "notifier.log",
+                                "layout": { "type": "basic" }
+                            },
+                            {
+                                "type": "console",
+                                "layout": { "type": "basic" }
+                            }
+                        ],
+
+                        // Define the levels to accept for messages from a logger.
+                        "levels": {
+                            "server":  "INFO"
+                        }
+                    }
+                );
+
+                // Add a method to the Logger prototype to allow definition of a child logger from its parent.
+                var root = log4js.getDefaultLogger();
+                root.__proto__.child = function(name) {
+                    return log4js.getLogger(this.category + '.' + name);
+                };
+
+                // Add a method to signal the start of a method
+                root.__proto__.BEGIN = function() {
+                    this.info.apply(this, ['BEG'].concat(slice.call(arguments)));
+                };
+
+                // Add a method to signal the end of a method
+                root.__proto__.END = function() {
+                    this.info.apply(this, ['END'].concat(slice.call(arguments)));
+                };
+
+                return log4js.getLogger;
+            })(),
 
     /**
      * FQDN of the host to use to deliver WNS notification payloads.
