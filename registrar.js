@@ -1,7 +1,50 @@
+"use strict";
+
 /**
  * @fileOverview Defines the Registrar prototype and its methods.
  */
 module.exports = Registrar;
+
+var Model = require('model.js');
+
+var UserIdModel = Model.extend(
+    {
+        userId: {required:true, type:'string', minlength:2, maxlength:128}
+    });
+
+var RouteModel = Model.extend(
+    {
+        name: {required:true, type:'string', minlength:1, maxlength:128},
+        token: {required:true, type:'string', minlength:1},
+        secondsToLive: {required:true, type:'integer', min:1}
+    });
+
+var RegistrationModel = UserIdModel.extend(
+    {
+        registrationId: {required:true, type:'string', minlength:1, maxlength:128},
+        templateVersion: {required:true, type:'string', minlength:1, maxlength:10},
+        templateLanguage: {required:true, type:'string', minlength:2, maxlength:10},
+        service: {required:true, type:'string', minlength:1, maxlength:10},
+        routes: {required:true, type:'routeArray', minlength:1}
+    },
+    {
+        types:{
+            routeArray:function (value) {
+                value = Model.types.array(value);
+                if (value === null) return value;
+                for (var index in value) {
+                    var z = RouteModel.validate(value[index]);
+                    if (z !== null) return null;
+                }
+                return value;
+            }
+        }
+    });
+
+var DeleteKeyModel = UserIdModel.extend(
+    {
+        registrationId: {type:'string', minlength:1, maxlength:128}
+    });
 
 /**
  * Registrar constructor.
@@ -11,7 +54,7 @@ module.exports = Registrar;
  * A registrar allows for querying, updating, and deleting of registrations for a given user ID.
  */
 function Registrar(registrationStore) {
-    this.log = require('./config.js').log('registrar');
+    this.log = require('./config').log('registrar');
     this.registrationStore = registrationStore;
 }
 
@@ -36,20 +79,23 @@ Registrar.prototype = {
         var log = this.log.child('getRegistrations');
         log.BEGIN();
 
-        var userId = req.params.userId;
-        if (userId === '') {
-            log.error('missing userId');
+        var params = {userId: req.param('userId')};
+        log.info('params:', params);
+
+        var errors = UserIdModel.validate(params);
+        if (errors !== null) {
+            log.error('invalid params:',errors);
             res.send(null, null, 400);
             return;
         }
 
-        log.info('userId:', userId);
-
         var start = new Date();
-        this.registrationStore.getRegistrations(userId, function (err, regs) {
+        this.registrationStore.getRegistrations(params.userId, function (err, regs) {
             var end = new Date();
             var duration = end.getTime() - start.getTime();
             if (err !== null || typeof(regs) === "undefined" || regs.length === 0) {
+                if (err) log.error('RegistrationStore.getRegistrations error:', err);
+                log.info('no registrations found');
                 res.send(null, null, 404);
             }
             else {
@@ -57,7 +103,7 @@ Registrar.prototype = {
                     "registrations": regs,
                     "tableStoreDuration": duration
                 };
-                log.debug(tmp);
+                log.info(tmp);
                 res.json(tmp);
             }
             log.END(duration, 'msec');
@@ -86,70 +132,26 @@ Registrar.prototype = {
     addRegistration: function (req, res) {
         var self = this;
         var log = this.log.child('addRegistration');
-        log.BEGIN();
+        log.BEGIN('req:', req.body);
 
-        var body = req.body;
-        var userId = req.params.userId;
-        function isUndefined(value) {
-            return typeof(value) === "undefined" || value === "";
-        }
+        var params = req.body;
+        params.userId = req.param('userId');
+        log.info('params:', params);
 
-        if (userId === "") {
-            log.error('missing userId');
+        var errors = RegistrationModel.validate(params);
+        if (errors !== null) {
+            log.error('invalid params:', params);
             res.send(null, null, 400);
             return;
         }
-
-        log.debug('userId:', userId);
-        
-        var registrationId = body.registrationId;
-        if (isUndefined(registrationId)) {
-            log.error('missing registrationId');
-            res.send(null, null, 400);
-            return;
-        }
-
-        log.debug('registrationId:', registrationId);
-
-        var templateVersion = body.templateVersion;
-        if (isUndefined(templateVersion)) {
-            log.error('missing templateVersion');
-            res.send(null, null, 400);
-            return;
-        }
-
-        log.debug('templateVersion:', templateVersion);
-
-        var templateLanguage = body.templateLanguage;
-        if (isUndefined(templateLanguage)) {
-            log.error('missing templateLanguage');
-            res.send(null, null, 400);
-            return;
-        }
-
-        log.debug('templateLanguage:', templateLanguage);
-
-        var service = body.service;
-        if (isUndefined(service)) {
-            log.error('missing service');
-            res.send(null, null, 400);
-            return;
-        }
-
-        log.debug('service:', service);
-
-        var routes = body.routes;
-        if (typeof(routes) === "undefined" || routes.length === 0) {
-            log.error('missing routes');
-            res.send(null, null, 400);
-            return;
-        }
-
-        log.debug('routes:', routes);
 
         var start = new Date();
-        this.registrationStore.updateRegistrationEntity(userId, registrationId, templateVersion,
-                                                        templateLanguage, service, routes,
+        this.registrationStore.updateRegistrationEntity(params.userId,
+                                                        params.registrationId,
+                                                        params.templateVersion,
+                                                        params.templateLanguage,
+                                                        params.service,
+                                                        params.routes,
                                                         function (err, registrationEntity)
         {
             var end = new Date();
@@ -161,10 +163,10 @@ Registrar.prototype = {
             else {
                 var tmp = self.registrationStore.getRegistration(registrationEntity);
                 tmp.tableStoreDuration = duration;
-                log.debug(tmp);
+                log.info(tmp);
                 res.json(tmp);
             }
-            log.END(userId, duration, 'msec');
+            log.END(params.userId, duration, 'msec');
         });
     },
 
@@ -187,17 +189,22 @@ Registrar.prototype = {
         var log = this.log.child('deleteRegistration');
         log.BEGIN();
 
-        var userId = req.params.userId;
-        if (userId === "") {
-            log.error('missing userId');
+        var params = {
+            userId: req.param('userId')
+        };
+
+        var registrationId = req.param('registrationId');
+        if (typeof registrationId !== 'undefined') {
+            params.registrationId = registrationId;
+        }
+
+        log.info('params:', params);
+        var errors = DeleteKeyModel.validate(params);
+        if (errors !== null) {
+            log.error('invalid params:', errors);
             res.send(null, null, 400);
             return;
         }
-
-        log.info('userId:', userId);
-
-        var registrationId = req.body.registrationId;
-        log.info('registrationId:', registrationId);
 
         var start = new Date();
 
@@ -211,14 +218,14 @@ Registrar.prototype = {
             else {
                 res.send(null, null, 204);
             }
-            log.END(userId, registrationId, duration, 'msec');
+            log.END(params.userId, registrationId, duration, 'msec');
         }
 
-        if (registrationId === undefined) {
-            this.registrationStore.deleteAllRegistrationEntities(userId, callback);
+        if (params.registrationId === undefined) {
+            this.registrationStore.deleteAllRegistrationEntities(params.userId, callback);
         }
         else {
-            this.registrationStore.deleteRegistrationEntity(userId, registrationId, callback);
+            this.registrationStore.deleteRegistrationEntity(params.userId, params.registrationId, callback);
         }
     }
 };

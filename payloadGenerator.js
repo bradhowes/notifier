@@ -14,7 +14,7 @@ var XRegExp = require("xregexp").XRegExp;
  * data.
  */
 function PayloadGenerator() {
-    this.log = require('./config.js').log('payloadGenerator');
+    this.log = require('./config').log('payloadGenerator');
 
     /**
      * The regular expression that matches a placeholder in a template.

@@ -14,7 +14,7 @@ var azure = require("azure");
  * @param {Function} callback the function to invoke when the table store exits
  */
 function TemplateStore(name, callback) {
-    this.log = require('./config.js').log('templateManager');
+    this.log = require('./config').log('templateManager');
 
     if (name === undefined) {
         name = 'templates';

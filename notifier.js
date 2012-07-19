@@ -16,7 +16,7 @@ module.exports = Notifier;
  * @param {Hash} senders a mapping of notification service tags to objects that provide a sendNotification method
  */
 function Notifier(templateStore, registrationStore, generator, senders) {
-    this.log = require('./config.js').log('notifier');
+    this.log = require('./config').log('notifier');
     this.templateStore = templateStore;
     this.registrationStore = registrationStore;
     this.generator = generator;
@@ -98,7 +98,7 @@ Notifier.prototype = {
                 }
 
                 var callback = function (result) {
-                    log("callback:", userId, token, result);
+                    log.debug("callback:", userId, token, result);
                     if (result.invalidToken) {
                         self.registrationStore.deleteRegistrationEntity(
                             userId, token,

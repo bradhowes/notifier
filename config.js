@@ -6,8 +6,8 @@
 module.exports = undefined;
 
 // Load in sensitive parameters
-var priv = require('./private/config.js');
-var LoggerUtils = require('./loggerUtils.js');
+var priv = require('./private/config');
+var LoggerUtils = require('./loggerUtils');
 
 /**
  * Configuration module.
@@ -122,6 +122,9 @@ function Config () {
      * @type {String}
      */
     this.azure_storage_access_key = priv.azure_storage_access_key;
+
+    process.env.AZURE_STORAGE_ACCOUNT = this.azure_storage_account;
+    process.env.AZURE_STORAGE_ACCESS_KEY = this.azure_storage_access_key;
 
     this.registrations_table_name = 'notifierRegistrations';
     this.templates_table_name = 'notifierTemplates';

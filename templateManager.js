@@ -12,7 +12,7 @@ module.exports = TemplateManager;
  * @param {TemplateStore} templateStore the TemplateStore instance to rely on
  */
 function TemplateManager(templateStore) {
-    this.log = require('./config.js').log('templateManager');
+    this.log = require('./config').log('templateManager');
     this.templateStore = templateStore;
 }
 
@@ -25,56 +25,37 @@ TemplateManager.prototype = {
         var log = this.log.child('addTemplate');
         log.BEGIN();
 
+        function invalid(value, msg) {
+            if (typeof value === "undefined" || value === '') {
+                log.error(msg);
+                res.send(null, null, 400);
+                return true;
+            }
+            return false;
+        }
+
         var body = req.body;
 
         var eventId = body.eventId;
-        if (eventId === "") {
-            log.error('missing eventId');
-            res.send(null, null, 400);
-            return;
-        }
+        if (invalid(eventId, 'missing eventId')) return;
 
         var notificationId = body.notificationId;
-        if (notificationId === "") {
-            log.error('missing notificationId');
-            res.send(null, null, 400);
-            return;
-        }
+        if (invalid(notificationId, 'missing notificationId')) return;
 
         var route = body.route;
-        if (route === "") {
-            log.error('missing route');
-            res.send(null, null, 400);
-            return;
-        }
+        if (invalid(route, 'missing route')) return;
 
         var templateVersion = body.templateVersion;
-        if (templateVersion === "") {
-            log.error('missing templateVersion');
-            res.send(null, null, 400);
-            return;
-        }
+        if (invalid(templateVersion,'missing templateVersion')) return;
 
         var templateLanguage = body.templateLanguage;
-        if (templateLanguage === "") {
-            log.error('missing templateLanguage');
-            res.send(null, null, 400);
-            return;
-        }
+        if (invalid(templateLanguage, 'missing templateLanguage')) return;
 
         var service = body.service;
-        if (service === "") {
-            log.error('missing service');
-            res.send(null, null, 400);
-            return;
-        }
+        if (invalid(service, 'missing service')) return;
 
         var template = body.template;
-        if (template === "") {
-            log.error('missing template');
-            res.send(null, null, 400);
-            return;
-        }
+        if (invalid(template, 'missing template')) return;
 
         var start = new Date();
         this.templateStore.addTemplate(eventId, notificationId, route, templateVersion, templateLanguage, service,
@@ -105,35 +86,38 @@ TemplateManager.prototype = {
         var log = this.log.child('getTemplates');
         log.BEGIN();
 
-        var eventId = req.param('eventId', '');
-        if (eventId === "") {
-            log.error('missing eventId');
-            res.send(null, null, 400);
-            return;
+        function invalid(value, msg) {
+            if (typeof value === "undefined" || value === '') {
+                log.error(msg);
+                res.send(null, null, 400);
+                return true;
+            }
+            return false;
         }
 
-        var templateVersion = req.param('templateVersion', '');
-        if (templateVersion === "") {
-            log.error('missing templateVersion');
-            res.send(null, null, 400);
-            return;
-        }
+        var body = req.body;
 
-        var templateLanguage = req.param('templateLanguage', '');
-        if (templateLanguage === "") {
-            log.error('missing templateLanguage');
-            res.send(null, null, 400);
-            return;
-        }
+        var eventId = body.eventId;
+        if (invalid(eventId, 'missing eventId')) return;
 
-        var service = req.param('service', '');
-        if (service === "") {
-            log.error('missing service');
-            res.send(null, null, 400);
-            return;
-        }
+        var notificationId = body.notificationId;
+        if (invalid(notificationId, 'missing notificationId')) return;
 
-        var route = req.param('route', '');
+        var route = body.route;
+        if (invalid(route, 'missing route')) return;
+
+        var templateVersion = body.templateVersion;
+        if (invalid(templateVersion,'missing templateVersion')) return;
+
+        var templateLanguage = body.templateLanguage;
+        if (invalid(templateLanguage, 'missing templateLanguage')) return;
+
+        var service = body.service;
+        if (invalid(service, 'missing service')) return;
+
+        var route = body.route;
+        if (invalid(route, 'missing route')) return;
+
         var reg = {
             'templateVersion': '' + templateVersion,
             'templateLanguage': templateLanguage,
@@ -173,42 +157,32 @@ TemplateManager.prototype = {
         var log = this.log.child('deleteTemplate');
         log.BEGIN();
 
-        var eventId = req.param('eventId', '');
-        if (eventId === "") {
-            log.error('missing eventId');
-            res.send(null, null, 400);
-            return;
+        function invalid(value, msg) {
+            if (typeof value === "undefined" || value === '') {
+                log.error(msg);
+                res.send(null, null, 400);
+                return true;
+            }
+            return false;
         }
 
-        var notificationId = req.param('notificationId', '');
-        if (notificationId === "") {
-            log.error('missing notificationId');
-            res.send(null, null, 400);
-            return;
-        }
+        var eventId = body.eventId;
+        if (invalid(eventId, 'missing eventId')) return;
 
-        var templateVersion = req.param('templateVersion', '');
-        if (templateVersion === "") {
-            log.error('missing templateVersion');
-            res.send(null, null, 400);
-            return;
-        }
+        var notificationId = body.notificationId;
+        if (invalid(notificationId, 'missing notificationId')) return;
 
-        var templateLanguage = req.param('templateLanguage', '');
-        if (templateLanguage === "") {
-            log.error('missing templateLanguage');
-            res.send(null, null, 400);
-            return;
-        }
+        var route = body.route;
+        if (invalid(route, 'missing route')) return;
 
-        var service = req.param('service', '');
-        if (service === "") {
-            log.error('missing service');
-            res.send(null, null, 400);
-            return;
-        }
+        var templateVersion = body.templateVersion;
+        if (invalid(templateVersion,'missing templateVersion')) return;
 
-        var route = req.param('route', '');
+        var templateLanguage = body.templateLanguage;
+        if (invalid(templateLanguage, 'missing templateLanguage')) return;
+
+        var service = body.service;
+        if (invalid(service, 'missing service')) return;
 
         log.debug('eventId:', eventId,
                   'notificationId:', notificationId,

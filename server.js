@@ -1,66 +1,103 @@
+'use strict';
+
 /**
  * @fileOverview Main nodejs server. Provides three kinds of services: a registrar, a template manager, and a notifier.
  */
+module.exports = Server;
 
-"use strict";
+var config = require('./config');
 
-var config = require('./config.js');
+function Server()
+{
+    this.log = config.log('server');
+}
 
-var log = config.log('server');
-var port = process.env.PORT|| 4465;
+Server.prototype = {
 
-log.info('starting up');
+    createServer: function() {
+        var log = this.log.child('createServer');
+        log.BEGIN();
 
-var express = require('express');
-var app = express.createServer();
+        var express = require('express');
+        var app = express.createServer();
 
-var Registrar = require('./registrar.js');
-var Notifier = require('./notifier.js');
-var TemplateManager = require('./templateManager.js');
-var TemplateStore = require('./templateStore.js');
-var RegistrationStore = require('./registrationStore.js');
-var PayloadGenerator = require('./payloadGenerator.js');
+        // Configuration
+        app.configure(
+            function () {
+                app.use(express.bodyParser());
+                app.use(app.router);
+            });
 
-var APNs = require("./APNs.js");
-var GCM = require("./GCM.js");
-var WNS = require("./WNS.js");
+        app.configure('development', function(){
+                          app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+                      });
 
-process.env.AZURE_STORAGE_ACCOUNT = config.azure_storage_account;
-process.env.AZURE_STORAGE_ACCESS_KEY = config.azure_storage_access_key;
+        app.configure('production', function(){
+                          app.use(express.errorHandler());
+                      });
 
-// Configuration
-app.configure(function(){
-    app.use(express.bodyParser());
-    app.use(app.router);
-});
+        var service = this.registrar;
+        if (service === undefined) {
+            log.info('creating stock registrar');
+            var Registrar = require('./registrar');
+            var RegistrationStore = require('./registrationStore');
+            var registrationStore = new RegistrationStore(config.registrations_table_name);
+            service = new Registrar(registrationStore);
+            this.registrar = service;
+        }
 
-app.configure('development', function(){
-    app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
-});
-app.configure('production', function(){
-    app.use(express.errorHandler());
-});
+        if (service !== null) {
+            log.info('binding registrar');
+            app.get('/registrations/:userId', service.getRegistrations.bind(service));
+            app.post('/registrations/:userId', service.addRegistration.bind(service));
+            app.del('/registrations/:userId', service.deleteRegistration.bind(service));
+        }
 
-// Registrar bindings
-var registrationStore = new RegistrationStore(config.registrations_table_name);
-var registrar = new Registrar(registrationStore);
-app.get('/registrations/:userId', registrar.getRegistrations.bind(registrar));
-app.post('/registrations/:userId', registrar.addRegistration.bind(registrar));
-app.del('/registrations/:userId', registrar.deleteRegistration.bind(registrar));
+        service = this.templateManager;
+        if (service === undefined) {
+            log.info('creating stock template manager');
+            var TemplateManager = require('./templateManager');
+            var TemplateStore = require('./templateStore');
+            var templateStore = new TemplateStore(config.templates_table_name);
+            service = new TemplateManager(templateStore);
+            this.templateManager = service;
+        }
 
-// Template Manager bindings
-var templateStore = new TemplateStore(config.templates_table_name);
-var templateManager = new TemplateManager(templateStore);
-app.get("/templates", templateManager.getTemplates.bind(templateManager));
-app.post("/templates", templateManager.addTemplate.bind(templateManager));
-app.del("/templates", templateManager.deleteTemplate.bind(templateManager));
+        if (service !== null) {
+            log.info('binding templateManager');
+            app.get('/templates', service.getTemplates.bind(service));
+            app.post('/templates', service.addTemplate.bind(service));
+            app.del('/templates', service.deleteTemplate.bind(service));
+        }
 
-// Notifier bindings
-var generator = new PayloadGenerator();
-var senders = {"wns": new WNS(), "apns": new APNs(), "gcm": new GCM()};
-var notifier = new Notifier(templateStore, registrationStore, generator, senders);
-app.post("/post/:userId", notifier.postNotification.bind(notifier));
+        service = this.notifier;
+        if (service === undefined) {
+            log.info('creating stock notifier');
+            var Notifier = require('./notifier');
+            var PayloadGenerator = require('./payloadGenerator');
+            var APNs = require('./APNs');
+            var GCM = require('./GCM');
+            var WNS = require('./WNS');
+            var generator = new PayloadGenerator();
+            var senders = {'wns': new WNS(), 'apns': new APNs(), 'gcm': new GCM()};
+            service = new Notifier(this.templateManager.templateStore, this.registrar.registrationStore,
+                                   generator, senders);
+            this.notifier = service;
+        }
 
-log.info('listening on port', port);
+        if (service != null) {
+            log.info('binding notifier');
+            app.post('/post/:userId', service.postNotification.bind(service));
+        }
 
-app.listen(port);
+        log.END();
+        return app;
+    }
+};
+
+// Run if we are the main script
+if (process.argv[1].indexOf('server.js') !== -1) {
+    var server = new Server();
+    var port = process.env.PORT || 4465;
+    server.createServer().listen(port);
+}

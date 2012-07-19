@@ -11,7 +11,7 @@ var azure = require("azure");
  * @class RegistrationStore
  */
 function RegistrationStore(name, callback) {
-    this.log = require('./config.js').log('registrationStore');
+    this.log = require('./config').log('registrationStore');
 
     if (name === undefined)  name = 'registrations';
     if (callback === undefined) callback = function (err) {
@@ -74,7 +74,7 @@ RegistrationStore.prototype = {
 
     getRegistration: function (registrationEntity) {
         var log = this.log.child('getRegistration');
-        log.BEGIN(registrationEntity);
+        log.BEGIN();
 
         var registration = {
             'registrationId': decodeURIComponent(registrationEntity.RowKey),
@@ -109,7 +109,7 @@ RegistrationStore.prototype = {
         log.debug('valid routes:', valid);
         registration.routes = valid;
 
-        log.END(registration);
+        log.END();
         return registration;
     },
 
@@ -188,7 +188,7 @@ RegistrationStore.prototype = {
         var self = this;
         var log = self.log.child('updateRegistrationEntity');
         log.BEGIN(userId, registrationId, templateVersion, templateLanguage, service, routes);
-        
+
         self.getRegistrationEntity(userId, registrationId, function (err, found) {
             var registrationEntity = {
                 "PartitionKey": encodeURIComponent(userId),
@@ -251,14 +251,14 @@ RegistrationStore.prototype = {
         log.BEGIN(userId, registrationId);
 
         var registrationEntity = {
-            "PartitionKey": userId,
-            "RowKey": registrationId
+            "PartitionKey": encodeURIComponent(userId),
+            "RowKey": encodeURIComponent(registrationId)
         };
 
         this.store.deleteEntity(this.tableName, registrationEntity,
                                 function (err) {
                                     callback(err);
-                                    log.END();
+                                    log.END(err);
                                 });
     },
 
