@@ -8,12 +8,14 @@
         "azure": "0.5.x",
         "express": "2.5.x",
         "log4js": "0.5.x",
+        "model.js": "0.0.1",
         "request": "2.9.x",
         "xregexp": "2.0.x"
     },
     "devDependencies": {
         "debug": "0.7.x",
-        "vows": "0.6.x"
+        "vows": "0.6.x",
+        "pact": "0.1.x"
     },
     "engine": "node >= 0.6.12"
 }
