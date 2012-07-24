@@ -25,6 +25,14 @@ function PostTracker(maxSize) {
     this.mapping = {};
 }
 
+/**
+ * PostTracker.Node constructor
+ *
+ * @class
+ *
+ * A PostTracker.Node instance contains attributes associated with a post notification request. In particular, it
+ * tracks the unique sequence ID for the request, and the time when the request was made.
+ */
 PostTracker.Node = function(sequenceId, when) {
     this.sequence = sequenceId;
     this.when = when.getTime();

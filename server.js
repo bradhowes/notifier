@@ -18,6 +18,13 @@ var TemplateManager = require('./templateManager');
 var TemplateStore = require('./templateStore');
 var WNS = require('./WNS');
 
+/**
+ * Server constructor.
+ *
+ * @class
+ *
+ * A Server object routes HTTP requests to appropriate services.
+ */
 function Server()
 {
     this.log = config.log('server');
@@ -25,8 +32,18 @@ function Server()
     this.templateStoreName = config.templates_table_name;
 }
 
+/**
+ * Server prototype.
+ *
+ * Defines the methods available to a Server instance.
+ */
 Server.prototype = {
 
+    /**
+     * Initialize a Server instance with the necessary services.
+     *
+     * @param {Function} callback the function to invoke when the Server is initialized.
+     */
     initialize: function(callback) {
         var log = this.log.child('initialize');
         var self = this;

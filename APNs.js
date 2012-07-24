@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * @fileOverview Defines the APNs prototype and its methods.
  */
