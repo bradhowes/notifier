@@ -1,13 +1,16 @@
 #!/bin/bash
 
+set -x
+
 SERVER="localhost:4465"
 #SERVER="notifier.bradhowes.c9.io"
 
 function usage
 {
     cat << +EOF+
-usage: post USER EVTID [NAME VALUE] [NAME VALUE]...
+usage: post [-t TOKEN] USER EVTID [NAME VALUE] [NAME VALUE]...
 
+TOKEN: restrict deliver to registrations containing TOKEN
 USER: user ID to notify
 EVTID: event ID to notify about
 NAME: template placeholder name to substitute
@@ -20,9 +23,24 @@ if (( $# < 2 )); then
     usage
 fi
 
+TOKENS=""
+COMMA=""
+
+while [[ "${1}" = "-t" ]]; do
+    TOKENS="${TOKENS}${COMMA}\"${2}\""
+    COMMA=","
+    shift 2
+done
+
 USERID="${1}"
-JSON="{\"eventId\":\"${2}\",\"substitutionValues\":{"
+JSON="{\"eventId\":\"${2}\""
 shift 2
+
+if [[ -n "${TOKENS}" ]]; then
+    JSON="${JSON},\"tokens\":[${TOKENS}]"
+fi
+
+JSON="${JSON},\"substitutions\":{"
 
 COMMA=""
 while (( $# > 0 ))
@@ -30,7 +48,7 @@ do
     if (( $# < 2 )); then
         usage
     fi
-    JSON="${JSON}${COMMA}\"name\":\"${1}\",\"value\":\"${2}\""
+    JSON="${JSON}${COMMA}\"${1}\":\"${2}\""
     COMMA=","
     shift 2
 done

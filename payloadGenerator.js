@@ -1,9 +1,12 @@
+'use strict';
+
 /**
  * @fileOverview Defines the PayloadGenerator prototype and its methods.
  */
 module.exports = PayloadGenerator;
 
-var XRegExp = require("xregexp").XRegExp;
+var XRegExp = require('xregexp').XRegExp;
+var config = require('./config');
 
 /**
  * PayloadGenerator constructor.
@@ -14,13 +17,13 @@ var XRegExp = require("xregexp").XRegExp;
  * data.
  */
 function PayloadGenerator() {
-    this.log = require('./config').log('payloadGenerator');
+    this.log = config.log('payloadGenerator');
 
     /**
      * The regular expression that matches a placeholder in a template.
      * @type XRegExp
      */
-    this.regexp =  XRegExp("@@([A-Za-z0-9_]+)(=([^@]*))?@@");
+    this.regexp =  XRegExp(config.placeholder_re);
 }
 
 /**
@@ -41,6 +44,12 @@ PayloadGenerator.prototype = {
      */
     transform: function(template, substitutions) {
         var log = this.log.child('transform');
+        log.BEGIN(substitutions);
+
+        if (! substitutions) {
+            substitutions = {};
+        }
+
         while (1) {
             var match = this.regexp.exec(template);
             if (match === null) break;
@@ -51,7 +60,7 @@ PayloadGenerator.prototype = {
                 value = match[3];
                 if (value === undefined) {
                     log.debug('no default value defined');
-                    value = "";
+                    value = '';
                 }
             }
             log.debug('substituting with', value);

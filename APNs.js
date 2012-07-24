@@ -99,8 +99,15 @@ APNs.prototype = {
      */
     sendNotification: function(token, content, callback) {
         var log = this.log.child('sendNotification');
-        log.BEGIN();
-        content = JSON.parse(content);
+        log.BEGIN(token, content);
+        try {
+            content = JSON.parse(content);
+        } catch (x) {
+            log.error('invalid JSON format for payload:', content);
+            callback(x);
+            return;
+        }
+
         var notification = new apn.Notification();
         notification.callback = callback;
         notification.device = new apn.Device(new Buffer(token, 'base64'));

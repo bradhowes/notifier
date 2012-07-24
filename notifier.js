@@ -1,7 +1,12 @@
+'use strict';
+
 /**
  * @fileOverview Defines the Notifier prototype and its methods.
  */
 module.exports = Notifier;
+
+var Model = require('model.js');
+var PostTracker = require('./postTracker');
 
 /**
  * Notifier constructor
@@ -21,6 +26,37 @@ function Notifier(templateStore, registrationStore, generator, senders) {
     this.registrationStore = registrationStore;
     this.generator = generator;
     this.senders = senders;
+
+    this.sequenceId = 1;
+    this.postTracker = new PostTracker(100);
+
+    this.PostModel = Model.extend(
+        {
+            userId: {required:true, type:'string', minlength:2, maxlength:128},
+            eventId: {required:true, type:'integer'},
+            substitutions: {type:'stringmap'},
+            tokens: {type: 'array'}
+        },
+        {
+            types:
+            {
+                stringmap: function (value) {
+                    if (typeof value !== 'object') return null;
+                    for (var key in value) {
+                        if (typeof value[key] !== 'string') return null;
+                    }
+                    return value;
+                }
+            }
+        }
+    );
+
+    this.LogReceiptModel = Model.extend(
+        {
+            sequenceId: {required:true, type:'integer'},
+            when: {required:true, type:'date'}
+        }
+    );
 }
 
 /**
@@ -40,34 +76,39 @@ Notifier.prototype = {
     postNotification: function(req, res) {
         var self = this;
         var log = self.log.child('postNotification');
-
         log.BEGIN();
 
-        var userId = req.params.userId;
-        log.debug('userId:', userId);
-        if (userId === "undefined" || userId === "") {
-            log.error('missing userId');
+        var params = {
+            userId: req.param('userId'),
+            eventId: req.param('eventId'),
+            substitutions: req.param('substitutions'),
+            tokens: req.param('tokens')
+        };
+
+        log.info('params:', params);
+
+        var errors = this.PostModel.validate(params);
+        if (errors !== null) {
+            log.error('invalid params:', errors);
             res.send(null, null, 400);
             return;
         }
 
-        var body = req.body;
-        var eventId = body.eventId;
-        log.debug('eventId:', eventId);
-        if (eventId === "undefined" || eventId === "") {
-            log.error('missing eventId');
-            res.send(null, null, 400);
-            return;
+        var substitutions = params.substitutions;
+        if (typeof substitutions !== 'object') {
+            substitutions = {};
+            params.substitutions = substitutions;
         }
-
-        var substitutions = body.substitutions;
-        log.debug('substitutions:', substitutions);
 
         var start = new Date();
+        log.debug('start:', start.toUTCString());
+
+        var sequenceId = ++this.sequenceId;
+        substitutions['SEQUENCE_ID'] = sequenceId;
+        this.postTracker.add(sequenceId, start);
 
         // Fetch the registrations for the given user
-        this.registrationStore.getRegistrations(userId, function(err, registrations)
-        {
+        this.registrationStore.getRegistrations(params.userId, params.tokens, function(err, registrations) {
             if (err !== null) {
                 log.error('RegistrationStore.getRegistrations error:', err);
                 res.send(null, null, 500);
@@ -75,14 +116,13 @@ Notifier.prototype = {
             }
 
             if (registrations.length === 0) {
-                log.info('no registrations exist for user', userId);
+                log.info('no registrations exist for user', params.userId);
                 res.send(null, null, 202);
                 return;
             }
 
             // Find the templates that apply for the given registrations
-            self.templateStore.findTemplates(eventId, registrations, function(err, matches)
-            {
+            self.templateStore.findTemplates(params.eventId, registrations, function(err, matches) {
                 var token = null;
 
                 if (err !== null) {
@@ -98,12 +138,12 @@ Notifier.prototype = {
                 }
 
                 var callback = function (result) {
-                    log.debug("callback:", userId, token, result);
+                    log.debug('callback:', params.userId, token, result);
                     if (result.invalidToken) {
                         self.registrationStore.deleteRegistrationEntity(
-                            userId, token,
+                            params.userId, token,
                             function (err) {
-                                log.error("deliverCallback:", err);
+                                log.error('deliverCallback:', err);
                             });
                     }
                 };
@@ -112,7 +152,7 @@ Notifier.prototype = {
                 for (var index in matches) {
                     var match = matches[index];
                     var template = match.template;
-                    var content = self.generator.transform(template, substitutions);
+                    var content = self.generator.transform(template, params.substitutions);
                     token = match.token;
                     self.deliver(match.service, match.token, content, callback);
                 }
@@ -124,6 +164,30 @@ Notifier.prototype = {
                 log.END(duration, 'msecs');
             });
         });
+    },
+
+    logReceipt: function(req, res) {
+        var log = this.log.child('logReceipt');
+        log.BEGIN();
+
+        var params = {
+            sequenceId: req.param('sequenceId'),
+            when: req.param('when')
+        };
+
+        log.info('params:', params);
+
+        var errors = this.LogReceiptModel.validate(params);
+        if (errors !== null) {
+            log.error('invalid params:', errors);
+            res.send(null, null, 400);
+            return;
+        }
+
+        this.postTracker.track(Number(params.sequenceId), new Date(params.when));
+        res.send(null, null, 204); // OK but no content
+
+        log.END();
     },
 
     /**

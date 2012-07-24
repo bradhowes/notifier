@@ -1,7 +1,11 @@
+'use strict';
+
 /**
  * @fileOverview Defines the TemplateManager prototype and its methods.
  */
 module.exports = TemplateManager;
+
+var Model = require('model.js');
 
 /**
  * Initializes a new TemplateManager object. A TemplateManager stores and retrieves notification template definitions.
@@ -14,6 +18,28 @@ module.exports = TemplateManager;
 function TemplateManager(templateStore) {
     this.log = require('./config').log('templateManager');
     this.templateStore = templateStore;
+
+    this.FindKeyModel = Model.extend(
+        {
+            eventId: {required:true, type:'integer'},
+            route: {required:true, type:'string'},
+            templateVersion: {required:true, type:'string', minlength:1, maxlength:10},
+            templateLanguage: {required:true, type:'string', minlength:2, maxlength:10},
+            service: {required:true, type:'string', minlength:1, maxlength:10}
+        }
+    );
+
+    this.TemplateKeyModel = this.FindKeyModel.extend(
+        {
+            notificationId: {required:true, type:'integer'}
+        }
+    );
+
+    this.TemplateDefinitionModel = this.TemplateKeyModel.extend(
+        {
+            template: {required:true, type:'string', minlength:1}
+        }
+    );
 }
 
 TemplateManager.prototype = {
@@ -25,41 +51,28 @@ TemplateManager.prototype = {
         var log = this.log.child('addTemplate');
         log.BEGIN();
 
-        function invalid(value, msg) {
-            if (typeof value === "undefined" || value === '') {
-                log.error(msg);
-                res.send(null, null, 400);
-                return true;
-            }
-            return false;
+        var params = {
+          eventId: req.param('eventId'),
+          notificationId: req.param('notificationId'),
+          route: req.param('route'),
+          templateVersion: req.param('templateVersion'),
+          templateLanguage: req.param('templateLanguage'),
+          service: req.param('service'),
+          template: req.param('template')
+        };
+
+        log.info('params:', params);
+        var errors = this.TemplateDefinitionModel.validate(params);
+        if (errors !== null) {
+            log.error('invalid params:', errors);
+            res.json(errors, 400);
+            return;
         }
 
-        var body = req.body;
-
-        var eventId = body.eventId;
-        if (invalid(eventId, 'missing eventId')) return;
-
-        var notificationId = body.notificationId;
-        if (invalid(notificationId, 'missing notificationId')) return;
-
-        var route = body.route;
-        if (invalid(route, 'missing route')) return;
-
-        var templateVersion = body.templateVersion;
-        if (invalid(templateVersion,'missing templateVersion')) return;
-
-        var templateLanguage = body.templateLanguage;
-        if (invalid(templateLanguage, 'missing templateLanguage')) return;
-
-        var service = body.service;
-        if (invalid(service, 'missing service')) return;
-
-        var template = body.template;
-        if (invalid(template, 'missing template')) return;
-
         var start = new Date();
-        this.templateStore.addTemplate(eventId, notificationId, route, templateVersion, templateLanguage, service,
-                                       template, function (err, templateEntity)
+        this.templateStore.addTemplate(params.eventId, params.notificationId, params.route, params.templateVersion,
+                                       params.templateLanguage, params.service, params.template,
+                                       function (err, templateEntity)
         {
             var end = new Date();
             var duration = end.getTime() - start.getTime();
@@ -69,7 +82,6 @@ TemplateManager.prototype = {
             }
             else {
                 var tmp = {
-                    'templateEntity': templateEntity,
                     'tableStoreDuration': duration
                 };
                 res.json(tmp);
@@ -84,49 +96,34 @@ TemplateManager.prototype = {
      */
     getTemplates: function (req, res) {
         var log = this.log.child('getTemplates');
-        log.BEGIN();
+        log.BEGIN(req.query);
 
-        function invalid(value, msg) {
-            if (typeof value === "undefined" || value === '') {
-                log.error(msg);
-                res.send(null, null, 400);
-                return true;
-            }
-            return false;
+        var params = {
+          eventId: req.param('eventId'),
+          route: req.param('route'),
+          templateVersion: req.param('templateVersion'),
+          templateLanguage: req.param('templateLanguage'),
+          service: req.param('service')
+        };
+
+        log.info('params:', params);
+
+        var errors = this.FindKeyModel.validate(params);
+        if (errors !== null) {
+            log.error('invalid params:', errors);
+            res.send(null, null, 400);
+            return;
         }
 
-        var body = req.body;
-
-        var eventId = body.eventId;
-        if (invalid(eventId, 'missing eventId')) return;
-
-        var notificationId = body.notificationId;
-        if (invalid(notificationId, 'missing notificationId')) return;
-
-        var route = body.route;
-        if (invalid(route, 'missing route')) return;
-
-        var templateVersion = body.templateVersion;
-        if (invalid(templateVersion,'missing templateVersion')) return;
-
-        var templateLanguage = body.templateLanguage;
-        if (invalid(templateLanguage, 'missing templateLanguage')) return;
-
-        var service = body.service;
-        if (invalid(service, 'missing service')) return;
-
-        var route = body.route;
-        if (invalid(route, 'missing route')) return;
-
         var reg = {
-            'templateVersion': '' + templateVersion,
-            'templateLanguage': templateLanguage,
-            'service': service,
-            'routes': [ {'name':route, 'token':''} ]
+            'templateVersion': '' + params.templateVersion,
+            'templateLanguage': params.templateLanguage,
+            'service': params.service,
+            'routes': [ {'name':params.route, 'token':''} ]
         };
 
         var start = new Date();
-        this.templateStore.findTemplates(eventId, [reg], function (err, templates)
+        this.templateStore.findTemplates(params.eventId, [reg], function (err, templates)
         {
             var end = new Date();
             var duration = end.getTime() - start.getTime();
@@ -157,43 +154,27 @@ TemplateManager.prototype = {
         var log = this.log.child('deleteTemplate');
         log.BEGIN();
 
-        function invalid(value, msg) {
-            if (typeof value === "undefined" || value === '') {
-                log.error(msg);
-                res.send(null, null, 400);
-                return true;
-            }
-            return false;
+        var params = {
+          eventId: req.param('eventId'),
+          notificationId: req.param('notificationId'),
+          route: req.param('route'),
+          templateVersion: req.param('templateVersion'),
+          templateLanguage: req.param('templateLanguage'),
+          service: req.param('service')
+        };
+
+        log.info('params:', params);
+
+        var errors = this.TemplateKeyModel.validate(params);
+        if (errors !== null) {
+            log.error('invalid params:', errors);
+            res.send(null, null, 400);
+            return;
         }
 
-        var eventId = body.eventId;
-        if (invalid(eventId, 'missing eventId')) return;
-
-        var notificationId = body.notificationId;
-        if (invalid(notificationId, 'missing notificationId')) return;
-
-        var route = body.route;
-        if (invalid(route, 'missing route')) return;
-
-        var templateVersion = body.templateVersion;
-        if (invalid(templateVersion,'missing templateVersion')) return;
-
-        var templateLanguage = body.templateLanguage;
-        if (invalid(templateLanguage, 'missing templateLanguage')) return;
-
-        var service = body.service;
-        if (invalid(service, 'missing service')) return;
-
-        log.debug('eventId:', eventId,
-                  'notificationId:', notificationId,
-                  'route:', route,
-                  'templateVersion:', templateVersion,
-                  'templateLanguage:', templateLanguage,
-                  'service:', service);
-
         var start = new Date();
-        this.templateStore.removeTemplate(eventId, notificationId, route, templateVersion, templateLanguage,
-                                          service, function (err, templateEntity)
+        this.templateStore.removeTemplate(params.eventId, params.notificationId, params.route, params.templateVersion,
+                                          params.templateLanguage, params.service, function (err, templateEntity)
         {
             var end = new Date();
             var duration = end.getTime() - start.getTime();

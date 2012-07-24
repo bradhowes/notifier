@@ -126,9 +126,6 @@ function Config () {
     process.env.AZURE_STORAGE_ACCOUNT = this.azure_storage_account;
     process.env.AZURE_STORAGE_ACCESS_KEY = this.azure_storage_access_key;
 
-    this.registrations_table_name = 'notifierRegistrations';
-    this.templates_table_name = 'notifierTemplates';
-
     /**
      * The authorization key from Google for sending GCM messages
      */
@@ -139,6 +136,11 @@ function Config () {
      */
     this.gcm_uri = 'https://android.googleapis.com/gcm/send';
 
+    this.registrations_table_name = 'notifierRegistrations';
+
+    this.templates_table_name = 'notifierTemplates';
+
+    this.placeholder_re = '@@([A-Za-z0-9_]+)(=([^@]*))?@@';
 }
 
 module.exports = new Config();

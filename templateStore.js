@@ -13,27 +13,19 @@ var azure = require("azure");
  * @param {String} name the name of the table store to use/create
  * @param {Function} callback the function to invoke when the table store exits
  */
-function TemplateStore(name, callback) {
-    this.log = require('./config').log('templateManager');
-
-    if (name === undefined) {
-        name = 'templates';
+function TemplateStore(tableName, callback) {
+    var log = this.log = require('./config').log('templateStore');
+    log.BEGIN(tableName);
+    if (tableName === undefined) {
+        tableName = config.registrations_table_name;
     }
 
-    /**
-     * Default callback function for new TemplateStore instances. Simply logs to the console any errors it sees.
-     */
-    function defaultCallback(err) {
-        if (err) console.log('createTableIfNotExists: name:', name, 'err:', err);
-    }
-
-    if (callback === undefined) {
-        callback = defaultCallback;
-    }
-
-    this.tableName = name;
+    this.tableName = tableName;
     this.store = azure.createTableService();
-    this.store.createTableIfNotExists(name, callback);
+    this.store.createTableIfNotExists(tableName, function (err, b, c) {
+                                          log.END(err, b, c);
+                                          if (callback) callback(err);
+                                      });
 }
 
 TemplateStore.prototype = {
@@ -161,11 +153,12 @@ TemplateStore.prototype = {
 
         log.BEGIN(eventId, notificationId, routeName, templateVersion, templateLanguage, service, content);
 
+        var partitionKey = eventId.toString();
         var rowKey = self.makeRowKey(notificationId, routeName, templateVersion, templateLanguage, service);
         log.debug('rowKey:', rowKey);
 
         var templateEntity = {
-            'PartitionKey': eventId.toString(),
+            'PartitionKey': partitionKey,
             'RowKey': rowKey,
             'RouteName': routeName.toString(),
             'TemplateVersion': templateVersion.toString(),

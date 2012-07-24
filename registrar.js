@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /**
  * @fileOverview Defines the Registrar prototype and its methods.
@@ -6,45 +6,6 @@
 module.exports = Registrar;
 
 var Model = require('model.js');
-
-var UserIdModel = Model.extend(
-    {
-        userId: {required:true, type:'string', minlength:2, maxlength:128}
-    });
-
-var RouteModel = Model.extend(
-    {
-        name: {required:true, type:'string', minlength:1, maxlength:128},
-        token: {required:true, type:'string', minlength:1},
-        secondsToLive: {required:true, type:'integer', min:1}
-    });
-
-var RegistrationModel = UserIdModel.extend(
-    {
-        registrationId: {required:true, type:'string', minlength:1, maxlength:128},
-        templateVersion: {required:true, type:'string', minlength:1, maxlength:10},
-        templateLanguage: {required:true, type:'string', minlength:2, maxlength:10},
-        service: {required:true, type:'string', minlength:1, maxlength:10},
-        routes: {required:true, type:'routeArray', minlength:1}
-    },
-    {
-        types:{
-            routeArray:function (value) {
-                value = Model.types.array(value);
-                if (value === null) return value;
-                for (var index in value) {
-                    var z = RouteModel.validate(value[index]);
-                    if (z !== null) return null;
-                }
-                return value;
-            }
-        }
-    });
-
-var DeleteKeyModel = UserIdModel.extend(
-    {
-        registrationId: {type:'string', minlength:1, maxlength:128}
-    });
 
 /**
  * Registrar constructor.
@@ -56,6 +17,61 @@ var DeleteKeyModel = UserIdModel.extend(
 function Registrar(registrationStore) {
     this.log = require('./config').log('registrar');
     this.registrationStore = registrationStore;
+
+    /**
+     * JSON schema for userId values
+     * @type Model
+     */
+    this.UserIdModel = Model.extend(
+        {
+            userId: {required:true, type:'string', minlength:2, maxlength:128}
+        });
+
+    /**
+     * JSON schema for route definitions.
+     * @type Model
+     */
+    this.RouteModel = Model.extend(
+        {
+            name: {required:true, type:'string', minlength:1, maxlength:128},
+            token: {required:true, type:'string', minlength:1},
+            secondsToLive: {required:true, type:'integer', min:1}
+        });
+
+    /**
+     * JSON schema for registration definitions.
+     * @type Model
+     */
+    this.RegistrationModel = this.UserIdModel.extend(
+        {
+            registrationId: {required:true, type:'string', minlength:1, maxlength:128},
+            templateVersion: {required:true, type:'string', minlength:1, maxlength:10},
+            templateLanguage: {required:true, type:'string', minlength:2, maxlength:10},
+            service: {required:true, type:'string', minlength:1, maxlength:10},
+            routes: {required:true, type:'routeArray', minlength:1}
+        },
+        {
+            types:{
+                routeArray:function (value) {
+                    value = Model.types.array(value);
+                    if (value === null) return value;
+                    for (var index in value) {
+                        var z = this.RouteModel.validate(value[index]);
+                        if (z !== null) return null;
+                    }
+                    return value;
+                }.bind(this)
+            }
+        });
+
+    /**
+     * JSON schema for delete parameter definitions.
+     * @type Model
+     */
+    this.DeleteKeyModel = this.UserIdModel.extend(
+        {
+            registrationId: {type:'string', minlength:1, maxlength:128}
+        });
 }
 
 /**
@@ -82,7 +98,7 @@ Registrar.prototype = {
         var params = {userId: req.param('userId')};
         log.info('params:', params);
 
-        var errors = UserIdModel.validate(params);
+        var errors = this.UserIdModel.validate(params);
         if (errors !== null) {
             log.error('invalid params:',errors);
             res.send(null, null, 400);
@@ -93,15 +109,15 @@ Registrar.prototype = {
         this.registrationStore.getRegistrations(params.userId, function (err, regs) {
             var end = new Date();
             var duration = end.getTime() - start.getTime();
-            if (err !== null || typeof(regs) === "undefined" || regs.length === 0) {
-                if (err) log.error('RegistrationStore.getRegistrations error:', err);
+            if (err !== null || typeof(regs) === 'undefined' || regs.length === 0) {
+                if (err) log.error('error:', err);
                 log.info('no registrations found');
                 res.send(null, null, 404);
             }
             else {
                 var tmp = {
-                    "registrations": regs,
-                    "tableStoreDuration": duration
+                    'registrations': regs,
+                    'tableStoreDuration': duration
                 };
                 log.info(tmp);
                 res.json(tmp);
@@ -138,7 +154,7 @@ Registrar.prototype = {
         params.userId = req.param('userId');
         log.info('params:', params);
 
-        var errors = RegistrationModel.validate(params);
+        var errors = this.RegistrationModel.validate(params);
         if (errors !== null) {
             log.error('invalid params:', params);
             res.send(null, null, 400);
@@ -146,13 +162,7 @@ Registrar.prototype = {
         }
 
         var start = new Date();
-        this.registrationStore.updateRegistrationEntity(params.userId,
-                                                        params.registrationId,
-                                                        params.templateVersion,
-                                                        params.templateLanguage,
-                                                        params.service,
-                                                        params.routes,
-                                                        function (err, registrationEntity)
+        this.registrationStore.updateRegistrationEntity(params, function (err, registrationEntity)
         {
             var end = new Date();
             var duration = end.getTime() - start.getTime();
@@ -161,8 +171,9 @@ Registrar.prototype = {
                 res.send(null, null, 404);
             }
             else {
-                var tmp = self.registrationStore.getRegistration(registrationEntity);
-                tmp.tableStoreDuration = duration;
+                var tmp = {
+                    'tableStoreDuration': duration
+                };
                 log.info(tmp);
                 res.json(tmp);
             }
@@ -199,7 +210,7 @@ Registrar.prototype = {
         }
 
         log.info('params:', params);
-        var errors = DeleteKeyModel.validate(params);
+        var errors = this.DeleteKeyModel.validate(params);
         if (errors !== null) {
             log.error('invalid params:', errors);
             res.send(null, null, 400);
@@ -212,7 +223,7 @@ Registrar.prototype = {
             var end = new Date();
             var duration = end.getTime() - start.getTime();
             if (err) {
-                log.error('RegistrationStore.deleteAllRegistrationEntities error:', err);
+                log.error('RegistrationStore.deleteAllRegistrations error:', err);
                 res.send(null, null, 404);
             }
             else {
@@ -222,10 +233,10 @@ Registrar.prototype = {
         }
 
         if (params.registrationId === undefined) {
-            this.registrationStore.deleteAllRegistrationEntities(params.userId, callback);
+            this.registrationStore.deleteAllRegistrations(params.userId, callback);
         }
         else {
-            this.registrationStore.deleteRegistrationEntity(params.userId, params.registrationId, callback);
+            this.registrationStore.deleteRegistration(params.userId, params.registrationId, callback);
         }
     }
 };
