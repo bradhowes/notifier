@@ -42,7 +42,7 @@ TemplateStore.prototype = {
         var query = azure.TableQuery
             .select()
             .from(this.tableName)
-            .where("PartitionKey eq ?", eventId.toString());
+            .where("PartitionKey eq ?", this.makePartitionKey(eventId.toString()));
 
         this.store.queryEntities(query, function(err, found)
         {
@@ -63,7 +63,7 @@ TemplateStore.prototype = {
             var foundMap = {};
             for (var foundIndex in found) {
                 entity = found[foundIndex];
-                bits = self.getKeyBits(entity.RowKey);
+                bits = self.getKeyBits(new Buffer(entity.RowKey, 'base64').toString('ascii'));
                 routeName = bits[0];
                 templateVersion = bits[1];
                 templateLanguage = bits[2];
@@ -153,7 +153,8 @@ TemplateStore.prototype = {
 
         log.BEGIN(eventId, notificationId, routeName, templateVersion, templateLanguage, service, content);
 
-        var partitionKey = eventId.toString();
+        var partitionKey = self.makePartitionKey(eventId.toString());
+        log.debug('partitionKey:', partitionKey);
         var rowKey = self.makeRowKey(notificationId, routeName, templateVersion, templateLanguage, service);
         log.debug('rowKey:', rowKey);
 
@@ -186,14 +187,15 @@ TemplateStore.prototype = {
                              callback) {
         var self = this;
         var log = self.log.child('removeTemplate');
-
         log.BEGIN(eventId, notificationId, routeName, templateVersion, templateLanguage, service);
 
+        var partitionKey = self.makePartitionKey(eventId.toString());
+        log.debug('partitionKey:', partitionKey);
         var rowKey = self.makeRowKey(notificationId, routeName, templateVersion, templateLanguage, service);
         log.debug('rowKey:', rowKey);
 
         var templateEntity = {
-            'PartitionKey': eventId.toString(),
+            'PartitionKey': partitionKey,
             'RowKey': rowKey
         };
 
@@ -213,10 +215,18 @@ TemplateStore.prototype = {
     },
 
     /**
+     * Make a table store partition key.
+     */
+    makePartitionKey: function(value) {
+        return new Buffer(value).toString('base64');
+    },
+
+    /**
      * Make a table store row key
      */
     makeRowKey: function(notificationId, routeName, templateVersion, templateLanguage, service) {
-        return this.makeKey(routeName, templateVersion, templateLanguage, service) + notificationId.toString();
+        return new Buffer(this.makeKey(routeName, templateVersion, templateLanguage, service) +
+                          notificationId.toString()).toString('base64');
     },
 
     /**

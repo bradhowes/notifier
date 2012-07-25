@@ -76,6 +76,7 @@ Notifier.prototype = {
     postNotification: function(req, res) {
         var self = this;
         var log = self.log.child('postNotification');
+        var result = {count: 0};
         log.BEGIN();
 
         var params = {
@@ -117,25 +118,30 @@ Notifier.prototype = {
 
             if (registrations.length === 0) {
                 log.info('no registrations exist for user', params.userId);
-                res.send(null, null, 202);
+                res.send(result, 202);
+                var end = new Date();
+                var duration = end.getTime() - start.getTime();
+                log.END(duration, 'msecs');
                 return;
             }
 
             // Find the templates that apply for the given registrations
             self.templateStore.findTemplates(params.eventId, registrations, function(err, matches) {
                 var token = null;
-
                 if (err !== null) {
                     log.error('TemplateStore.findTemplates error:', err);
-                    res.send(null, null, 500);
+                    var end = new Date();
+                    var duration = end.getTime() - start.getTime();
+                    log.END(duration, 'msecs');
                     return;
                 }
 
                 if (matches.length === 0) {
                     log.info('TemplateStore.findTemplates returned no matches');
-                    res.send(null, null, 202);
-                    return;
                 }
+
+                result.count = matches.length;
+                res.send(result, 202);
 
                 var callback = function (result) {
                     log.debug('callback:', params.userId, token, result);
@@ -159,8 +165,6 @@ Notifier.prototype = {
 
                 var end = new Date();
                 var duration = end.getTime() - start.getTime();
-
-                res.send(null, null, 202);
                 log.END(duration, 'msecs');
             });
         });

@@ -26,10 +26,11 @@ suite.addBatch({
 suite.addBatch({
     'add registration': {
         topic: function () {
-            store.updateRegistrationEntity('br.howes', 'myregistration', '1.0', 'en', 'wns',
-                                           [{'name':'*',
-                                             'token':'123',
-                                             'secondsToLive':86400}], this.callback);
+            store.updateRegistration({userId:'br.howes', registrationId:'myregistration', templateVersion:'1.0',
+                                      templateLanguage:'en-us', service:'wns',
+                                      routes:[{'name':'*',
+                                               'token':'123',
+                                               'secondsToLive':86400}]}, this.callback);
         },
         'succeeds without error': function (err, entity) {
             assert.isNull(err);
@@ -43,10 +44,9 @@ suite.addBatch({
 suite.addBatch({
     'fetch registrations': {
         topic: function () {
-            store.getRegistrations('br.howes', this.callback);
+            store.getRegistrations('br.howes', null, this.callback);
         },
         'succeeds without error': function (err, found) {
-            //                    console.log('store.getRegistrations: err:', err, "found:", found);
             assert.isNull(err);
         },
         'found 1 match': function (err, found) {
@@ -56,7 +56,7 @@ suite.addBatch({
             var registration = found[0];
             assert.equal(registration.registrationId, 'myregistration');
             assert.equal(registration.templateVersion, '1.0');
-            assert.equal(registration.templateLanguage, 'en');
+            assert.equal(registration.templateLanguage, 'en-us');
             assert.equal(registration.service, 'wns');
             var route = registration.routes[0];
             assert.equal(route.name, '*');
@@ -68,7 +68,7 @@ suite.addBatch({
 suite.addBatch({
     'delete registration': {
         topic: function () {
-            store.deleteRegistrationEntity('br.howes', 'myregistration', this.callback);
+            store.deleteRegistration('br.howes', 'myregistration', this.callback);
         },
         'succeeds without error': function (err, found) {
             assert.isNull(err);
@@ -79,12 +79,13 @@ suite.addBatch({
 suite.addBatch({
     'then fetch non-existant registration': {
         topic: function () {
-            store.getRegistrations('br.howes', this.callback);
+            store.getRegistrations('br.howes', null, this.callback);
         },
         'succeeds without error': function (err, found) {
             assert.isNull(err);
         },
         'found 0 matches': function (err, found) {
+            console.log('@@@', found);
             assert.equal(found.length, 0);
         }
     }

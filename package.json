@@ -4,6 +4,7 @@
     "author": "Brad Howes <bhowes@microsoft.com>",
     "version": "1.0.0",
     "dependencies": {
+        "async": "0.1.x",
         "apn": "1.2.x",
         "azure": "0.5.x",
         "express": "2.5.x",

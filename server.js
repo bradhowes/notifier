@@ -5,9 +5,9 @@
  */
 module.exports = Server;
 
-var config = require('./config');
 var express = require('express');
 
+var config = require('./config');
 var APNs = require('./APNs');
 var GCM = require('./GCM');
 var Notifier = require('./notifier');
@@ -66,7 +66,7 @@ Server.prototype = {
                 errors[key] = err;
             }
 
-            if (awaiting == 0) {
+            if (awaiting === 0) {
                 clog.info('creating notifier');
                 var senders = {'wns': new WNS(), 'apns': new APNs(), 'gcm': new GCM()};
                 var generator = new PayloadGenerator();

@@ -1,5 +1,7 @@
 .~
 .c9revisions
 *.log
+README.html
+/doc
 /private
 /node_modules

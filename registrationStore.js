@@ -6,6 +6,7 @@
 module.exports = RegistrationStore;
 
 var azure = require('azure');
+var async = require('async');
 
 /**
  * RegistrationStore constructor.
@@ -81,13 +82,13 @@ RegistrationStore.prototype = {
      * @private
      */
     _deleteRegistrationEntity: function (partitionKey, rowKey, callback) {
-        var log = this.log.child('deleteRegistrationEntity');
-        log.BEGIN(partitionKey, rowKey);
-        var registrationEntity = {
-            'PartitionKey': partitionKey,
-            'RowKey': rowKey
+        var log = this.log.child('_deleteRegistrationEntity');
+        log.BEGIN('partitionKey:', partitionKey, 'rowKey:', rowKey);
+        var entity = {
+            PartitionKey: partitionKey,
+            RowKey: rowKey
         };
-        this.store.deleteEntity(this.tableName, registrationEntity,
+        this.store.deleteEntity(this.tableName, entity,
                                 function (err) {
                                     callback(err);
                                     log.END(err);
@@ -99,12 +100,12 @@ RegistrationStore.prototype = {
         log.BEGIN(tokens, typeof tokens);
 
         var registration = {
-            'registrationId': new Buffer(registrationEntity.RowKey, 'base64').toString('ascii'),
-            'templateVersion': registrationEntity.TemplateVersion.substr(1),
-            'templateLanguage': registrationEntity.TemplateLanguage,
-            'service': registrationEntity.Service,
-            'expiration': registrationEntity.Expiration,
-            'routes': null
+            registrationId: new Buffer(registrationEntity.RowKey, 'base64').toString('ascii'),
+            templateVersion: registrationEntity.TemplateVersion.substr(1),
+            templateLanguage: registrationEntity.TemplateLanguage,
+            service: registrationEntity.Service,
+            expiration: registrationEntity.Expiration,
+            routes: null
         };
 
         var now = new Date();
@@ -218,15 +219,15 @@ RegistrationStore.prototype = {
      *   - err: if not null, definition of the error that took place
      *   - found: if no error, the existing registration entity
      */
-    updateRegistrationEntity: function(registration, callback) {
+    updateRegistration: function(registration, callback) {
         var self = this;
-        var log = self.log.child('updateRegistrationEntity');
+        var log = self.log.child('updateRegistration');
         log.BEGIN(registration);
 
-        var partitionKey = new Buffer(registration.userId).toString('base64');
+        var partitionKey = this.makePartitionKey(registration.userId);
         log.debug('partitionKey:', partitionKey);
 
-        var rowKey = new Buffer(registration.registrationId).toString('base64');
+        var rowKey = this.makeRowKey(registration.registrationId);
         log.debug('rowKey:', rowKey);
 
         self.store.queryEntity(
@@ -293,9 +294,14 @@ RegistrationStore.prototype = {
      * @private
      */
     deleteRegistration: function (userId, registrationId, callback) {
-        var log = this.log.child('deleteRegistrationEntity');
+        var log = this.log.child('deleteRegistration');
         log.BEGIN(userId, registrationId);
-        this._deleteRegistrationEntity(makePartitionKey(userId), makeRowKey(registrationId), callback);
+        this._deleteRegistrationEntity(this.makePartitionKey(userId),
+                                       this.makeRowKey(registrationId),
+                                       function (err) {
+                                           callback(err);
+                                           log.END(err);
+                                       });
     },
 
     /**
@@ -313,26 +319,40 @@ RegistrationStore.prototype = {
         var log = self.log.child('deleteAllRegistrations');
         log.BEGIN(userId);
 
-        var partitionKey = self.makePartitionKey(userId);
+        var partitionKey = this.makePartitionKey(userId);
 
         self._getAllRegistrationEntities(
             partitionKey, function (err, registrationEntities) {
+                var rowKey = null;
+                var errors = null;
+                var awaiting = registrationEntities.length;
+
                 if (err || registrationEntities.length === 0) {
                     callback(err);
                 }
                 else {
-                    for (var index in registrationEntities) {
-                        var rowKey = registrationEntities[index].RowKey;
-                        self._deleteRegistrationEntity(
-                            partitionKey, rowKey, function (err) {
-                                if (err) {
-                                    log.error('deleteRegistrationEntity error:', err);
-                                }
-                            });
-                    }
-                    callback(null);
+                    async.map(registrationEntities,
+                              // Function to invoke for each entity
+                              function (entity, entityCallback) {
+                                  rowKey = entity.RowKey;
+                                  log.debug('deleting registration', rowKey);
+                                  self._deleteRegistrationEntity(
+                                      partitionKey, rowKey, function (err) {
+                                          if (err) {
+                                              if (errors === null) {
+                                                  errors = {};
+                                              }
+                                              errors[rowKey] = err;
+                                          }
+                                          entityCallback(null, null);
+                                      });
+                              },
+                              // Function to call once all per-entity callbacks have been invoked
+                             function (err, results) {
+                                 callback(errors);
+                                 log.END();
+                             });
                 }
-                log.END();
             });
     }
 };

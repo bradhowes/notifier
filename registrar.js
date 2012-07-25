@@ -106,7 +106,7 @@ Registrar.prototype = {
         }
 
         var start = new Date();
-        this.registrationStore.getRegistrations(params.userId, function (err, regs) {
+        this.registrationStore.getRegistrations(params.userId, null, function (err, regs) {
             var end = new Date();
             var duration = end.getTime() - start.getTime();
             if (err !== null || typeof(regs) === 'undefined' || regs.length === 0) {
@@ -162,12 +162,12 @@ Registrar.prototype = {
         }
 
         var start = new Date();
-        this.registrationStore.updateRegistrationEntity(params, function (err, registrationEntity)
+        this.registrationStore.updateRegistration(params, function (err, registrationEntity)
         {
             var end = new Date();
             var duration = end.getTime() - start.getTime();
             if (err) {
-                log.error('RegistrationStore.updateRegistrationEntity error:', err);
+                log.error('RegistrationStore.updateRegistration error:', err);
                 res.send(null, null, 404);
             }
             else {
@@ -223,7 +223,7 @@ Registrar.prototype = {
             var end = new Date();
             var duration = end.getTime() - start.getTime();
             if (err) {
-                log.error('RegistrationStore.deleteAllRegistrations error:', err);
+                log.error('RegistrationStore.deleteRegistrations error:', err);
                 res.send(null, null, 404);
             }
             else {
