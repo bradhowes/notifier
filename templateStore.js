@@ -3,7 +3,7 @@
  */
 module.exports = TemplateStore;
 
-var azure = require("azure");
+var azure = require('azure');
 
 /**
  * Initializes a new TemplateStore object. A TemplateStore reads from and writes to an Azure table store.
@@ -26,6 +26,10 @@ function TemplateStore(tableName, callback) {
                                           log.END(err, b, c);
                                           if (callback) callback(err);
                                       });
+
+    this.findKeyGenerators = [this.makeKey.bind(this),
+                              this.makeBaseLanguageKey.bind(this),
+                              this.makeDefaultLanguageKey.bind(this) ];
 }
 
 TemplateStore.prototype = {
@@ -42,7 +46,7 @@ TemplateStore.prototype = {
         var query = azure.TableQuery
             .select()
             .from(this.tableName)
-            .where("PartitionKey eq ?", this.makePartitionKey(eventId.toString()));
+            .where('PartitionKey eq ?', this.makePartitionKey(eventId.toString()));
 
         this.store.queryEntities(query, function(err, found)
         {
@@ -62,14 +66,15 @@ TemplateStore.prototype = {
 
             var foundMap = {};
             for (var foundIndex in found) {
+                log.debug('found:', found);
                 entity = found[foundIndex];
-                bits = self.getKeyBits(new Buffer(entity.RowKey, 'base64').toString('ascii'));
-                routeName = bits[0];
-                templateVersion = bits[1];
-                templateLanguage = bits[2];
-                service = bits[3];
-                key = self.makeKey(routeName, templateVersion, templateLanguage, service);
-                foundMap[key] = entity;
+                key = self.makeKey(entity.Route, entity.TemplateVersion, entity.TemplateLanguage, entity.Service);
+                bits = foundMap[key];
+                if (! bits) {
+                    bits = [];
+                    foundMap[key] = bits;
+                }
+                bits.push(entity);
             }
 
             matches = [];
@@ -82,57 +87,25 @@ TemplateStore.prototype = {
                 for (routeIndex in routes) {
                     route = routes[routeIndex];
                     routeName = route.name;
-                    key = self.makeKey(routeName, templateVersion, templateLanguage, service);
-
-                    log.debug('looking for:', key);
-                    var match = foundMap[key];
-                    if (match !== undefined) {
-                        match = {
-                            'service': service,
-                            'token': route.token,
-                            'template': match.Content
-                        };
-
-                        log.debug('exact match:', match);
-                        matches.push(match);
-                        continue;
-                    }
-
-                    var pos = templateLanguage.indexOf('-');
-                    if (pos > 0) {
-
-                        // Strip off language specialization and search.
-                        key = self.makeKey(routeName, templateVersion, templateLanguage.substr(0, pos), service);
-                        log.debug('looking for:', key);
-                        match = foundMap[key];
-                        if (match !== undefined) {
-                            match = {
-                                'service': service,
-                                'token': route.token,
-                                'template': match.Content
-                            };
-
-                            log.debug('general language match:', match);
-                            matches.push(match);
+                    for (var genIndex in self.findKeyGenerators) {
+                        key = self.findKeyGenerators[genIndex](routeName, templateVersion, templateLanguage,
+                                                               service);
+                        log.debug('looking for key:', key);
+                        if (key === null) {
                             continue;
                         }
-                    }
 
-                    if (templateLanguage.substr(0, pos) != 'en') {
-
-                        // Try for default English match
-                        key = self.makeKey(routeName, templateVersion, 'en', service);
-                        log.debug('looking for:', key);
-                        match = foundMap[key];
-                        if (match !== undefined) {
-                            match = {
-                                'service': service,
-                                'token': route.token,
-                                'template': match.Content
-                            };
-
-                            log.debug('en language match:', match);
-                            matches.push(match);
+                        var matched = foundMap[key];
+                        if (matched !== undefined) {
+                            for (var matchIndex in matched) {
+                                var match = {
+                                    'service': service,
+                                    'token': route.token,
+                                    'template': JSON.parse(matched[matchIndex].Content)
+                                };
+                                log.debug('found match:', match);
+                                matches.push(match);
+                            }
                         }
                     }
                 }
@@ -146,26 +119,25 @@ TemplateStore.prototype = {
     /**
      * Add a new template to the table store.
      */
-    addTemplate: function(eventId, notificationId, routeName, templateVersion, templateLanguage, service, content,
-                          callback) {
+    addTemplate: function(params, callback) {
         var self = this;
         var log = self.log.child('addTemplate');
+        log.BEGIN(params);
 
-        log.BEGIN(eventId, notificationId, routeName, templateVersion, templateLanguage, service, content);
-
-        var partitionKey = self.makePartitionKey(eventId.toString());
+        var partitionKey = self.makePartitionKey(params.eventId.toString());
         log.debug('partitionKey:', partitionKey);
-        var rowKey = self.makeRowKey(notificationId, routeName, templateVersion, templateLanguage, service);
+        var rowKey = self.makeRowKey(params.notificationId, params.routeName, params.templateVersion,
+                                     params.templateLanguage, params.service);
         log.debug('rowKey:', rowKey);
 
         var templateEntity = {
             'PartitionKey': partitionKey,
             'RowKey': rowKey,
-            'RouteName': routeName.toString(),
-            'TemplateVersion': templateVersion.toString(),
-            'TemplateLanguage': templateLanguage.toString(),
-            'Service': service.toString(),
-            'Content': content
+            'Route': params.route.toString(),
+            'TemplateVersion': params.templateVersion.toString(),
+            'TemplateLanguage': params.templateLanguage.toString(),
+            'Service': params.service.toString(),
+            'Content': JSON.stringify(params.template)
         };
 
         self.store.updateEntity(self.tableName, templateEntity, function(err, tmp) {
@@ -183,15 +155,15 @@ TemplateStore.prototype = {
     /**
      * Remove a template from the table store.
      */
-    removeTemplate: function(eventId, notificationId, routeName, templateVersion, templateLanguage, service,
-                             callback) {
+    removeTemplate: function(params, callback) {
         var self = this;
         var log = self.log.child('removeTemplate');
-        log.BEGIN(eventId, notificationId, routeName, templateVersion, templateLanguage, service);
+        log.BEGIN(params);
 
-        var partitionKey = self.makePartitionKey(eventId.toString());
+        var partitionKey = self.makePartitionKey(params.eventId.toString());
         log.debug('partitionKey:', partitionKey);
-        var rowKey = self.makeRowKey(notificationId, routeName, templateVersion, templateLanguage, service);
+        var rowKey = self.makeRowKey(params.notificationId, params.routeName, params.templateVersion,
+                                     params.templateLanguage, params.service);
         log.debug('rowKey:', rowKey);
 
         var templateEntity = {
@@ -212,6 +184,27 @@ TemplateStore.prototype = {
      */
     makeKey: function(routeName, templateVersion, templateLanguage, service) {
         return routeName + '_' + templateVersion + '_' + templateLanguage + '_' + service + '_';
+    },
+
+    /**
+     * Make a base-language template key
+     */
+    makeBaseLanguageKey: function(routeName, templateVersion, templateLanguage, service) {
+        var pos = templateLanguage.indexOf('-');
+        if (pos > 0) {
+            return this.makeKey(routeName, templateVersion, templateLanguage.substr(0, pos), service);
+        }
+        return null;
+    },
+
+    /**
+     * Make a base-language template key
+     */
+    makeDefaultLanguageKey: function(routeName, templateVersion, templateLanguage, service) {
+        if (templateLanguage.substr(0, 2) !== 'en'){
+            return this.makeKey(routeName, templateVersion, 'en', service);
+        }
+        return null;
     },
 
     /**

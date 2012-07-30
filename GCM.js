@@ -29,18 +29,13 @@ GCM.prototype = {
     /**
      * Send a notification to a client via GCM. See http://developer.android.com/guide/google/gcm/gcm.html
      *
-     * @param {String} token the identifier of the client to notify
-     *
-     * @param {String} content the notification payload to send
-     *
-     * @param {Function} callback function to call when GCM returns a response.
+     * @param {NotificationRequest} request the request to send out
      */
-    sendNotification: function(token, content, callback) {
+    sendNotification: function(request, removeCallback) {
         var log = this.log.child('sendNotification');
-        log.BEGIN(token, content);
+        log.BEGIN(request);
 
-        content = JSON.parse(content);
-
+        var content = request.content;
         content.registration_ids = [token];
         log.debug(content);
 
@@ -61,11 +56,10 @@ GCM.prototype = {
             function(err, resp, body) {
                 if (err !== null) {
                     log.error("POST error:", err);
-                    callback({"retry":true, "invalidToken":false});
                 }
                 else {
-                    log.info("POST response:", resp.statusCode);
-                    callback({"retry":false, "invalidToken":resp.statusCode == 410});
+                    log.info('POST response:', resp.statusCode);
+                    log.info('BODY:', body);
                 }
                 log.END();
             }

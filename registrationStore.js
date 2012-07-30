@@ -244,28 +244,27 @@ RegistrationStore.prototype = {
                     'Routes': null
                 };
 
-                var now = new Date();
+                var now = Date.now();
                 var oldest = now;
                 var routes = registration.routes;
 
-                now = now.getTime();
                 for (var index in registration.routes) {
                     var route = routes[index];
-                    var expiration = new Date(now + route.secondsToLive * 1000);
+                    var expiration = now + route.secondsToLive * 1000;
                     if (oldest < expiration) {
                         oldest = expiration;
                     }
                     route = {
                         'Name': route.name,
                         'Token': route.token,
-                        'Expiration': expiration.toISOString()
+                        'Expiration': (new Date(expiration)).toISOString()
                     };
 
                     log.debug('new route:', route);
                     routes[index] = route;
                 }
 
-                registrationEntity.Expiration = oldest.toISOString();
+                registrationEntity.Expiration = (new Date(oldest)).toISOString();
                 registrationEntity.Routes = JSON.stringify(routes);
                 if (! found) {
                     self.store.insertEntity(self.tableName, registrationEntity, callback);

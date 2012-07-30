@@ -12,32 +12,50 @@ function makeQuery(obj) {
     return args.join("&");
 }
 
-var validRegistration = {
-    registrationId: 'myregistration',
+var validRegistration_WNS = {
+    registrationId: 'myregistration_WNS',
     templateVersion: '3.0',
     templateLanguage: 'en-us',
     service: 'wns',
     routes: [ { 'name': '*', 'token': '123', 'secondsToLive': 60 } ]
 };
 
-var validTemplate = {
+var validRegistration_APNS = {
+    registrationId: 'myregistration_APNS',
+    templateVersion: '3.0',
+    templateLanguage: 'en-us',
+    service: 'apns',
+    routes: [ { 'name': '*', 'token': '6aBSE3NLfNw9TwAEUgV+pHgeVU6eEWraSar9f4ycf98=', 'secondsToLive': 60 } ]
+};
+
+var validTemplate_WNS = {
     eventId: 200,
     notificationId: 100,
     templateVersion: '3.0',
     templateLanguage: 'en',
     route: '*',
     service: 'wns',
-    template: JSON.stringify(
-        {
-            kind: 'wns/badge',
-            text: '<?xml version="1.0" encoding="utf-8"?><badge value="3"/>'
-        }
-    )
+    template: {
+        kind: 'wns/badge',
+        content: '<?xml version="1.0" encoding="utf-8"?><badge value="@@B@@"/>'
+    }
+};
+
+var validTemplate_APNS = {
+    eventId: 200,
+    notificationId: 100,
+    templateVersion: '3.0',
+    templateLanguage: 'en',
+    route: '*',
+    service: 'apns',
+    template: {
+        content: '{"aps":{"alert":"Hello, @@A@@ World!","badge":@@B@@,"sound":"default"}}'
+    }
 };
 
 var validPost = {
     eventId: 200,
-    substitutions: {}
+    substitutions: {"A":"aye","B":"3"}
 };
 
 var invalidPost = {
@@ -78,17 +96,27 @@ suite.addBatch(
             'for a registration query': {
                 topic: pact.request(
                     {
-                        url:'/registrations/br.howes',
+                        url:'/registrations/br.howes2',
                         method: 'GET',
                         headers: {'Content-Type':'application/json'}
                     }
                 ),
                 'it should fail with NOT FOUND': pact.code(404)
             },
-            'for a template query': {
+            'for a WNS template query': {
                 topic: pact.request(
                     {
-                        url:'/templates?' + makeQuery(validTemplate),
+                        url:'/templates?' + makeQuery(validTemplate_WNS),
+                        method: 'GET',
+                        headers: {'Content-Type':'application/json'}
+                    }
+                ),
+                'it should fail with NOT FOUND': pact.code(404)
+            },
+            'for an APNs template query': {
+                topic: pact.request(
+                    {
+                        url:'/templates?' + makeQuery(validTemplate_APNS),
                         method: 'GET',
                         headers: {'Content-Type':'application/json'}
                     }
@@ -109,13 +137,24 @@ suite.addBatch(
                                   vows.callback(err, 4465);
                                   });
                 },
-            'new valid registration': {
+            'new valid WNS registration': {
                 topic: pact.request(
                     {
-                        url:'/registrations/br.howes',
+                        url:'/registrations/br.howes2',
                         method: 'POST',
                         headers: {'Content-Type':'application/json'},
-                        data: JSON.stringify(validRegistration)
+                        data: JSON.stringify(validRegistration_WNS)
+                    }
+                ),
+                'it should succeed with OK': pact.code(200)
+            },
+            'new valid APNs registration': {
+                topic: pact.request(
+                    {
+                        url:'/registrations/br.howes2',
+                        method: 'POST',
+                        headers: {'Content-Type':'application/json'},
+                        data: JSON.stringify(validRegistration_APNS)
                     }
                 ),
                 'it should succeed with OK': pact.code(200)
@@ -123,7 +162,7 @@ suite.addBatch(
             'invalid registration with missing registrationId': {
                 topic: pact.request(
                     {
-                        url:'/registrations/br.howes',
+                        url:'/registrations/br.howes2',
                         method: 'POST',
                         headers: {'Content-Type':'application/json'},
                         data: JSON.stringify({
@@ -138,7 +177,7 @@ suite.addBatch(
             'invalid registration with missing templateVersion': {
                 topic: pact.request(
                     {
-                        url:'/registrations/br.howes',
+                        url:'/registrations/br.howes2',
                         method: 'POST',
                         headers: {'Content-Type':'application/json'},
                         data: JSON.stringify({
@@ -153,7 +192,7 @@ suite.addBatch(
             'invalid registration with missing templateLanguage': {
                 topic: pact.request(
                     {
-                        url:'/registrations/br.howes',
+                        url:'/registrations/br.howes2',
                         method: 'POST',
                         headers: {'Content-Type':'application/json'},
                         data: JSON.stringify({
@@ -168,7 +207,7 @@ suite.addBatch(
             'invalid registration with missing service': {
                 topic: pact.request(
                     {
-                        url:'/registrations/br.howes',
+                        url:'/registrations/br.howes2',
                         method: 'POST',
                         headers: {'Content-Type':'application/json'},
                         data: JSON.stringify({
@@ -183,7 +222,7 @@ suite.addBatch(
             'invalid registration with missing route': {
                 topic: pact.request(
                     {
-                        url:'/registrations/br.howes',
+                        url:'/registrations/br.howes2',
                         method: 'POST',
                         headers: {'Content-Type':'application/json'},
                         data: JSON.stringify({
@@ -198,7 +237,7 @@ suite.addBatch(
             'invalid registration with empty route': {
                 topic: pact.request(
                     {
-                        url:'/registrations/br.howes',
+                        url:'/registrations/br.howes2',
                         method: 'POST',
                         headers: {'Content-Type':'application/json'},
                         data: JSON.stringify({
@@ -214,7 +253,7 @@ suite.addBatch(
             'invalid registration with invalid route': {
                 topic: pact.request(
                     {
-                        url:'/registrations/br.howes',
+                        url:'/registrations/br.howes2',
                         method: 'POST',
                         headers: {'Content-Type':'application/json'},
                         data: JSON.stringify({
@@ -227,13 +266,24 @@ suite.addBatch(
                     }),
                 'it should fail with BAD REQUEST': pact.code(400)
             },
-            'new valid template': {
+            'new valid WNS template': {
                 topic: pact.request(
                     {
                         url:'/templates',
                         method: 'POST',
                         headers: {'Content-Type':'application/json'},
-                        data: JSON.stringify(validTemplate)
+                        data: JSON.stringify(validTemplate_WNS)
+                    }
+                ),
+                'it should succeed with OK': pact.code(200)
+            },
+            'new valid APNs template': {
+                topic: pact.request(
+                    {
+                        url:'/templates',
+                        method: 'POST',
+                        headers: {'Content-Type':'application/json'},
+                        data: JSON.stringify(validTemplate_APNS)
                     }
                 ),
                 'it should succeed with OK': pact.code(200)
@@ -255,17 +305,27 @@ suite.addBatch(
             'for a registration query': {
                 topic: pact.request(
                     {
-                        url:'/registrations/br.howes',
+                        url:'/registrations/br.howes2',
                         method: 'GET',
                         headers: {'Content-Type':'application/json'}
                     }
                 ),
                 'it should succeed with OK': pact.code(200)
             },
-            'for a template query': {
+            'for a WNS template query': {
                 topic: pact.request(
                     {
-                        url:'/templates?' + makeQuery(validTemplate),
+                        url:'/templates?' + makeQuery(validTemplate_WNS),
+                        method: 'GET',
+                        headers: {'Content-Type':'application/json'}
+                    }
+                ),
+                'it should succeed with OK': pact.code(200)
+            },
+            'for an APNs template query': {
+                topic: pact.request(
+                    {
+                        url:'/templates?' + makeQuery(validTemplate_APNS),
                         method: 'GET',
                         headers: {'Content-Type':'application/json'}
                     }
@@ -289,7 +349,7 @@ suite.addBatch(
             'a valid post request': {
                 topic: pact.request(
                     {
-                        url:'/post/br.howes',
+                        url:'/post/br.howes2',
                         method: 'POST',
                         headers: {'Content-Type':'application/json'},
                         data: JSON.stringify(validPost)
@@ -297,16 +357,24 @@ suite.addBatch(
                 ),
                 'it should succeed with ACCEPTED': pact.code(202),
 
-                'is should return 1 match': function (err, res) {
+                'it should return 2 matches': function (err, res) {
                     assert.isNull(err);
                     assert.isObject(res);
-                    assert.equal(res.body.count, 1);
+                    assert.equal(res.body.count, 2);
+                }
+            },
+            'stay alive': {
+                topic: function () {
+                    setTimeout(this.callback, 5000);
+                },
+                'it should succeed': function (a, b) {
+                    console.log(arguments);
                 }
             },
             'an invalid post request': {
                 topic: pact.request(
                     {
-                        url:'/post/br.howes',
+                        url:'/post/br.howes2',
                         method: 'POST',
                         headers: {'Content-Type':'application/json'},
                         data: JSON.stringify({})
@@ -317,7 +385,7 @@ suite.addBatch(
             'a missing post request': {
                 topic: pact.request(
                     {
-                        url:'/post/br.howes',
+                        url:'/post/br.howes2',
                         method: 'POST',
                         headers: {'Content-Type':'application/json'},
                         data: JSON.stringify(invalidPost)
@@ -325,7 +393,7 @@ suite.addBatch(
                 ),
                 'it should succeed with ACCEPTED': pact.code(202),
 
-                'is should return 0 matches': function (err, res) {
+                'it should return 0 matches': function (err, res) {
                     assert.isNull(err);
                     assert.isObject(res);
                     assert.equal(res.body.count, 0);
@@ -348,20 +416,31 @@ suite.addBatch(
             'deleting previous registration': {
                 topic: pact.request(
                     {
-                        url:'/registrations/br.howes',
+                        url:'/registrations/br.howes2',
                         method: 'DELETE',
                         headers: {'Content-Type':'application/json'}
                     }
                 ),
                 'it should succeed with NO DATA': pact.code(204)
             },
-            'deleting previous template': {
+            'deleting previous WNS template': {
                 topic: pact.request(
                     {
                         url:'/templates',
                         method: 'DELETE',
                         headers: {'Content-Type':'application/json'},
-                        data: JSON.stringify(validTemplate)
+                        data: JSON.stringify(validTemplate_WNS)
+                    }
+                ),
+                'it should succeed with NO DATA': pact.code(204)
+            },
+            'deleting previous APNs template': {
+                topic: pact.request(
+                    {
+                        url:'/templates',
+                        method: 'DELETE',
+                        headers: {'Content-Type':'application/json'},
+                        data: JSON.stringify(validTemplate_APNS)
                     }
                 ),
                 'it should succeed with NO DATA': pact.code(204)
@@ -383,17 +462,27 @@ suite.addBatch(
             'for a registration query': {
                 topic: pact.request(
                     {
-                        url:'/registrations/br.howes',
+                        url:'/registrations/br.howes2',
                         method: 'GET',
                         headers: {'Content-Type':'application/json'}
                     }
                 ),
                 'it should fail with NOT FOUND': pact.code(404)
             },
-            'for a template query': {
+            'for a WNS template query': {
                 topic: pact.request(
                     {
-                        url:'/templates?' + makeQuery(validTemplate),
+                        url:'/templates?' + makeQuery(validTemplate_WNS),
+                        method: 'GET',
+                        headers: {'Content-Type':'application/json'}
+                    }
+                ),
+                'it should fail with NOT FOUND': pact.code(404)
+            },
+            'for an APNs template query': {
+                topic: pact.request(
+                    {
+                        url:'/templates?' + makeQuery(validTemplate_APNS),
                         method: 'GET',
                         headers: {'Content-Type':'application/json'}
                     }

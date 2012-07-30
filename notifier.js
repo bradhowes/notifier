@@ -7,6 +7,7 @@ module.exports = Notifier;
 
 var Model = require('model.js');
 var PostTracker = require('./postTracker');
+var NotificationRequest = require('./notificationRequest');
 
 /**
  * Notifier constructor
@@ -60,7 +61,7 @@ function Notifier(templateStore, registrationStore, generator, senders) {
 }
 
 /**
- * APNs prototype.
+ * Notifier prototype.
  *
  * Defines the methods available to an APNs instance.
  */
@@ -101,8 +102,8 @@ Notifier.prototype = {
             params.substitutions = substitutions;
         }
 
-        var start = new Date();
-        log.debug('start:', start.toUTCString());
+        var start = Date.now();
+        log.debug('start:', start);
 
         var sequenceId = ++this.sequenceId;
         substitutions['SEQUENCE_ID'] = sequenceId;
@@ -119,8 +120,7 @@ Notifier.prototype = {
             if (registrations.length === 0) {
                 log.info('no registrations exist for user', params.userId);
                 res.send(result, 202);
-                var end = new Date();
-                var duration = end.getTime() - start.getTime();
+                var duration = Date.now() - start;
                 log.END(duration, 'msecs');
                 return;
             }
@@ -130,8 +130,7 @@ Notifier.prototype = {
                 var token = null;
                 if (err !== null) {
                     log.error('TemplateStore.findTemplates error:', err);
-                    var end = new Date();
-                    var duration = end.getTime() - start.getTime();
+                    var duration = Date.now() - start;
                     log.END(duration, 'msecs');
                     return;
                 }
@@ -143,28 +142,25 @@ Notifier.prototype = {
                 result.count = matches.length;
                 res.send(result, 202);
 
-                var callback = function (result) {
+                var removeCallback = function () {
                     log.debug('callback:', params.userId, token, result);
-                    if (result.invalidToken) {
-                        self.registrationStore.deleteRegistrationEntity(
-                            params.userId, token,
-                            function (err) {
-                                log.error('deliverCallback:', err);
-                            });
-                    }
+                    self.registrationStore.deleteRegistrationEntity(params.userId, token,
+                                                                    function (err) {
+                                                                        log.error('removeCallback:', err);
+                                                                    });
                 };
 
                 // For each template, generate a notification payload and send it on its way.
                 for (var index in matches) {
                     var match = matches[index];
                     var template = match.template;
-                    var content = self.generator.transform(template, params.substitutions);
+                    template.content = self.generator.transform(template.content, params.substitutions);
                     token = match.token;
-                    self.deliver(match.service, match.token, content, callback);
+                    self.deliver(match.service, new NotificationRequest(params.userId, token, template, 30),
+                                removeCallback);
                 }
 
-                var end = new Date();
-                var duration = end.getTime() - start.getTime();
+                var duration = Date.now() - start;
                 log.END(duration, 'msecs');
             });
         });
@@ -199,14 +195,12 @@ Notifier.prototype = {
      *
      * @param {string} service the notification service tag
      *
-     * @param {string} token the client token used for notification delivery
-     *
-     * @param {string} content what to send as a notification payload
+     * @param {NotificationRequest} request description of the request to send
      *
      * @param {Function} callback function to call with the results of the notification delivery. Takes one argument,
      * an object with two attributes: retry and invalidToken.
      */
-    deliver: function(service, token, content, callback) {
-        this.senders[service].sendNotification(token, content, callback);
+    deliver: function(service, request, removeCallback) {
+        this.senders[service].sendNotification(request, removeCallback);
     }
 };

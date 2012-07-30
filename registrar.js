@@ -105,10 +105,9 @@ Registrar.prototype = {
             return;
         }
 
-        var start = new Date();
+        var start = Date.now();
         this.registrationStore.getRegistrations(params.userId, null, function (err, regs) {
-            var end = new Date();
-            var duration = end.getTime() - start.getTime();
+            var duration = Date.now() - start;
             if (err !== null || typeof(regs) === 'undefined' || regs.length === 0) {
                 if (err) log.error('error:', err);
                 log.info('no registrations found');
@@ -161,11 +160,10 @@ Registrar.prototype = {
             return;
         }
 
-        var start = new Date();
+        var start = Date.now();
         this.registrationStore.updateRegistration(params, function (err, registrationEntity)
         {
-            var end = new Date();
-            var duration = end.getTime() - start.getTime();
+            var duration = Date.now() - start;
             if (err) {
                 log.error('RegistrationStore.updateRegistration error:', err);
                 res.send(null, null, 404);
@@ -217,11 +215,9 @@ Registrar.prototype = {
             return;
         }
 
-        var start = new Date();
-
+        var start = Date.now();
         function callback(err) {
-            var end = new Date();
-            var duration = end.getTime() - start.getTime();
+            var duration = Date.now() - start;
             if (err) {
                 log.error('RegistrationStore.deleteRegistrations error:', err);
                 res.send(null, null, 404);

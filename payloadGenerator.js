@@ -44,7 +44,8 @@ PayloadGenerator.prototype = {
      */
     transform: function(template, substitutions) {
         var log = this.log.child('transform');
-        log.BEGIN(substitutions);
+
+        log.BEGIN(template, substitutions);
 
         if (! substitutions) {
             substitutions = {};
@@ -66,6 +67,7 @@ PayloadGenerator.prototype = {
             log.debug('substituting with', value);
             template = template.replace(match[0], value);
         }
+
         return template;
     }
 };

@@ -84,19 +84,14 @@ WNS.prototype = {
      *
      * @param {Function} callback function to call when WNS returns a response.
      */
-    sendNotification: function(token, content, callback) {
+    sendNotification: function(req, deleteCallback) {
         var log = this.log.child('sendNotification');
-        log.BEGIN(token);
-
-        content = JSON.parse(content);
-
-        log.debug('content.kind:', content.kind);
-
+        log.BEGIN(req);
         this.validateAccessToken(
             function(err, accessToken) {
                 var headers = {
                     'Content-Type': 'text/xml',
-                    'X-WNS-Type': content.kind,
+                    'X-WNS-Type': req.content.kind,
                     'X-WNS-RequestForStatus': 'true',
                     'Authorization': 'Bearer ' + accessToken,
                     'Host': 'cloud.notify.windows.com'
@@ -104,18 +99,19 @@ WNS.prototype = {
                 request(
                     {
                         'method': 'POST',
-                        'uri': token,
-                        'body': content.text,
+                        'uri': req.token,
+                        'body': req.content.text,
                         'headers': headers
                     },
                     function(err, resp, body) {
                         if (err !== null) {
                             log.error("POST error:", err);
-                            callback({"retry":true, "invalidToken":false});
                         }
                         else {
                             log.info("POST response:", resp.statusCode);
-                            callback({"retry":false, "invalidToken":resp.statusCode == 410});
+                            if (resp.statusCode === 410) {
+                                deleteCallback();
+                            }
                         }
                         log.END();
                     }

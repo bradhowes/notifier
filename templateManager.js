@@ -16,7 +16,7 @@ var Model = require('model.js');
  * @param {TemplateStore} templateStore the TemplateStore instance to rely on
  */
 function TemplateManager(templateStore) {
-    this.log = require('./config').log('templateManager');
+    this.log = require('./config').log('TemplateManager');
     this.templateStore = templateStore;
 
     this.FindKeyModel = Model.extend(
@@ -35,9 +35,23 @@ function TemplateManager(templateStore) {
         }
     );
 
+    this.TemplateContentModel = Model.extend(
+        {
+            content: {required:true, type:'string'}
+        }
+    );
+
     this.TemplateDefinitionModel = this.TemplateKeyModel.extend(
         {
-            template: {required:true, type:'string', minlength:1}
+            template: {required:true, type:'templateContent'}
+        },
+        {
+            types:{
+                templateContent:function (value) {
+                    if (this.TemplateContentModel.validate(value) !== null) return null;
+                    return value;
+                }.bind(this)
+            }
         }
     );
 }
@@ -69,13 +83,10 @@ TemplateManager.prototype = {
             return;
         }
 
-        var start = new Date();
-        this.templateStore.addTemplate(params.eventId, params.notificationId, params.route, params.templateVersion,
-                                       params.templateLanguage, params.service, params.template,
-                                       function (err, templateEntity)
+        var start = Date.now();
+        this.templateStore.addTemplate(params, function (err, templateEntity)
         {
-            var end = new Date();
-            var duration = end.getTime() - start.getTime();
+            var duration = Date.now() - start;
             if (err) {
                 log.error('TemplateStore.addTemplate error:', err);
                 res.send(null, null, 500);
@@ -122,11 +133,10 @@ TemplateManager.prototype = {
             'routes': [ {'name':params.route, 'token':''} ]
         };
 
-        var start = new Date();
+        var start = Date.now();
         this.templateStore.findTemplates(params.eventId, [reg], function (err, templates)
         {
-            var end = new Date();
-            var duration = end.getTime() - start.getTime();
+            var duration = Date.now() - start;
             if (err) {
                 log.error('TemplateStore.findTemplates error:', err);
                 res.send(null, null, 500);
@@ -172,12 +182,10 @@ TemplateManager.prototype = {
             return;
         }
 
-        var start = new Date();
-        this.templateStore.removeTemplate(params.eventId, params.notificationId, params.route, params.templateVersion,
-                                          params.templateLanguage, params.service, function (err, templateEntity)
+        var start = Date.now();
+        this.templateStore.removeTemplate(params, function (err, templateEntity)
         {
-            var end = new Date();
-            var duration = end.getTime() - start.getTime();
+            var duration = Date.now() - start;
             if (err !== null) {
                 log.error('TemplateStore.removeTemplate error:', err);
                 res.send(null, null, 404);

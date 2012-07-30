@@ -92,29 +92,23 @@ APNs.prototype = {
     /**
      * Send a notification payload to an APNs server.
      *
-     * @param {String} token the device token that identifies the client to notify
+     * @param {NotificationRequest} req attributes of the notification to send
      *
-     * @param {String} content the payload to send
-     *
-     * @param {Function} callback the function to invoke when the notification has been sent and/or when there is an
-     * error encountered.
+     * @param {Function} deleteCallback the function to invoke if the token in the NotificationReqeuest is found
+     * invalid
      */
-    sendNotification: function(token, content, callback) {
+    sendNotification: function(req, deleteCallback) {
         var log = this.log.child('sendNotification');
-        log.BEGIN(token, content);
-        try {
-            content = JSON.parse(content);
-        } catch (x) {
-            log.error('invalid JSON format for payload:', content);
-            callback(x);
-            return;
-        }
-
+        log.BEGIN(req);
         var notification = new apn.Notification();
-        notification.callback = callback;
-        notification.device = new apn.Device(new Buffer(token, 'base64'));
-        notification.payload = content;
-        log.debug('payload:', content);
+        notification.callback = function (state) {
+            if (state.invalidToken) {
+                deleteCallback();
+            }
+        };
+        notification.device = new apn.Device(new Buffer(req.token, 'base64'));
+        notification.payload = JSON.parse(req.content.content);
+        log.debug('payload:', req.content.content);
         this.connection.sendNotification(notification);
         log.END();
     }

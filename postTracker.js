@@ -35,7 +35,7 @@ function PostTracker(maxSize) {
  */
 PostTracker.Node = function(sequenceId, when) {
     this.sequence = sequenceId;
-    this.when = when.getTime();
+    this.when = when;
 };
 
 PostTracker.prototype = {
@@ -74,8 +74,8 @@ PostTracker.prototype = {
         var node = this.mapping[sequenceId];
         log.debug(node);
         if (node) {
-            var duration = when.getTime() - node.when;
-            log.debug('when.getTime:', when.getTime());
+            var duration = when - node.when;
+            log.debug('when.getTime:', when);
             log.info(sequenceId, ' receipt - duration:', duration, 'msecs');
         }
         log.END();
