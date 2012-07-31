@@ -3,8 +3,10 @@
  */
 module.exports = WNS;
 
-var config = require("./config");
-var request = require("request");
+var config = require('./config');
+var fs = require('fs');
+var HTTPRequest = require('./httpRequest');
+var Q = require('q');
 
 /**
  * WNS constructor.
@@ -16,8 +18,22 @@ var request = require("request");
 function WNS() {
     this.log = config.log('WNS');
     this.accessToken = null;
-    this.accessTokenTimestamp = null;
-    this.connection = null;
+    this.accessTokenLifetime = null;
+    this.pending = null;
+    fs.readFile(config.wns_access_token_cache, function (err, data) {
+        if (data) {
+            this.log.info('loading access token from', config.wns_access_token_cache);
+            try {
+                data = JSON.parse(data);
+                this.accessToken = data.accessToken;
+                this.accessTokenLifetime = data.accessTokenLifetime;
+                this.log.info('accessToken:', this.accessToken);
+                this.log.info('accessTokenLifetime:', this.accessTokenLifetime);
+            } catch (x) {
+                this.log.error('failed loading from', config.wns_access_token_cache);
+            }
+        }
+    }.bind(this));
 }
 
 /**
@@ -27,95 +43,120 @@ function WNS() {
  */
 WNS.prototype = {
 
-    /**
-     * Check for a valid access token. If none found, fetch a new one.
-     *
-     * @param {Function} callback function to call when a valid token is obtained
-     */
-    validateAccessToken: function (callback) {
-        if (this.accessToken === null) {
-            this.fetchAccessToken(callback);
-        }
-        else {
-            callback(undefined, this.accessToken);
-        }
-    },
-
-    /**
-     * Fetch a new access token from WNS.
-     *
-     * @param {Function} callback function to call when WNS returns a response.
-     */
-    fetchAccessToken: function(callback) {
-        var self = this;
-        var log = this.log.child('fetchAccessToken');
-        log.BEGIN();
-
-        var params = {
-            'grant_type': 'client_credentials',
-            'client_id': config.wns_package_sid,
-            'client_secret': config.wns_client_secret,
-            'scope': 'notify.windows.com'
-        };
-        request(
-            {
-                'method': 'POST',
-                'uri': config.wns_access_token_url,
-                'form': params
-            },
-            function(err, resp, body) {
-                if (err === null) {
-                    if (resp.statusCode == 200) {
-                        body = JSON.parse(body);
-                        self.accessToken = body.access_token;
-                    }
-                }
-                callback(undefined, self.accessToken);
-                log.END();
-            });
+    fetchAccessToken: function(params) {
+        return HTTPRequest(params,
+                           function(err, resp, body) {
+                               body = JSON.parse(body);
+                               return body.access_token;
+                           });
     },
 
     /**
      * Send a notification to a client via WNS.
      *
-     * @param {String} token the identifier of the client to notify
-     *
-     * @param {String} content the notification payload to send
-     *
-     * @param {Function} callback function to call when WNS returns a response.
+     * @param {NotificationRequest} req the identifier of the client to notify
      */
-    sendNotification: function(req, deleteCallback) {
+    sendNotification: function(req) {
         var log = this.log.child('sendNotification');
         log.BEGIN(req);
-        this.validateAccessToken(
-            function(err, accessToken) {
-                var headers = {
-                    'Content-Type': 'text/xml',
-                    'X-WNS-Type': req.content.kind,
-                    'X-WNS-RequestForStatus': 'true',
-                    'Authorization': 'Bearer ' + accessToken,
-                    'Host': 'cloud.notify.windows.com'
-                };
-                request(
-                    {
-                        'method': 'POST',
+
+        if (this.pending !== null) {
+            // *** We should have a pending accessToken refresh in-progress. If not, then we are sunk.
+            this.pending.push(req);
+            return;
+        }
+
+        if (this.accessToken === null || this.accessTokenLifetime < Date.now()) {
+            log.info('renewing access token:', this.accessToken);
+            this.pending = [];  // *** This keeps others from entering this branch until the renewal is done
+            this.pending.push(req);
+            this.fetchAccessToken({
+                                      'secondsToLive': 0,
+                                      'retryTimeout': 500,
+                                      'retryStatusCheck': function (statusCode) { return statusCode !== 200; },
+                                      'uri': config.wns_access_token_url,
+                                      'method': 'POST',
+                                      'form': {
+                                          'grant_type': 'client_credentials',
+                                          'scope': 'notify.windows.com',
+                                          'client_id': config.wns_package_sid,
+                                          'client_secret': config.wns_client_secret
+                                      }
+                                  })
+                .then(function (accessToken) {
+                          log.info('new accessToken:', accessToken);
+                          this.accessToken = accessToken;
+                          this.accessTokenLifetime = Date.now() + 24 * 60 * 60 * 1000;
+
+                          // Save to local cache in case we restart
+                          fs.writeFile(config.wns_access_token_cache,
+                                       JSON.stringify(
+                                       {
+                                           'accessToken': this.accessToken,
+                                           'accessTokenLifetime': this.accessTokenLifetime
+                                       }),
+                                      function (err) {
+                                          log.info('wrote accessToken to', config.wns_access_token_cache, err);
+                                      });
+
+                          // If we have pending notifications waiting on a valid access token, resubmit them now.
+                          var pending = this.pending;
+                          this.pending = null;
+                          pending.forEach(function (item) {
+                                              this.sendNotification(item);
+                                          }.bind(this));
+                          return accessToken;
+                      }.bind(this))
+                .end();
+            return;
+        }
+
+        // Post the notification now that we have a valid access token
+        HTTPRequest({
+                        'secondsToLive': 30,
+                        'retryTimeout': 500,
                         'uri': req.token,
+                        'method': 'POST',
                         'body': req.content.text,
-                        'headers': headers
+                        'forever': true, // enable long-lived connections
+                        'headers': {
+                            'Content-Type': 'text/xml',
+                            'X-WNS-Type': req.content.kind,
+                            'X-WNS-RequestForStatus': 'true',
+                            'Authorization': 'Bearer ' + this.accessToken,
+                            'Host': 'cloud.notify.windows.com'
+                        }
                     },
                     function(err, resp, body) {
+                        log.debug(err, resp, body);
                         if (err !== null) {
-                            log.error("POST error:", err);
+                            log.error('failed to deliver notification:', err);
+                            return err;
                         }
                         else {
-                            log.info("POST response:", resp.statusCode);
-                            if (resp.statusCode === 410) {
-                                deleteCallback();
+                            log.debug('response code:', resp.statusCode);
+                            switch (resp.statusCode) {
+                            case 200:
+                                log.info('delivered notification');
+                                break;
+                            case 401: // Unauthorized
+                            case 403: // Forbidden
+                                // This *really* should not happen here.
+                                log.error('access token has strangely expired');
+                                this.accessToken = null;
+                                return sendNotification(req);
+                                break;
+
+                            case 410: // Gone
+                                log.warn('user registration is no longer valid');
+                                req.removeRegistrationProc();
+                                break;
+
+                            default:
+                                log.warn('failed to deliver notification:', resp.statusCode);
                             }
+                            return resp;
                         }
-                        log.END();
-                    }
-                );
-            });
+                    }.bind(this)).end();
     }
 };

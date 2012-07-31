@@ -51,6 +51,8 @@ function Config () {
 
     this.log = log4js.getLogger;
 
+    this.wns_access_token_cache = 'wns_access_token_cache.js',
+
     /**
      * FQDN of the host to use to deliver WNS notification payloads.
      * @type {String}

@@ -1,6 +1,7 @@
 .~
 .c9revisions
 *.log
+wns_access_token_cache.js
 README.html
 /doc
 /private

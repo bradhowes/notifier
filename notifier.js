@@ -142,7 +142,7 @@ Notifier.prototype = {
                 result.count = matches.length;
                 res.send(result, 202);
 
-                var removeCallback = function () {
+                var removeRegistrationProc = function () {
                     log.debug('callback:', params.userId, token, result);
                     self.registrationStore.deleteRegistrationEntity(params.userId, token,
                                                                     function (err) {
@@ -156,8 +156,8 @@ Notifier.prototype = {
                     var template = match.template;
                     template.content = self.generator.transform(template.content, params.substitutions);
                     token = match.token;
-                    self.deliver(match.service, new NotificationRequest(params.userId, token, template, 30),
-                                removeCallback);
+                    self.deliver(match.service, new NotificationRequest(params.userId, token, template, 30,
+                                                                        removeRegistrationProc));
                 }
 
                 var duration = Date.now() - start;
@@ -200,7 +200,7 @@ Notifier.prototype = {
      * @param {Function} callback function to call with the results of the notification delivery. Takes one argument,
      * an object with two attributes: retry and invalidToken.
      */
-    deliver: function(service, request, removeCallback) {
-        this.senders[service].sendNotification(request, removeCallback);
+    deliver: function(service, request) {
+        this.senders[service].sendNotification(request);
     }
 };

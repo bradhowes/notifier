@@ -97,13 +97,13 @@ APNs.prototype = {
      * @param {Function} deleteCallback the function to invoke if the token in the NotificationReqeuest is found
      * invalid
      */
-    sendNotification: function(req, deleteCallback) {
+    sendNotification: function(req) {
         var log = this.log.child('sendNotification');
         log.BEGIN(req);
         var notification = new apn.Notification();
         notification.callback = function (state) {
             if (state.invalidToken) {
-                deleteCallback();
+                req.removeRegistrationProc();
             }
         };
         notification.device = new apn.Device(new Buffer(req.token, 'base64'));

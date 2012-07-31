@@ -17,7 +17,7 @@ var validRegistration_WNS = {
     templateVersion: '3.0',
     templateLanguage: 'en-us',
     service: 'wns',
-    routes: [ { 'name': '*', 'token': '123', 'secondsToLive': 60 } ]
+    routes: [ { 'name': '*', 'token': 'http://www.iana.org/domains/example', 'secondsToLive': 60 } ]
 };
 
 var validRegistration_APNS = {
@@ -363,14 +363,6 @@ suite.addBatch(
                     assert.equal(res.body.count, 2);
                 }
             },
-            'stay alive': {
-                topic: function () {
-                    setTimeout(this.callback, 5000);
-                },
-                'it should succeed': function (a, b) {
-                    console.log(arguments);
-                }
-            },
             'an invalid post request': {
                 topic: pact.request(
                     {
@@ -488,6 +480,20 @@ suite.addBatch(
                     }
                 ),
                 'it should fail with NOT FOUND': pact.code(404)
+            }
+        }
+    }
+);
+
+// Make sure we really deleted entries from server
+suite.addBatch(
+    {
+        'stay alive': {
+            topic: function () {
+                setTimeout(this.callback, 5000);
+            },
+            'it should succeed': function (a, b) {
+                console.log(arguments);
             }
         }
     }
