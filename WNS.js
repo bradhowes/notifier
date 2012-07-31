@@ -58,6 +58,7 @@ WNS.prototype = {
      */
     sendNotification: function(req) {
         var log = this.log.child('sendNotification');
+        var self = this;
         log.BEGIN(req);
 
         if (this.pending !== null) {
@@ -85,28 +86,28 @@ WNS.prototype = {
                                   })
                 .then(function (accessToken) {
                           log.info('new accessToken:', accessToken);
-                          this.accessToken = accessToken;
-                          this.accessTokenLifetime = Date.now() + 24 * 60 * 60 * 1000;
+                          self.accessToken = accessToken;
+                          self.accessTokenLifetime = Date.now() + 24 * 60 * 60 * 1000;
 
                           // Save to local cache in case we restart
                           fs.writeFile(config.wns_access_token_cache,
                                        JSON.stringify(
                                        {
-                                           'accessToken': this.accessToken,
-                                           'accessTokenLifetime': this.accessTokenLifetime
+                                           'accessToken': self.accessToken,
+                                           'accessTokenLifetime': self.accessTokenLifetime
                                        }),
                                       function (err) {
                                           log.info('wrote accessToken to', config.wns_access_token_cache, err);
                                       });
 
                           // If we have pending notifications waiting on a valid access token, resubmit them now.
-                          var pending = this.pending;
-                          this.pending = null;
+                          var pending = self.pending;
+                          self.pending = null;
                           pending.forEach(function (item) {
-                                              this.sendNotification(item);
-                                          }.bind(this));
+                                              self.sendNotification(item);
+                                          });
                           return accessToken;
-                      }.bind(this))
+                      })
                 .end();
             return;
         }
@@ -143,9 +144,8 @@ WNS.prototype = {
                             case 403: // Forbidden
                                 // This *really* should not happen here.
                                 log.error('access token has strangely expired');
-                                this.accessToken = null;
-                                return sendNotification(req);
-                                break;
+                                self.accessToken = null;
+                                return self.sendNotification(req);
 
                             case 410: // Gone
                                 log.warn('user registration is no longer valid');
@@ -157,6 +157,6 @@ WNS.prototype = {
                             }
                             return resp;
                         }
-                    }.bind(this)).end();
+                    }).end();
     }
 };

@@ -47,7 +47,7 @@ Server.prototype = {
     initialize: function(callback) {
         var log = this.log.child('initialize');
         var self = this;
-        var awaiting = 0;
+        var awaiting = 2;
         var errors = null;
         var app = express.createServer();
         var registrationStore;
@@ -99,7 +99,6 @@ Server.prototype = {
                           app.use(express.errorHandler());
                       });
 
-        ++awaiting;
         registrationStore = new RegistrationStore(this.registrationStoreName, function(err) {
                 log.info('creating registrar');
                 var service = self.registrar = new Registrar(registrationStore);
@@ -110,7 +109,6 @@ Server.prototype = {
                 continuation('registrationStore', err);
             });
 
-        ++awaiting;
         templateStore = new TemplateStore(this.templateStoreName, function(err) {
                 log.info('creating template manager');
                 var service = new TemplateManager(templateStore);

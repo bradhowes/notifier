@@ -75,7 +75,7 @@ Notifier.prototype = {
      * @param {Response} res outgoing HTTP response values
      */
     postNotification: function(req, res) {
-        var self = this;
+        var self = this, duration;
         var log = self.log.child('postNotification');
         var result = {count: 0};
         log.BEGIN();
@@ -106,7 +106,7 @@ Notifier.prototype = {
         log.debug('start:', start);
 
         var sequenceId = ++this.sequenceId;
-        substitutions['SEQUENCE_ID'] = sequenceId;
+        substitutions.SEQUENCE_ID = sequenceId;
         this.postTracker.add(sequenceId, start);
 
         // Fetch the registrations for the given user
@@ -120,7 +120,7 @@ Notifier.prototype = {
             if (registrations.length === 0) {
                 log.info('no registrations exist for user', params.userId);
                 res.send(result, 202);
-                var duration = Date.now() - start;
+                duration = Date.now() - start;
                 log.END(duration, 'msecs');
                 return;
             }
@@ -130,7 +130,7 @@ Notifier.prototype = {
                 var token = null;
                 if (err !== null) {
                     log.error('TemplateStore.findTemplates error:', err);
-                    var duration = Date.now() - start;
+                    duration = Date.now() - start;
                     log.END(duration, 'msecs');
                     return;
                 }
@@ -160,7 +160,7 @@ Notifier.prototype = {
                                                                         removeRegistrationProc));
                 }
 
-                var duration = Date.now() - start;
+                duration = Date.now() - start;
                 log.END(duration, 'msecs');
             });
         });

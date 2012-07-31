@@ -82,6 +82,10 @@ TemplateManager.prototype = {
             res.json(errors, 400);
             return;
         }
+        
+        if (typeof params.template.content !== 'string') {
+            params.template.content = JSON.stringify(params.template.content);
+        }
 
         var start = Date.now();
         this.templateStore.addTemplate(params, function (err, templateEntity)
@@ -141,7 +145,7 @@ TemplateManager.prototype = {
                 log.error('TemplateStore.findTemplates error:', err);
                 res.send(null, null, 500);
             }
-            else if (templates.length == 0) {
+            else if (templates.length === 0) {
                 log.info('no templates found in store');
                 res.send(null, null, 404);
             }

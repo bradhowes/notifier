@@ -4,6 +4,7 @@
 module.exports = TemplateStore;
 
 var azure = require('azure');
+var config = require('./config');
 
 /**
  * Initializes a new TemplateStore object. A TemplateStore reads from and writes to an Azure table store.
@@ -14,7 +15,7 @@ var azure = require('azure');
  * @param {Function} callback the function to invoke when the table store exits
  */
 function TemplateStore(tableName, callback) {
-    var log = this.log = require('./config').log('templateStore');
+    var log = this.log = config.log('templateStore');
     log.BEGIN(tableName);
     if (tableName === undefined) {
         tableName = config.registrations_table_name;
