@@ -126,7 +126,8 @@ TemplateStore.prototype = {
 
         var partitionKey = self.makePartitionKey(params.eventId.toString());
         log.debug('partitionKey:', partitionKey);
-        var rowKey = self.makeRowKey(params.notificationId, params.routeName, params.templateVersion,
+
+        var rowKey = self.makeRowKey(params.notificationId, params.route, params.templateVersion,
                                      params.templateLanguage, params.service);
         log.debug('rowKey:', rowKey);
 
@@ -140,16 +141,18 @@ TemplateStore.prototype = {
             'Content': JSON.stringify(params.template)
         };
 
+        console.log(templateEntity);
         self.store.updateEntity(self.tableName, templateEntity, function(err, tmp) {
-            if (err !== null) {
-                log.warn('TableService.updateEntity error:', err);
-                self.store.insertEntity(self.tableName, templateEntity, callback);
-            }
-            else {
-                callback(err, tmp);
-            }
-            log.END();
-        });
+                                    console.log('***', err, tmp);
+                                    if (err !== null) {
+                                        log.warn('TableService.updateEntity error:', err);
+                                        self.store.insertEntity(self.tableName, templateEntity, callback);
+                                    }
+                                    else {
+                                        callback(err, tmp);
+                                    }
+                                    log.END();
+                                });
     },
 
     /**
@@ -162,7 +165,8 @@ TemplateStore.prototype = {
 
         var partitionKey = self.makePartitionKey(params.eventId.toString());
         log.debug('partitionKey:', partitionKey);
-        var rowKey = self.makeRowKey(params.notificationId, params.routeName, params.templateVersion,
+
+        var rowKey = self.makeRowKey(params.notificationId, params.route, params.templateVersion,
                                      params.templateLanguage, params.service);
         log.debug('rowKey:', rowKey);
 

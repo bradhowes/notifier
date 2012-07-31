@@ -12,6 +12,7 @@ var TemplateStore = require("../templateStore");
 var store = null;
 
 var suite = vows.describe('templateStore');
+
 suite.addBatch({
     'create an empty table': {
         topic: function () {
@@ -26,11 +27,20 @@ suite.addBatch({
 suite.addBatch({
     'add template': {
         topic: function () {
-            store.addTemplate(200, 2000, '*', '1.0', 'en', 'wns',
-                              JSON.stringify({
-                                                 'kind': 'wns/badge',
-                                                 'text': '<?xml version="1.0" encoding="utf-8"?><badge value="3"/>'
-                                             }), this.callback);
+            store.addTemplate(
+                {
+                    eventId:200,
+                    notificationId: 2000,
+                    route:'*',
+                    templateVersion:'1.0',
+                    templateLanguage:'en',
+                    service:'wns',
+                    template: {
+                        'kind': 'wns/badge',
+                        'content': '<?xml version="1.0" encoding="utf-8"?><badge value="3"/>'
+                    }
+                },
+                this.callback);
         },
         'succeeds without error': function (err, entity) {
             assert.isNull(err);
@@ -46,7 +56,7 @@ suite.addBatch({
         topic: function () {
             var reg = {
                 'templateVersion':'1.0',
-                'templateLanguage':'en-US',
+                'templateLanguage':'en-us',
                 'service':'wns',
                 'routes':[{'name':'*', 'token':'http://a.b.c'}]
             };
@@ -132,14 +142,32 @@ suite.addBatch({
 suite.addBatch({
     'delete template': {
         topic: function () {
-            store.removeTemplate(200, 2000, '*', '1.0', 'en', 'wns', this.callback);
+            store.removeTemplate(
+                {
+                    eventId:200,
+                    notificationId:2000,
+                    route:'*',
+                    templateVersion:'1.0',
+                    templateLanguage:'en',
+                    service:'wns'
+                },
+                this.callback);
         },
         'succeeds without error': function (err, entity) {
             assert.isNull(err);
         },
         'delete template again': {
             topic: function () {
-                store.removeTemplate(200, 2000, '*', '1.0', 'en', 'wns', this.callback);
+                store.removeTemplate(
+                    {
+                        eventId:200,
+                        notificationId:2000,
+                        route:'*',
+                        templateVersion:'1.0',
+                        templateLanguge:'en',
+                        service:'wns'
+                    },
+                    this.callback);
             },
             'fails with error': function (err, entity) {
                 console.log(err, entity);
