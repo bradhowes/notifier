@@ -10,6 +10,7 @@
         "express": "2.5.x",
         "log4js": "0.5.x",
         "model.js": "0.0.1",
+        "q": "0.8.x",
         "request": "2.9.x",
         "xregexp": "2.0.x"
     },
