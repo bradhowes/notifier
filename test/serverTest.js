@@ -70,7 +70,7 @@ suite.addBatch(
 {
     'start server': {
         topic: function () {
-            var server = new Server();
+            server = new Server();
             server.registrationStoreName = 'serverTestRegistrations';
             server.templateStoreName = 'serverTestTemplates';
             server = server.initialize(this.callback);
@@ -490,7 +490,7 @@ suite.addBatch(
     {
         'stay alive': {
             topic: function () {
-                setTimeout(this.callback, 5000);
+                setTimeout(this.callback, 2000);
             },
             'it should succeed': function (a, b) {
                 console.log(arguments);
