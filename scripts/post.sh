@@ -3,7 +3,7 @@
 set -x
 
 SERVER="localhost:4465"
-#SERVER="notifier.bradhowes.c9.io"
+# SERVER="notifier.bradhowes.c9.io"
 
 function usage
 {
