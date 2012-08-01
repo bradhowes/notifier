@@ -1,4 +1,5 @@
 .~
+.DS_Store
 .c9revisions
 *.log
 wns_access_token_cache.js
