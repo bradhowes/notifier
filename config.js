@@ -41,7 +41,7 @@ function Config () {
 
             // Define the levels to accept for messages from a logger.
             "levels": {
-                "server":  "INFO"
+                "[default]":  "ERROR"
             }
         }
     );
@@ -49,12 +49,12 @@ function Config () {
     /**
      * Determines if SSL authentication is enabled.
      */
-    this.ssl_authentication_enabled = false;
+    this.ssl_authentication_enabled = true;
 
     /**
      * Determines if unauthenticated traffic will be accepted.
      */
-    this.ssl_reject_unauthorized = false;
+    this.ssl_reject_unauthorized = true;
 
     /**
      * The contents of the server key for SSL authentication.
@@ -64,7 +64,7 @@ function Config () {
     /**
      * The passphrase for the above server key.
      */
-    this.ssl_server_key_passphrase = 'thisisatest';
+    this.ssl_server_key_passphrase = '';
 
     /**
      * The contents of the server certificate file for SSL authentication.

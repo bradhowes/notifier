@@ -79,7 +79,7 @@ TemplateManager.prototype = {
         log.info('params:', params);
         var errors = this.TemplateDefinitionModel.validate(params);
         if (errors !== null) {
-            log.error('invalid params:', errors);
+            log.error('invalid params:', JSON.stringify(errors));
             res.send(HTTPStatus.BAD_REQUEST);
             return;
         }
@@ -126,7 +126,7 @@ TemplateManager.prototype = {
 
         var errors = this.FindKeyModel.validate(params);
         if (errors !== null) {
-            log.error('invalid params:', errors);
+            log.error('invalid params:', JSON.stringify(errors));
             res.send(HTTPStatus.BAD_REQUEST);
             return;
         }
@@ -182,7 +182,7 @@ TemplateManager.prototype = {
 
         var errors = this.TemplateKeyModel.validate(params);
         if (errors !== null) {
-            log.error('invalid params:', errors);
+            log.error('invalid params:', JSON.stringify(errors));
             res.send(HTTPStatus.BAD_REQUEST);
             return;
         }

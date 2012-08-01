@@ -2,13 +2,15 @@
 
 var assert = require('assert');
 var HTTPStatus = require('http-status');
+var config = require('../config');
 var fs = require('fs');
 var http = require('http');
 var https = require('https');
+var log4js = require('log4js');
 var pact = require('pact');
 var Request = require('request');
 var vows = require('vows');
-var App = require('../server.js');
+var App = require('../server');
 
 var host = '127.0.0.1';
 var port = 4465;
@@ -16,6 +18,20 @@ var key = fs.readFileSync("certs/client.key");
 var cert = fs.readFileSync('certs/client.cert');
 var agent = new https.Agent({key:key, cert:cert});
 var server = null;
+
+log4js.configure(
+    {
+        // Define the log appenders to use. These apply to all loggers.
+        "appenders": [
+            {
+                "type": "file",
+                "filename": "notifier.log",
+                "layout": { "type": "basic" }
+            }
+        ]}
+    );
+
+log4js.setGlobalLogLevel('DEBUG');
 
 function listen() {
     return function() {
@@ -112,15 +128,14 @@ suite.addBatch(
         },
         'successfully': function (app, errors) {
             var opts = {
-                key: fs.readFileSync("certs/server.key"),
-                cert: fs.readFileSync("certs/server.cert"),
-                ca: fs.readFileSync("certs/ca.cert"),
-                requestCert: true,
-                rejectUnauthorized: true
+                key: config.ssl_server_key,
+                cert: config.ssl_server_certificate,
+                ca: config.ssl_ca_certificate,
+                requestCert: config.ssl_authentication_enabled,
+                rejectUnauthorized: config.ssl_reject_unauthorized
             };
             server = https.createServer(opts, app);
             assert.isNull(errors);
-            console.log(arguments);
         }
     }
 });
@@ -468,7 +483,7 @@ suite.addBatch(
                 setTimeout(this.callback, 2000);
             },
             'it should succeed': function (a, b) {
-                console.log(arguments);
+                ;
             }
         }
     }

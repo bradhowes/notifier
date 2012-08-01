@@ -92,7 +92,7 @@ Notifier.prototype = {
 
         var errors = this.PostModel.validate(params);
         if (errors !== null) {
-            log.error('invalid params:', errors);
+            log.error('invalid params:', JSON.stringify(errors));
             res.send(HTTPStatus.BAD_REQUEST);
             return;
         }

@@ -142,9 +142,7 @@ TemplateStore.prototype = {
             'Content': JSON.stringify(params.template)
         };
 
-        console.log(templateEntity);
         self.store.updateEntity(self.tableName, templateEntity, function(err, tmp) {
-                                    console.log('***', err, tmp);
                                     if (err !== null) {
                                         log.warn('TableService.updateEntity error:', err);
                                         self.store.insertEntity(self.tableName, templateEntity, callback);

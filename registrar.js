@@ -101,7 +101,7 @@ Registrar.prototype = {
 
         var errors = this.UserIdModel.validate(params);
         if (errors !== null) {
-            log.error('invalid params:',errors);
+            log.error('invalid params:',JSON.stringify(errors));
             res.send(HTTPStatus.BAD_REQUEST);
             return;
         }
@@ -156,7 +156,7 @@ Registrar.prototype = {
 
         var errors = this.RegistrationModel.validate(params);
         if (errors !== null) {
-            log.error('invalid params:', params);
+            log.error('invalid params:', JSON.stringify(params));
             res.send(HTTPStatus.BAD_REQUEST);
             return;
         }
@@ -211,7 +211,7 @@ Registrar.prototype = {
         log.info('params:', params);
         var errors = this.DeleteKeyModel.validate(params);
         if (errors !== null) {
-            log.error('invalid params:', errors);
+            log.error('invalid params:', JSON.stringify(errors));
             res.send(HTTPStatus.BAD_REQUEST);
             return;
         }
