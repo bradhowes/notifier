@@ -6,6 +6,7 @@
 module.exports = undefined;
 
 // Load in sensitive parameters
+var fs = require('fs');
 var priv = require('./private/config');
 var LoggerUtils = require('./loggerUtils');
 
@@ -19,8 +20,10 @@ var LoggerUtils = require('./loggerUtils');
 function Config () {
 
     var log4js = require('log4js');
-    var slice = Array.prototype.slice;
 
+    /**
+     * Logging configuration for the server.
+     */
     log4js.configure(
         {
             // Define the log appenders to use. These apply to all loggers.
@@ -43,14 +46,46 @@ function Config () {
         }
     );
 
-    var root = log4js.getDefaultLogger();
-    var lu = LoggerUtils.prototype;
-    root.__proto__.child = lu.child;
-    root.__proto__.BEGIN = lu.BEGIN;
-    root.__proto__.END = lu.END;
+    /**
+     * Determines if SSL authentication is enabled.
+     */
+    this.ssl_authentication_enabled = false;
 
+    /**
+     * Determines if unauthenticated traffic will be accepted.
+     */
+    this.ssl_reject_unauthorized = false;
+
+    /**
+     * The contents of the server key for SSL authentication.
+     */
+    this.ssl_server_key = fs.readFileSync('certs/server.key');
+
+    /**
+     * The passphrase for the above server key.
+     */
+    this.ssl_server_key_passphrase = 'thisisatest';
+
+    /**
+     * The contents of the server certificate file for SSL authentication.
+     */
+    this.ssl_server_certificate = fs.readFileSync('certs/server.crt');
+
+    /**
+     * The contents of the certificate authority certificate file for SSL authentication.
+     */
+    this.ssl_ca_certificate = fs.readFileSync('certs/ca.crt');
+
+    /**
+     * Shortcut to log4js.getLogger procedure. Allows other modules to do ```config.log('moduleName')```
+     * @type {Function}
+     */
     this.log = log4js.getLogger;
 
+    /**
+     * Path to local file that hold's the last fetched access_token. This will be read at startup if it exists.
+     * @type {String}
+     */
     this.wns_access_token_cache = 'wns_access_token_cache.js',
 
     /**
@@ -115,7 +150,7 @@ function Config () {
 
     /**
      * The Azure storage account to use for table stores.
-     * @type
+     * @type {String}
      */
     this.azure_storage_account = priv.azure_storage_account;
 
@@ -125,24 +160,48 @@ function Config () {
      */
     this.azure_storage_access_key = priv.azure_storage_access_key;
 
+    /**
+     * Make sure our environment reflects these Azure settings.
+     */
     process.env.AZURE_STORAGE_ACCOUNT = this.azure_storage_account;
     process.env.AZURE_STORAGE_ACCESS_KEY = this.azure_storage_access_key;
 
     /**
      * The authorization key from Google for sending GCM messages
+     * @type {String}
      */
     this.gcm_authorization_key = priv.gcm_authorization_key;
 
     /**
      * The URI for the GCM server
+     * @type {String}
      */
     this.gcm_uri = 'https://android.googleapis.com/gcm/send';
 
+    /**
+     * Name of the Azure table to create and use for user registrations.
+     * @type {String}
+     */
     this.registrations_table_name = 'notifierRegistrations';
 
+    /**
+     * Name of the Azure table to create and use for notification templates.
+     * @type {String}
+     */
     this.templates_table_name = 'notifierTemplates';
 
-    this.placeholder_re = '@@([A-Za-z0-9_]+)(=([^@]*))?@@';
+    /**
+     * The regular-expression (RE) that matches placeholders in a template.
+     *
+     * Placeholders are signaled by two '@' characters, followed by a name of alphanumeric characters and underscores.
+     * There may also be an optional default value, signaled by a '=' character after the name. The stock one below
+     * matches fields such as: @@ABC@@, @@FooBar=default value@@
+     *
+     * NOTE: if you change this, odds are you have to change the RE processing code in payloadGenerator.js
+     *
+     * @type {String}
+     */
+    this.templates_placeholder_re = '@@([A-Za-z0-9_]+)(=([^@]*))?@@';
 }
 
 module.exports = new Config();

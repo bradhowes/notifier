@@ -23,7 +23,7 @@ function PayloadGenerator() {
      * The regular expression that matches a placeholder in a template.
      * @type XRegExp
      */
-    this.regexp =  XRegExp(config.placeholder_re);
+    this.regexp =  XRegExp(config.templates_placeholder_re);
 }
 
 /**

@@ -53,3 +53,12 @@ LoggerUtils.prototype = {
         this.info.apply(this, ['END'].concat(slice.call(arguments)));
     }
 };
+
+// Add the above extensions to all logger instances.
+
+var root = log4js.getDefaultLogger();
+var lu = LoggerUtils.prototype;
+
+root.__proto__.child = lu.child;
+root.__proto__.BEGIN = lu.BEGIN;
+root.__proto__.END = lu.END;
