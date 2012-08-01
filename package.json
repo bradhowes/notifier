@@ -7,7 +7,7 @@
         "async": "0.1.x",
         "apn": "1.2.x",
         "azure": "0.5.x",
-        "express": "2.5.x",
+        "express": "3.x.x",
         "log4js": "0.5.x",
         "model.js": "0.0.1",
         "q": "0.8.x",

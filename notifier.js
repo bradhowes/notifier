@@ -5,6 +5,7 @@
  */
 module.exports = Notifier;
 
+var HTTPStatus = require('http-status');
 var Model = require('model.js');
 var PostTracker = require('./postTracker');
 var NotificationRequest = require('./notificationRequest');
@@ -92,7 +93,7 @@ Notifier.prototype = {
         var errors = this.PostModel.validate(params);
         if (errors !== null) {
             log.error('invalid params:', errors);
-            res.send(null, null, 400);
+            res.send(HTTPStatus.BAD_REQUEST);
             return;
         }
 
@@ -113,13 +114,13 @@ Notifier.prototype = {
         this.registrationStore.getRegistrations(params.userId, params.tokens, function(err, registrations) {
             if (err !== null) {
                 log.error('RegistrationStore.getRegistrations error:', err);
-                res.send(null, null, 500);
+                res.send(HTTPStatus.INTERNAL_SERVER_ERROR);
                 return;
             }
 
             if (registrations.length === 0) {
                 log.info('no registrations exist for user', params.userId);
-                res.send(result, 202);
+                res.send(HTTPStatus.NO_CONTENT);
                 duration = Date.now() - start;
                 log.END(duration, 'msecs');
                 return;
@@ -130,6 +131,7 @@ Notifier.prototype = {
                 var token = null;
                 if (err !== null) {
                     log.error('TemplateStore.findTemplates error:', err);
+                    res.send(HTTPStatus.INTERNAL_SERVER_ERROR);
                     duration = Date.now() - start;
                     log.END(duration, 'msecs');
                     return;
@@ -140,7 +142,7 @@ Notifier.prototype = {
                 }
 
                 result.count = matches.length;
-                res.send(result, 202);
+                res.json(HTTPStatus.ACCEPTED, result);
 
                 var removeRegistrationProc = function () {
                     log.debug('callback:', params.userId, token, result);
@@ -180,12 +182,12 @@ Notifier.prototype = {
         var errors = this.LogReceiptModel.validate(params);
         if (errors !== null) {
             log.error('invalid params:', errors);
-            res.send(null, null, 400);
+            res.send(HTTPStatus.BAD_REQUEST);
             return;
         }
 
         this.postTracker.track(Number(params.sequenceId), new Date(params.when));
-        res.send(null, null, 204); // OK but no content
+        res.send(HTTPStatus.NO_CONTENT); // OK but no content
 
         log.END();
     },

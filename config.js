@@ -69,12 +69,12 @@ function Config () {
     /**
      * The contents of the server certificate file for SSL authentication.
      */
-    this.ssl_server_certificate = fs.readFileSync('certs/server.crt');
+    this.ssl_server_certificate = fs.readFileSync('certs/server.cert');
 
     /**
      * The contents of the certificate authority certificate file for SSL authentication.
      */
-    this.ssl_ca_certificate = fs.readFileSync('certs/ca.crt');
+    this.ssl_ca_certificate = fs.readFileSync('certs/ca.cert');
 
     /**
      * Shortcut to log4js.getLogger procedure. Allows other modules to do ```config.log('moduleName')```

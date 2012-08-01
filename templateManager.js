@@ -5,6 +5,7 @@
  */
 module.exports = TemplateManager;
 
+var HTTPStatus = require('http-status');
 var Model = require('model.js');
 
 /**
@@ -79,10 +80,10 @@ TemplateManager.prototype = {
         var errors = this.TemplateDefinitionModel.validate(params);
         if (errors !== null) {
             log.error('invalid params:', errors);
-            res.json(errors, 400);
+            res.send(HTTPStatus.BAD_REQUEST);
             return;
         }
-        
+
         if (typeof params.template.content !== 'string') {
             params.template.content = JSON.stringify(params.template.content);
         }
@@ -93,13 +94,13 @@ TemplateManager.prototype = {
             var duration = Date.now() - start;
             if (err) {
                 log.error('TemplateStore.addTemplate error:', err);
-                res.send(null, null, 500);
+                res.send(HTTPStatus.INTERNAL_SERVER_ERROR);
             }
             else {
                 var tmp = {
                     'tableStoreDuration': duration
                 };
-                res.json(tmp);
+                res.json(HTTPStatus.OK, tmp);
             }
 
             log.END(duration, 'msec');
@@ -126,7 +127,7 @@ TemplateManager.prototype = {
         var errors = this.FindKeyModel.validate(params);
         if (errors !== null) {
             log.error('invalid params:', errors);
-            res.send(null, null, 400);
+            res.send(HTTPStatus.BAD_REQUEST);
             return;
         }
 
@@ -143,18 +144,18 @@ TemplateManager.prototype = {
             var duration = Date.now() - start;
             if (err) {
                 log.error('TemplateStore.findTemplates error:', err);
-                res.send(null, null, 500);
+                res.send(HTTPStatus.INTERNAL_SERVER_ERROR);
             }
             else if (templates.length === 0) {
                 log.info('no templates found in store');
-                res.send(null, null, 404);
+                res.send(HTTPStatus.NOT_FOUND);
             }
             else {
                 var tmp = {
                     'templates': templates,
                     'tableStoreDuration': duration
                 };
-                res.json(tmp);
+                res.json(HTTPStatus.OK, tmp);
             }
 
             log.END(duration, 'msec');
@@ -182,7 +183,7 @@ TemplateManager.prototype = {
         var errors = this.TemplateKeyModel.validate(params);
         if (errors !== null) {
             log.error('invalid params:', errors);
-            res.send(null, null, 400);
+            res.send(HTTPStatus.BAD_REQUEST);
             return;
         }
 
@@ -192,11 +193,11 @@ TemplateManager.prototype = {
             var duration = Date.now() - start;
             if (err !== null) {
                 log.error('TemplateStore.removeTemplate error:', err);
-                res.send(null, null, 404);
+                res.send(HTTPStatus.NOT_FOUND);
             }
             else {
                 log.info('removed');
-                res.send(null, null, 204);
+                res.send(HTTPStatus.NO_CONTENT);
             }
             log.END(duration, 'msecs');
         });

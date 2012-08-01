@@ -6,6 +6,7 @@
 module.exports = Registrar;
 
 var Model = require('model.js');
+var HTTPStatus = require('http-status');
 
 /**
  * Registrar constructor.
@@ -101,7 +102,7 @@ Registrar.prototype = {
         var errors = this.UserIdModel.validate(params);
         if (errors !== null) {
             log.error('invalid params:',errors);
-            res.send(null, null, 400);
+            res.send(HTTPStatus.BAD_REQUEST);
             return;
         }
 
@@ -111,7 +112,7 @@ Registrar.prototype = {
             if (err !== null || typeof(regs) === 'undefined' || regs.length === 0) {
                 if (err) log.error('error:', err);
                 log.info('no registrations found');
-                res.send(null, null, 404);
+                res.send(HTTPStatus.NOT_FOUND);
             }
             else {
                 var tmp = {
@@ -119,7 +120,7 @@ Registrar.prototype = {
                     'tableStoreDuration': duration
                 };
                 log.info(tmp);
-                res.json(tmp);
+                res.json(HTTPStatus.OK, tmp);
             }
             log.END(duration, 'msec');
         });
@@ -156,7 +157,7 @@ Registrar.prototype = {
         var errors = this.RegistrationModel.validate(params);
         if (errors !== null) {
             log.error('invalid params:', params);
-            res.send(null, null, 400);
+            res.send(HTTPStatus.BAD_REQUEST);
             return;
         }
 
@@ -166,14 +167,14 @@ Registrar.prototype = {
             var duration = Date.now() - start;
             if (err) {
                 log.error('RegistrationStore.updateRegistration error:', err);
-                res.send(null, null, 404);
+                res.send(HTTPStatus.BAD_REQUEST);
             }
             else {
                 var tmp = {
                     'tableStoreDuration': duration
                 };
                 log.info(tmp);
-                res.json(tmp);
+                res.json(HTTPStatus.OK, tmp);
             }
             log.END(params.userId, duration, 'msec');
         });
@@ -211,7 +212,7 @@ Registrar.prototype = {
         var errors = this.DeleteKeyModel.validate(params);
         if (errors !== null) {
             log.error('invalid params:', errors);
-            res.send(null, null, 400);
+            res.send(HTTPStatus.BAD_REQUEST);
             return;
         }
 
@@ -220,10 +221,10 @@ Registrar.prototype = {
             var duration = Date.now() - start;
             if (err) {
                 log.error('RegistrationStore.deleteRegistrations error:', err);
-                res.send(null, null, 404);
+                res.send(HTTPStatus.NOT_FOUND);
             }
             else {
-                res.send(null, null, 204);
+                res.send(HTTPStatus.NO_CONTENT);
             }
             log.END(params.userId, registrationId, duration, 'msec');
         }
