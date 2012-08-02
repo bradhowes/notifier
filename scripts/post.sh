@@ -2,8 +2,7 @@
 
 set -x
 
-SERVER="localhost:4465"
-SERVER="notifier.bradhowes.c9.io:8080"
+SERVER="${NOTIFIER:-localhost:4465}"
 
 function usage
 {
@@ -55,10 +54,11 @@ done
 
 JSON="${JSON}}}"
 
+set -x
 curl -w "\nTime: %{time_total}s Response: %{http_code} Content-Type: %{content_type}" \
      -X POST \
      -H 'Content-Type: application/json' \
      -d "${JSON}" --key ../certs/client.key --cert ../certs/client.cert --cacert ../certs/ca.cert \
-     -L https://${SERVER}/post/${USERID}
+     -L --post301 --post302 https://${SERVER}/post/${USERID}
 
 echo

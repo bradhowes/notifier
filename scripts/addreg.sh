@@ -42,6 +42,5 @@ JSON="${JSON}]}"
 
 set -x
 curl -w "\nTime: %{time_total}s Response: %{http_code} Content-Type: %{content_type}" \
-     -X POST \
-     -H 'Content-Type: application/json' -d "${JSON}" http://${SERVER}/registrations/${USERID}
+     -H 'Content-Type: application/json' -d "${JSON}" -L --post301 --post302 http://${SERVER}/registrations/${USERID}
 echo
