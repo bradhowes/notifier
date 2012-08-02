@@ -1,7 +1,6 @@
 #!/bin/bash
 
-SERVER="localhost:4465"
-#SERVER="notifier.bradhowes.c9.io"
+SERVER="${NOTIFIER:-localhost:4465}"
 
 function usage
 {
@@ -41,6 +40,7 @@ done
 
 JSON="${JSON}]}"
 
+set -x
 curl -w "\nTime: %{time_total}s Response: %{http_code} Content-Type: %{content_type}" \
      -X POST \
      -H 'Content-Type: application/json' -d "${JSON}" http://${SERVER}/registrations/${USERID}

@@ -49,12 +49,12 @@ function Config () {
     /**
      * Determines if SSL authentication is enabled.
      */
-    this.ssl_authentication_enabled = true;
+    this.ssl_authentication_enabled = false;
 
     /**
      * Determines if unauthenticated traffic will be accepted.
      */
-    this.ssl_reject_unauthorized = true;
+    this.ssl_reject_unauthorized = false;
 
     /**
      * The contents of the server key for SSL authentication.

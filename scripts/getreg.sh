@@ -1,7 +1,6 @@
 #!/bin/bash
 
-SERVER="localhost:4465"
-#SERVER="notifier.bradhowes.c9.io"
+SERVER="${NOTIFIER:-localhost:4465}"
 
 function usage
 {
@@ -17,7 +16,9 @@ if (( $# != 1 )); then
     usage
 fi
 
+set -x
 curl -w "\nTime: %{time_total}s Response: %{http_code} Content-Type: %{content_type}" \
      -X GET \
-     -H 'Content-Type: application/json' http://${SERVER}/registrations/${1}
+     -H 'Content-Type: application/json' \
+     -L http://${SERVER}/registrations/${1}
 echo
