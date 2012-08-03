@@ -167,49 +167,47 @@
 <span class='line'>160</span>      */</span><span class="WHIT">
 <span class='line'>161</span> </span><span class="WHIT">    </span><span class="NAME">this.azure_storage_access_key</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">priv.azure_storage_access_key</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>162</span> 
-<span class='line'>163</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>164</span>      * Make sure our environment reflects these Azure settings.
-<span class='line'>165</span>      */</span><span class="WHIT">
-<span class='line'>166</span> </span><span class="WHIT">    </span><span class="NAME">process.env.AZURE_STORAGE_ACCOUNT</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.azure_storage_account</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>167</span> </span><span class="WHIT">    </span><span class="NAME">process.env.AZURE_STORAGE_ACCESS_KEY</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.azure_storage_access_key</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>168</span> 
-<span class='line'>169</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>170</span>      * The authorization key from Google for sending GCM messages
-<span class='line'>171</span>      * @type {String}
-<span class='line'>172</span>      */</span><span class="WHIT">
-<span class='line'>173</span> </span><span class="WHIT">    </span><span class="NAME">this.gcm_authorization_key</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">priv.gcm_authorization_key</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>174</span> 
-<span class='line'>175</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>176</span>      * The URI for the GCM server
-<span class='line'>177</span>      * @type {String}
-<span class='line'>178</span>      */</span><span class="WHIT">
-<span class='line'>179</span> </span><span class="WHIT">    </span><span class="NAME">this.gcm_uri</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">'https://android.googleapis.com/gcm/send'</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>180</span> 
-<span class='line'>181</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>182</span>      * Name of the Azure table to create and use for user registrations.
-<span class='line'>183</span>      * @type {String}
-<span class='line'>184</span>      */</span><span class="WHIT">
-<span class='line'>185</span> </span><span class="WHIT">    </span><span class="NAME">this.registrations_table_name</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">'notifierRegistrations'</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>186</span> 
-<span class='line'>187</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>188</span>      * Name of the Azure table to create and use for notification templates.
-<span class='line'>189</span>      * @type {String}
-<span class='line'>190</span>      */</span><span class="WHIT">
-<span class='line'>191</span> </span><span class="WHIT">    </span><span class="NAME">this.templates_table_name</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">'notifierTemplates'</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>192</span> 
-<span class='line'>193</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>194</span>      * The regular-expression (RE) that matches placeholders in a template.
-<span class='line'>195</span>      *
-<span class='line'>196</span>      * Placeholders are signaled by two '@' characters, followed by a name of alphanumeric characters and underscores.
-<span class='line'>197</span>      * There may also be an optional default value, signaled by a '=' character after the name. The stock one below
-<span class='line'>198</span>      * matches fields such as: @@ABC@@, @@FooBar=default value@@
+<span class='line'>163</span> </span><span class="WHIT">    </span><span class="COMM">// Make sure our environment reflects these Azure settings.</span><span class="WHIT">
+<span class='line'>164</span> </span><span class="WHIT">    </span><span class="NAME">process.env.AZURE_STORAGE_ACCOUNT</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.azure_storage_account</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>165</span> </span><span class="WHIT">    </span><span class="NAME">process.env.AZURE_STORAGE_ACCESS_KEY</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.azure_storage_access_key</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>166</span> 
+<span class='line'>167</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>168</span>      * The authorization key from Google for sending GCM messages
+<span class='line'>169</span>      * @type {String}
+<span class='line'>170</span>      */</span><span class="WHIT">
+<span class='line'>171</span> </span><span class="WHIT">    </span><span class="NAME">this.gcm_authorization_key</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">priv.gcm_authorization_key</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>172</span> 
+<span class='line'>173</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>174</span>      * The URI for the GCM server
+<span class='line'>175</span>      * @type {String}
+<span class='line'>176</span>      */</span><span class="WHIT">
+<span class='line'>177</span> </span><span class="WHIT">    </span><span class="NAME">this.gcm_uri</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">'https://android.googleapis.com/gcm/send'</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>178</span> 
+<span class='line'>179</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>180</span>      * Name of the Azure table to create and use for user registrations.
+<span class='line'>181</span>      * @type {String}
+<span class='line'>182</span>      */</span><span class="WHIT">
+<span class='line'>183</span> </span><span class="WHIT">    </span><span class="NAME">this.registrations_table_name</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">'notifierRegistrations'</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>184</span> 
+<span class='line'>185</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>186</span>      * Name of the Azure table to create and use for notification templates.
+<span class='line'>187</span>      * @type {String}
+<span class='line'>188</span>      */</span><span class="WHIT">
+<span class='line'>189</span> </span><span class="WHIT">    </span><span class="NAME">this.templates_table_name</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">'notifierTemplates'</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>190</span> 
+<span class='line'>191</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>192</span>      * The regular-expression (RE) that matches placeholders in a template.
+<span class='line'>193</span>      *
+<span class='line'>194</span>      * Placeholders are signaled by two '@' characters, followed by a name of alphanumeric characters and underscores.
+<span class='line'>195</span>      * There may also be an optional default value, signaled by a '=' character after the name. The stock one below
+<span class='line'>196</span>      * matches fields such as: @@ABC@@, @@FooBar=default value@@
+<span class='line'>197</span>      *
+<span class='line'>198</span>      * NOTE: if you change this, odds are you have to change the RE processing code in payloadGenerator.js
 <span class='line'>199</span>      *
-<span class='line'>200</span>      * NOTE: if you change this, odds are you have to change the RE processing code in payloadGenerator.js
-<span class='line'>201</span>      *
-<span class='line'>202</span>      * @type {String}
-<span class='line'>203</span>      */</span><span class="WHIT">
-<span class='line'>204</span> </span><span class="WHIT">    </span><span class="NAME">this.templates_placeholder_re</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">'@@([A-Za-z0-9_]+)(=([^@]*))?@@'</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>205</span> </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>206</span> 
-<span class='line'>207</span> </span><span class="NAME">module.exports</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Config</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>208</span> </span></pre></body></html>
+<span class='line'>200</span>      * @type {String}
+<span class='line'>201</span>      */</span><span class="WHIT">
+<span class='line'>202</span> </span><span class="WHIT">    </span><span class="NAME">this.templates_placeholder_re</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">'@@([A-Za-z0-9_]+)(=([^@]*))?@@'</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>203</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>204</span> 
+<span class='line'>205</span> </span><span class="NAME">module.exports</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Config</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>206</span> </span></pre></body></html>
