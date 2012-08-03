@@ -36,6 +36,20 @@ To do so you will need to install jsdoc-toolkit from http://code.google.com/p/js
 % vows test/*.js
 ```
 
+# Scripts
+
+The ```scripts``` directory contains some Bash shell scripts to help get things going:
+
+* addreg.sh -- add or update a registration for a user
+* getreg.sh -- get current registrations for a user
+* delreg.sh -- remove one registration or all registrations for a user
+
+* addtemp.sh -- add or replace a template
+* gettemp.sh -- retrieve a template
+* deltemp.sh -- remove a template
+
+* post.sh -- post notifications associated with an eventId to the devices registered for a user
+
 # Template Manager API
 
 Notification templates contain the body of the template payload that will be sent out to a specific notification
@@ -63,24 +77,46 @@ Each template is associated with an notifiable event (see Notification Generatio
 * service -- the notification service to use for delivery (e.g. 'wns')
   * wns -- deliver notifications using Microsoft's WNS
   * apns -- deliver notifications using Apple's APNs
-* content -- the definition of the template. For WNS notifications, this should be JSON object with two attributes:
+  * gcm -- deliver notifications using Google's GCM service
+* template -- the definition of the template. This must refer to a JSON object with at least one attribute:
+  * content -- the contents for the template
+
+#### WNS Templates
+
+For WNS notifications, the ```template``` JSON object must have defined:
   * kind -- the type of notification this template will generate
-    * wns/badge -- WNS badge setting XML
-    * wns/toast -- WNS toast notification XML
-    * wns/tile -- WNS tile update XML
-    * wns/raw -- WNS raw notification XML
-  * body -- the XML contents for the template
+    * "wns/badge" -- WNS badge setting XML
+    * "wns/toast" -- WNS toast notification XML
+    * "wns/tile" -- WNS tile update XML
+    * "wns/raw" -- WNS raw notification XML
+
+The body of the template (```content``` above) must be valid XML.
+
+#### APNs Templates
+
+For APNs notifications, the ```content`` attribute must hold a string that contains a valid JSON definition for APNs.
+For example:
+
+```
+content: "{\"aps\":{\"alert\":\"Hello, @@PLANET@@\",\"badge\":@@COUNT@@,\"sound\":\"default\"}}"
+```
+
+Note the escaping of the quotes since the JSON payload itself is held within a string.
+
+#### GCM Templates
+
+Currently, only JSON payloads are supported by the GCM module. Same rules apply as per APNs above.
 
 ### Example: 
 ```
 {
-  'eventId': 100, 
-  'notificationId': 1,
-  'route': 'main',
-  'templateVersion': '1.0',
-  'templateLanguage': 'en-US',
-  'service': 'wns', 
-  'content': {'kind': 'wns/badge', 'body': '<xml>...</xml>'}
+  "eventId": 100,
+  "notificationId": 1,
+  "route": "main",
+  "templateVersion": "1.0",
+  "templateLanguage": "en-US",
+  "service": "wns", 
+  "template": {"kind": "wns/badge", "content": "<xml>...</xml>"}
 }
 ```
 
@@ -150,11 +186,11 @@ The USER is the identifier for a given user.
 
 ```
 {
-  'registrationId': 'abc-123-456',
-  'templateVersion': '1.0', 
-  'templateLanguage': 'en-US',
-  'service': 'wns',
-  'routes': [ {'name': 'main', 'token': 'https://example.com/...', secondsToLive: 86400} ]
+  "registrationId": "abc-123-456",
+  "templateVersion": "1.0", 
+  "templateLanguage": "en-US",
+  "service": "wns",
+  "routes": [ {"name": "main", "token": "https://example.com/...", secondsToLive: 86400} ]
 }
 ```
 
@@ -176,7 +212,7 @@ Returns all of the valid registrations for a given USER.
 
 ```
 {
-  'eventId': 100, 
-  'substitutions': {'NAME':, 'John Doe', 'PHONE': '+1 800 555-1212'}
+  "eventId": 100, 
+  "substitutions": {"NAME":, "John Doe", "PHONE": "+1 800 555-1212"}
 }
 ```
