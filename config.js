@@ -160,9 +160,7 @@ function Config () {
      */
     this.azure_storage_access_key = priv.azure_storage_access_key;
 
-    /**
-     * Make sure our environment reflects these Azure settings.
-     */
+    // Make sure our environment reflects these Azure settings.
     process.env.AZURE_STORAGE_ACCOUNT = this.azure_storage_account;
     process.env.AZURE_STORAGE_ACCESS_KEY = this.azure_storage_access_key;
 

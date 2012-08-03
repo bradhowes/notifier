@@ -93,9 +93,6 @@ APNs.prototype = {
      * Send a notification payload to an APNs server.
      *
      * @param {NotificationRequest} req attributes of the notification to send
-     *
-     * @param {Function} deleteCallback the function to invoke if the token in the NotificationReqeuest is found
-     * invalid
      */
     sendNotification: function(req) {
         var log = this.log.child('sendNotification');

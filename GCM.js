@@ -31,11 +31,11 @@ GCM.prototype = {
      *
      * @param {NotificationRequest} request the request to send out
      */
-    sendNotification: function(request, removeCallback) {
+    sendNotification: function(request) {
         var log = this.log.child('sendNotification');
         log.BEGIN(request);
 
-        var content = request.content;
+        var content = request.content.content;
         content.registration_ids = [token];
         log.debug(content);
 

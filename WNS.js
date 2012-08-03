@@ -118,7 +118,7 @@ WNS.prototype = {
                         'retryTimeout': 500,
                         'uri': req.token,
                         'method': 'POST',
-                        'body': req.content.text,
+                        'body': req.content.content,
                         'forever': true, // enable long-lived connections
                         'headers': {
                             'Content-Type': 'text/xml',

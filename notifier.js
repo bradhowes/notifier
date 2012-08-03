@@ -195,12 +195,9 @@ Notifier.prototype = {
     /**
      * Deliver a generated notification to a specific service.
      *
-     * @param {string} service the notification service tag
+     * @param {String} service the notification service tag
      *
      * @param {NotificationRequest} request description of the request to send
-     *
-     * @param {Function} callback function to call with the results of the notification delivery. Takes one argument,
-     * an object with two attributes: retry and invalidToken.
      */
     deliver: function(service, request) {
         this.senders[service].sendNotification(request);
