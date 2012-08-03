@@ -1,7 +1,6 @@
 #!/bin/bash
 
-SERVER="localhost:4465"
-#SERVER="notifier.bradhowes.c9.io"
+SERVER="${NOTIFIER:-localhost:4465}"
 
 function usage
 {
@@ -14,18 +13,20 @@ REGID: registration to remove
     exit 1
 }
 
-if (( $# != 1 )); then
+set -x
+
+if (( $# < 1 || $# > 2 )); then
     usage
 fi
 
+DATA=""
+
 if [[ -n "${2}" ]]; then
-    curl -w "\nTime: %{time_total}s Response: %{http_code} Content-Type: %{content_type}" \
-         -X DELETE \
-         -H 'Content-Type: application/json' -d "{\"registrationId\":\"${2}\"}" http://${SERVER}/registrations/${1}
-else
-    curl -w "\nTime: %{time_total}s Response: %{http_code} Content-Type: %{content_type}" \
-         -X DELETE \
-         -H 'Content-Type: application/json' http://${SERVER}/registrations/${1}
+    DATA="-d '{"registrationId":"${2}"}'"
 fi
+
+curl -w "\nTime: %{time_total}s Response: %{http_code} Content-Type: %{content_type}" \
+    -X DELETE ${DATA} \
+    -H 'Content-Type: application/json' -L --post301 --post302 http://${SERVER}/registrations/${1}
 
 echo
