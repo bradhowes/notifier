@@ -21,15 +21,19 @@ work, in particular the notification services and Azure Table Store access.
 
 # Code Documentation
 
-http://bradhowes.github.com/notifier/index.html
-
 Local documentation may be generated via
 
 ```
 % make doc
 ```
 
-To do so you will need to install jsdoc-toolkit from http://code.google.com/p/jsdoc-toolkit
+The resulting documentation will be found in the ```doc``` directory.
+
+NOTE: the above relies on ```noc``` so you will need to install it using ```npm```:
+
+```
+% sudo npm -g install noc
+```
 
 # Unit Tests
 ```

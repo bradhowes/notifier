@@ -6,10 +6,7 @@ doc: README.html doc/*.html
 # NOTE: the following relies on jsdoc-toolkit (http://code.google.com/p/jsdoc-toolkit).
 doc/*.html: APNs.js GCM.js WNS.js config.js deque.js loggerUtils.js notifier.js payloadGenerator.js postTracker.js \
 	registrar.js registrationStore.js server.js templateManager.js templateStore.js Makefile
-	if [ -n "${JSDOCDIR}" ]; then \
-		java -Djsdoc.dir=${JSDOCDIR} -jar ${JSDOCDIR}/jsrun.jar ${JSDOCDIR}/app/run.js -d=./doc \
-			-t=${JSDOCDIR}/templates/jsdoc -a $^; \
-    fi
+	/usr/local/lib/node_modules/noc/bin/noc -d=doc -t=/usr/local/lib/node_modules/noc/templates/codeview *.js
 
 clean:
 	rm -f README.html
