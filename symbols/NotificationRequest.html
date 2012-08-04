@@ -4,7 +4,7 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
-		<title>WNS | JsDoc Reference</title>
+		<title>NotificationRequest | JsDoc Reference</title>
 
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 		<meta name="mobileoptimized" content="0" />
@@ -94,12 +94,12 @@
 			<header>
 				<h1 class="classTitle">
 					
-					Class <span>WNS</span>
+					Class <span>NotificationRequest</span>
 				</h1>
 				
 				<div class="intro">
 					<p class="description summary">
-						A WNS object sends XML payloads to a WNS server for delivery to a specific Windows 8 device.
+						A NotificationRequest represents a notification request.
 					</p>
 						
 					
@@ -107,7 +107,7 @@
 							
 							
 							
-								<li>Defined in: <a href="../symbols/src/WNS.js.html">WNS.js</a></li>
+								<li>Defined in: <a href="../symbols/src/notificationRequest.js.html">notificationRequest.js</a></li>
 							
 							
 						</ul>
@@ -118,7 +118,7 @@
 			
 				<section>
 					<div class="props">
-						<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class WNS.">
+						<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class NotificationRequest.">
 							<caption class="sectionTitle">Class Summary</caption>
 							<thead>
 								<tr>
@@ -131,9 +131,9 @@
 									<td class="attributes">&nbsp;</td>
 									<td class="nameDescription" >
 										<div class="fixedFont">
-											<b><a href="../symbols/WNS.html#constructor">WNS</a></b>()
+											<b><a href="../symbols/NotificationRequest.html#constructor">NotificationRequest</a></b>(userId, token, content, secondsToLive, removeRegistrationProc)
 										</div>
-										<div class="description">WNS constructor.</div>
+										<div class="description">NotificationRequest constructor</div>
 									</td>
 								</tr>
 							</tbody>
@@ -146,45 +146,6 @@
 	<!--
 	#### METHODS SUMMARY
 	-->
-			
-				<section>
-					
-					
-					<div class="props">
-						<h2 class="sectionTitle">Method Summary</h2>
-						
-						
-							<nav>
-								<table class="summaryTable" id="MethodsList" cellspacing="0" summary="A summary of the methods documented in the class WNS.">
-									<thead>
-										<tr>
-											<th scope="col">Method Attributes</th>
-											<th scope="col">Method Name and Description</th>
-										</tr>
-									</thead>
-									
-									<tbody>
-										
-										
-											<tr
-												 class='item0'
-											>
-												<td class="attributes">&nbsp;</td>
-												<td class="nameDescription">
-													<div class="fixedFont"><b><a href="../symbols/WNS.html#sendNotification">sendNotification</a></b>(req)
-													</div>
-													<div class="description">Send a notification to a client via WNS.</div>
-												</td>
-											</tr>
-										
-									</tbody>
-								</table>
-							</nav>
-						
-					
-						
-					</div>
-				</section>
 			
 			
 	<!--
@@ -203,16 +164,53 @@
 							</h2>
 							
 							<div class="fixedFont">
-								<b>WNS</b>()
+								<b>NotificationRequest</b>(userId, token, content, secondsToLive, removeRegistrationProc)
 							</div>
 							
 							<div class="description">
-								WNS constructor.
+								NotificationRequest constructor
 								
 							</div>
 							
 							
 						
+							
+								<dl class="detailList params">
+									<dt class="heading">Parameters:</dt>
+									
+										<dt>
+											<span class="light fixedFont">{String}</span>  <b>userId</b>
+											
+										</dt>
+										<dd>user to notify</dd>
+									
+										<dt>
+											<span class="light fixedFont">{String}</span>  <b>token</b>
+											
+										</dt>
+										<dd>the value used to reach a specific device</dd>
+									
+										<dt>
+											<span class="light fixedFont">{Object}</span>  <b>content</b>
+											
+										</dt>
+										<dd>the notification payload to send to the device. The 'content' attribute holds the actual
+ payload to deliver. Additional attributes may exist depending on the os-specific notification service being used
+ for delivery.</dd>
+									
+										<dt>
+											<span class="light fixedFont">{Number}</span>  <b>secondsToLive</b>
+											
+										</dt>
+										<dd>how long this notification is valid</dd>
+									
+										<dt>
+											<span class="light fixedFont">{Function}</span>  <b>removeRegistrationProc</b>
+											
+										</dt>
+										<dd>function to call to remove a token from further notifications</dd>
+									
+								</dl>
 							
 							
 							
@@ -227,61 +225,6 @@
 	<!--
 	#### METHOD DETAILS
 	-->		
-			
-				<section>
-					<div class="details props">
-						<div class="innerProps">
-							<h2 class="sectionTitle">
-								Method Detail
-							</h2>
-							
-							<ul class="methodDetail" id="MethodDetail">
-								
-								
-									<li 
-										 class='item0'
-									>
-										<div class="fixedFont heading" id="sendNotification">
-											<span class='lighter'>
-											
-											</span>
-											
-											
-											
-											<b>sendNotification</b>(req)
-										</div>
-										
-										<div class="description">
-											Send a notification to a client via WNS.
-											
-											
-											
-											
-										</div>
-										
-										
-										
-										
-											<dl class="detailList params">
-												<dt class="heading">Parameters:</dt>
-												
-													<dt>
-														<span class="light fixedFont">{<a href="../symbols/NotificationRequest.html">NotificationRequest</a>}</span> <b>req</b>
-														
-													</dt>
-													<dd>the identifier of the client to notify</dd>
-												
-											</dl>
-										
-										
-										
-										
-									</li>
-								
-							</ul>
-						</div>
-					</div>
-				</section>
 			
 			
 	<!--
