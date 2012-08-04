@@ -43,11 +43,9 @@ The ```scripts``` directory contains some Bash shell scripts to help get things 
 * addreg.sh -- add or update a registration for a user
 * getreg.sh -- get current registrations for a user
 * delreg.sh -- remove one registration or all registrations for a user
-
 * addtemp.sh -- add or replace a template
 * gettemp.sh -- retrieve a template
 * deltemp.sh -- remove a template
-
 * post.sh -- post notifications associated with an eventId to the devices registered for a user
 
 # Template Manager API
