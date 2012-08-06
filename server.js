@@ -132,6 +132,9 @@ if (process.argv[1].indexOf('server.js') !== -1) {
     var log = config.log('main');
     var app = new App();
     var port = process.env.PORT || 4465;
+
+    process.on('uncaughtException', function (err) { console.log(err); });
+
     app.initialize(
         function (app, errors) {
             if (errors !== null) {

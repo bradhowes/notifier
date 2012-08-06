@@ -17,7 +17,7 @@ var config = require('./config');
  * data.
  */
 function PayloadGenerator() {
-    this.log = config.log('payloadGenerator');
+    this.log = config.log('PayloadGenerator');
 
     /**
      * The regular expression that matches a placeholder in a template.

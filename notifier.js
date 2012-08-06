@@ -23,7 +23,7 @@ var NotificationRequest = require('./notificationRequest');
  * @param {Hash} senders a mapping of notification service tags to objects that provide a sendNotification method
  */
 function Notifier(templateStore, registrationStore, generator, senders) {
-    this.log = require('./config').log('notifier');
+    this.log = require('./config').log('Notifier');
     this.templateStore = templateStore;
     this.registrationStore = registrationStore;
     this.generator = generator;
@@ -32,12 +32,27 @@ function Notifier(templateStore, registrationStore, generator, senders) {
     this.sequenceId = 1;
     this.postTracker = new PostTracker(100);
 
+    this.FilterModel = Model.extend(
+        {
+            registrationId: {type: 'array'},
+            templateVersion: {type: 'array'},
+            templateLanguage: {type: 'array'},
+            service: {type: 'array'},
+            routeName: {type: 'array'},
+            routeToken: {type: 'array'}
+        }
+    );
+
+    /**
+     * JSON schema for a notification posting.
+     * @type Model
+     */
     this.PostModel = Model.extend(
         {
             userId: {required:true, type:'string', minlength:2, maxlength:128},
             eventId: {required:true, type:'integer'},
             substitutions: {type:'stringmap'},
-            tokens: {type: 'array'}
+            filter: {type: 'filter'}
         },
         {
             types:
@@ -48,7 +63,12 @@ function Notifier(templateStore, registrationStore, generator, senders) {
                         if (typeof value[key] !== 'string') return null;
                     }
                     return value;
-                }
+                },
+                filter: function(value) {
+                    value = this.FilterModel.validate(value);
+                    if (value !== null) return null;
+                    return value;
+                }.bind(this)
             }
         }
     );
@@ -64,7 +84,7 @@ function Notifier(templateStore, registrationStore, generator, senders) {
 /**
  * Notifier prototype.
  *
- * Defines the methods available to an APNs instance.
+ * Defines the methods available to an Notifier instance.
  */
 Notifier.prototype = {
 
@@ -85,7 +105,7 @@ Notifier.prototype = {
             userId: req.param('userId'),
             eventId: req.param('eventId'),
             substitutions: req.param('substitutions'),
-            tokens: req.param('tokens')
+            filter: req.param('filter')
         };
 
         log.info('params:', params);
@@ -111,7 +131,7 @@ Notifier.prototype = {
         this.postTracker.add(sequenceId, start);
 
         // Fetch the registrations for the given user
-        this.registrationStore.getRegistrations(params.userId, params.tokens, function(err, registrations) {
+        this.registrationStore.getRegistrations(params.userId, params.filter, function(err, registrations) {
             if (err !== null) {
                 log.error('RegistrationStore.getRegistrations error:', err);
                 res.send(HTTPStatus.INTERNAL_SERVER_ERROR);
@@ -168,6 +188,13 @@ Notifier.prototype = {
         });
     },
 
+    /**
+     * Log the receipt of a notification from an external device.
+     *
+     * @param {Request} req incoming HTTP request settings and values. Input must conform to the LogReceiptModel.
+     *
+     * @param {Response} res outgoing HTTP response values
+     */
     logReceipt: function(req, res) {
         var log = this.log.child('logReceipt');
         log.BEGIN();

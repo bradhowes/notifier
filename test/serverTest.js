@@ -105,14 +105,16 @@ var validTemplate_APNS = {
     }
 };
 
-var validPost = {
-    eventId: 200,
-    substitutions: {"A":"aye","B":"3"}
+var validPost = function (post) {
+    if (typeof post === 'undefined') post = {};
+    if (typeof post.eventId === "undefined") post.eventId = 200;
+    if (typeof post.substitutions === "undefined") post.substitutions = {"A":"aye","B":"3"};
+    return post;
 };
 
-var invalidPost = {
-    eventId: 201,
-    substitutions: {}
+var invalidPost = function (post) {
+    if (typeof post === 'undefined') post = {};
+    return post;
 };
 
 var suite = vows.describe('REST API testing');
@@ -365,7 +367,7 @@ suite.addBatch(
                     {
                         uri:'/post/br.howes2',
                         method: 'POST',
-                        json: validPost
+                        json: validPost()
                     }
                 ),
                 'it should succeed with ACCEPTED': statusCheck(HTTPStatus.ACCEPTED),
@@ -375,22 +377,52 @@ suite.addBatch(
                     assert.equal(res.body.count, 2);
                 }
             },
-            'an invalid post request': {
+            'a valid filtered post request': {
                 topic: request(
                     {
                         uri:'/post/br.howes2',
                         method: 'POST',
-                        json: {}
+                        json: validPost({"filter":{"service":["apns"]}})
+                    }
+                ),
+                'it should succeed with ACCEPTED': statusCheck(HTTPStatus.ACCEPTED),
+                'it should return 1 match': function (err, res) {
+                    assert.isNull(err);
+                    assert.isObject(res);
+                    assert.equal(res.body.count, 1);
+                }
+            },
+            'a valid post request with empty substitutions': {
+                topic: request(
+                    {
+                        uri:'/post/br.howes2',
+                        method: 'POST',
+                        json: validPost({"substitutions":{}})
+                    }
+                ),
+                'it should succeed with ACCEPTED': statusCheck(HTTPStatus.ACCEPTED),
+                'it should return 2 match': function (err, res) {
+                    assert.isNull(err);
+                    assert.isObject(res);
+                    assert.equal(res.body.count, 1);
+                }
+            },
+            'an invalid post request with missing eventId': {
+                topic: request(
+                    {
+                        uri:'/post/br.howes2',
+                        method: 'POST',
+                        json: invalidPost()
                     }
                 ),
                 'it should fail with BAD REQUEST': statusCheck(HTTPStatus.BAD_REQUEST)
             },
-            'a missing post request': {
+            'an invalid post request with empty subsitutions': {
                 topic: request(
                     {
                         uri:'/post/br.howes2',
                         method: 'POST',
-                        json: invalidPost
+                        json: invalidPost({"substitutions":{}})
                     }
                 ),
                 'it should succeed with ACCEPTED': statusCheck(HTTPStatus.ACCEPTED),

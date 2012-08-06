@@ -16,7 +16,7 @@ var HTTPStatus = require('http-status');
  * A registrar allows for querying, updating, and deleting of registrations for a given user ID.
  */
 function Registrar(registrationStore) {
-    this.log = require('./config').log('registrar');
+    this.log = require('./config').log('Registrar');
     this.registrationStore = registrationStore;
 
     /**

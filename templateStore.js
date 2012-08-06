@@ -15,7 +15,7 @@ var config = require('./config');
  * @param {Function} callback the function to invoke when the table store exits
  */
 function TemplateStore(tableName, callback) {
-    var log = this.log = config.log('templateStore');
+    var log = this.log = config.log('TemplateStore');
     log.BEGIN(tableName);
     if (tableName === undefined) {
         tableName = config.registrations_table_name;

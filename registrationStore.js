@@ -7,6 +7,7 @@ module.exports = RegistrationStore;
 
 var azure = require('azure');
 var async = require('async');
+var Filter = require('./filter');
 
 /**
  * RegistrationStore constructor.
@@ -14,7 +15,7 @@ var async = require('async');
  * @class RegistrationStore
  */
 function RegistrationStore(tableName, callback) {
-    var log = this.log = require('./config').log('registrationStore');
+    var log = this.log = require('./config').log('RegistrationStore');
     log.BEGIN(tableName);
     if (tableName === undefined) {
         tableName = config.registrations_table_name;
@@ -95,9 +96,9 @@ RegistrationStore.prototype = {
                                 });
     },
 
-    _getRegistration: function (registrationEntity, tokens) {
+    _getRegistration: function (registrationEntity, filter) {
         var log = this.log.child('_getRegistration');
-        log.BEGIN(tokens, typeof tokens);
+        log.BEGIN(filter, typeof filter);
 
         var registration = {
             registrationId: new Buffer(registrationEntity.RowKey, 'base64').toString('ascii'),
@@ -146,10 +147,10 @@ RegistrationStore.prototype = {
         return registration;
     },
 
-    getRegistrations: function(userId, tokens, callback) {
+    getRegistrations: function(userId, filter, callback) {
         var self = this;
         var log = self.log.child('getRegistrations');
-        log.BEGIN(userId, tokens);
+        log.BEGIN(userId, filter);
 
         var partitionKey = this.makePartitionKey(userId);
 
@@ -169,6 +170,8 @@ RegistrationStore.prototype = {
                     return;
                 }
 
+                filter = new Filter(filter);
+                
                 var now = new Date();
                 now = now.toISOString();
 
@@ -184,7 +187,7 @@ RegistrationStore.prototype = {
                                                        deleteRegistrationCallback);
                     }
                     else {
-                        var r = self._getRegistration(registrationEntity, tokens);
+                        var r = self._getRegistration(registrationEntity, filter);
                         if (r) registrations.push(r);
                     }
                 }
