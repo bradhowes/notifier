@@ -1,554 +1,476 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<!DOCTYPE html>
+<html lang="en">
 	<head>
-		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta charset="utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
-		
-		<title>JsDoc Reference - Registrar</title>
+		<title>Registrar | JsDoc Reference</title>
 
-		<style type="text/css">
-			/* default.css */
-body
-{
-	font: 12px "Lucida Grande", Tahoma, Arial, Helvetica, sans-serif;
-	width: 800px;
-}
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+		<meta name="mobileoptimized" content="0" />
+	
+		<link rel="stylesheet" href="../css/all.css" media="all" />
+		<link rel="stylesheet" href="../css/handheld.css" media="only screen and (max-width: 660px)" />
+		<link rel="stylesheet" href="../css/handheld.css" media="handheld" />
+		<link rel="stylesheet" href="../css/screen.css" media="screen and (min-width: 661px)" />
 
-.header
-{
-	clear: both;
-	background-color: #ccc;
-	padding: 8px;
-}
-
-h1
-{
-	font-size: 150%;
-	font-weight: bold;
-	padding: 0;
-	margin: 1em 0 0 .3em;
-}
-
-hr
-{
-	border: none 0;
-	border-top: 1px solid #7F8FB1;
-	height: 1px;
-}
-
-pre.code
-{
-	display: block;
-	padding: 8px;
-	border: 1px dashed #ccc;
-}
-
-#index
-{
-	margin-top: 24px;
-	float: left;
-	width: 160px;
-	position: absolute;
-	left: 8px;
-	background-color: #F3F3F3;
-	padding: 8px;
-}
-
-#content
-{
-	margin-left: 190px;
-	width: 600px;
-}
-
-.classList
-{
-	list-style-type: none;
-	padding: 0;
-	margin: 0 0 0 8px;
-	font-family: arial, sans-serif;
-	font-size: 1em;
-	overflow: auto;
-}
-
-.classList li
-{
-	padding: 0;
-	margin: 0 0 8px 0;
-}
-
-.summaryTable { width: 100%; }
-
-h1.classTitle
-{
-	font-size:170%;
-	line-height:130%;
-}
-
-h2 { font-size: 110%; }
-caption, div.sectionTitle
-{
-	background-color: #7F8FB1;
-	color: #fff;
-	font-size:130%;
-	text-align: left;
-	padding: 2px 6px 2px 6px;
-	border: 1px #7F8FB1 solid;
-}
-
-div.sectionTitle { margin-bottom: 8px; }
-.summaryTable thead { display: none; }
-
-.summaryTable td
-{
-	vertical-align: top;
-	padding: 4px;
-	border-bottom: 1px #7F8FB1 solid;
-	border-right: 1px #7F8FB1 solid;
-}
-
-/*col#summaryAttributes {}*/
-.summaryTable td.attributes
-{
-	border-left: 1px #7F8FB1 solid;
-	width: 140px;
-	text-align: right;
-}
-
-td.attributes, .fixedFont
-{
-	line-height: 15px;
-	color: #002EBE;
-	font-family: "Courier New",Courier,monospace;
-	font-size: 13px;
-}
-
-.summaryTable td.nameDescription
-{
-	text-align: left;
-	font-size: 13px;
-	line-height: 15px;
-}
-
-.summaryTable td.nameDescription, .description
-{
-	line-height: 15px;
-	padding: 4px;
-	padding-left: 4px;
-}
-
-.summaryTable { margin-bottom: 8px; }
-
-ul.inheritsList
-{
-	list-style: square;
-	margin-left: 20px;
-	padding-left: 0;
-}
-
-.detailList {
-	margin-left: 20px; 
-	line-height: 15px;
-}
-.detailList dt { margin-left: 20px; }
-
-.detailList .heading
-{
-	font-weight: bold;
-	padding-bottom: 6px;
-	margin-left: 0;
-}
-
-.light, td.attributes, .light a:link, .light a:visited
-{
-	color: #777;
-	font-style: italic;
-}
-
-.fineprint
-{
-	text-align: right;
-	font-size: 10px;
-}
-		</style>
+		<script src="../javascript/all.js"></script>
+		<!--[if lt IE 9]>
+			<script src="../javascript/html5.js"></script>
+		<![endif]-->
 	</head>
 
 	<body>
-<!-- ============================== header ================================= -->	
-		<!-- begin static/header.html -->
-		<div id="header">
-</div>
-		<!-- end static/header.html -->
 
-<!-- ============================== classes index ============================ -->
-		<div id="index">
-			<!-- begin publish.classesIndex -->
-			<div align="center"><a href="../index.html">Class Index</a>
-| <a href="../files.html">File Index</a></div>
-<hr />
-<h2>Classes</h2>
-<ul class="classList">
-	
-	<li><i><a href="../symbols/_global_.html">_global_</a></i></li>
-	
-	<li><a href="../symbols/APNs.html">APNs</a></li>
-	
-	<li><a href="../symbols/App.html">App</a></li>
-	
-	<li><a href="../symbols/Config.html">Config</a></li>
-	
-	<li><a href="../symbols/Deque.html">Deque</a></li>
-	
-	<li><a href="../symbols/Deque.Node.html">Deque.Node</a></li>
-	
-	<li><a href="../symbols/GCM.html">GCM</a></li>
-	
-	<li><a href="../symbols/LoggerUtils.html">LoggerUtils</a></li>
-	
-	<li><a href="../symbols/Notifier.html">Notifier</a></li>
-	
-	<li><a href="../symbols/PayloadGenerator.html">PayloadGenerator</a></li>
-	
-	<li><a href="../symbols/PostTracker.html">PostTracker</a></li>
-	
-	<li><a href="../symbols/PostTracker.Node.html">PostTracker.Node</a></li>
-	
-	<li><a href="../symbols/Registrar.html">Registrar</a></li>
-	
-	<li><a href="../symbols/RegistrationStore.html">RegistrationStore</a></li>
-	
-	<li><a href="../symbols/TemplateManager.html">TemplateManager</a></li>
-	
-	<li><a href="../symbols/TemplateStore.html">TemplateStore</a></li>
-	
-	<li><a href="../symbols/WNS.html">WNS</a></li>
-	
-</ul>
-<hr />
-			<!-- end publish.classesIndex -->
+<div class="index">
+	<div class="menu">
+		<div class="indexLinks">
+			<a href="../index.html">Classes</a>
+			<a href="../files.html">Files</a>
 		</div>
+	
+		<h2 class="heading1">Classes</h2>
 		
-		<div id="content">
-<!-- ============================== class title ============================ -->
-			<h1 class="classTitle">
+		<input type="text" name="classFilter" class="classFilter" id="ClassFilter" placeholder="Filter"></input>
+		
+		<nav>
+			<ul class="classList" id="ClassList">
 				
-				Class Registrar
-			</h1>
-
-<!-- ============================== class summary ========================== -->			
-			<p class="description">
+					<li><a href="../symbols/_global_.html">_global_</a></li>
 				
+					<li><a href="../symbols/APNs.html">APNs</a></li>
 				
+					<li><a href="../symbols/App.html">App</a></li>
+				
+					<li><a href="../symbols/Config.html">Config</a></li>
+				
+					<li><a href="../symbols/Deque.html">Deque</a></li>
+				
+					<li><a href="../symbols/Deque.Node.html">Deque<span class='break'> </span>.<span class='break'> </span>Node</a></li>
+				
+					<li><a href="../symbols/Filter.html">Filter</a></li>
+				
+					<li><a href="../symbols/GCM.html">GCM</a></li>
+				
+					<li><a href="../symbols/LoggerUtils.html">LoggerUtils</a></li>
+				
+					<li><a href="../symbols/NotificationRequest.html">NotificationRequest</a></li>
+				
+					<li><a href="../symbols/Notifier.html">Notifier</a></li>
+				
+					<li><a href="../symbols/PayloadGenerator.html">PayloadGenerator</a></li>
+				
+					<li><a href="../symbols/PostTracker.html">PostTracker</a></li>
+				
+					<li><a href="../symbols/PostTracker.Node.html">PostTracker<span class='break'> </span>.<span class='break'> </span>Node</a></li>
+				
+					<li><a href="../symbols/Registrar.html">Registrar</a></li>
+				
+					<li><a href="../symbols/RegistrationStore.html">RegistrationStore</a></li>
+				
+					<li><a href="../symbols/TemplateManager.html">TemplateManager</a></li>
+				
+					<li><a href="../symbols/TemplateStore.html">TemplateStore</a></li>
+				
+					<li><a href="../symbols/WNS.html">WNS</a></li>
+				
+			</ul>
+		</nav>
+	</div>
+	<div class="fineprint" style="clear:both">
+		<footer>
 			
-				A registrar allows for querying, updating, and deleting of registrations for a given user ID.
-				
-				
-					<br /><i>Defined in: </i> <a href="../symbols/src/registrar.js.html">registrar.js</a>.
-				
-			</p>
+			Documentation generator: <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0<br />
+			Template: <a href="http://www.thebrightlines.com/2010/05/06/new-template-for-jsdoctoolkit-codeview/" target="_blank">Codeview</a> 1.2<br />
+			Generated on:
+			<time datetime='2012-7-6' pubdate>2012-7-6 21:47</time>
+		</footer>
+	</div>
+</div>
 
-<!-- ============================== constructor summary ==================== -->			
-			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class Registrar.">
-				<caption>Class Summary</caption>
-				<thead>
-					<tr>
-						<th scope="col">Constructor Attributes</th>
-						<th scope="col">Constructor Name and Description</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td class="attributes">&nbsp;</td>
-						<td class="nameDescription" >
-							<div class="fixedFont">
-								<b><a href="../symbols/Registrar.html#constructor">Registrar</a></b>(registrationStore)
-							</div>
-							<div class="description">Registrar constructor.</div>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-			
+<div class="index indexStatic"></div>
 
-<!-- ============================== properties summary ===================== -->
-			
+<div class="content">
+	<div class="innerContent">
+		<article>
+			<header>
+				<h1 class="classTitle">
+					
+					Class <span>Registrar</span>
+				</h1>
 				
-				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class Registrar.">
-					<caption>Field Summary</caption>
-					<thead>
-						<tr>
-							<th scope="col">Field Attributes</th>
-							<th scope="col">Field Name and Description</th>
-						</tr>
-					</thead>
-					<tbody>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/Registrar.html#DeleteKeyModel">DeleteKeyModel</a></b>
-								</div>
-								<div class="description">JSON schema for delete parameter definitions.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/Registrar.html#RegistrationModel">RegistrationModel</a></b>
-								</div>
-								<div class="description">JSON schema for registration definitions.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/Registrar.html#RouteModel">RouteModel</a></b>
-								</div>
-								<div class="description">JSON schema for route definitions.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/Registrar.html#UserIdModel">UserIdModel</a></b>
-								</div>
-								<div class="description">JSON schema for userId values</div>
-							</td>
-						</tr>
-					
-					</tbody>
-				</table>
-				
-				
-				
-			
-
-<!-- ============================== methods summary ======================== -->
-			
-				
-				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class Registrar.">
-					<caption>Method Summary</caption>
-					<thead>
-						<tr>
-							<th scope="col">Method Attributes</th>
-							<th scope="col">Method Name and Description</th>
-						</tr>
-					</thead>
-					<tbody>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Registrar.html#addRegistration">addRegistration</a></b>(req, res)
-								</div>
-								<div class="description">Add or update a registration for a given user.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Registrar.html#deleteRegistration">deleteRegistration</a></b>(req, res)
-								</div>
-								<div class="description">Delete a registration or all registrations for a given user.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Registrar.html#getRegistrations">getRegistrations</a></b>(req, res)
-								</div>
-								<div class="description">Obtain the current registrations for a given user.</div>
-							</td>
-						</tr>
-					
-					</tbody>
-				</table>
-				
-				
-				
-			
-<!-- ============================== events summary ======================== -->
-			
-
-<!-- ============================== constructor details ==================== -->		
-			
-			<div class="details"><a name="constructor"> </a>
-				<div class="sectionTitle">
-					Class Detail
-				</div>
-				
-				<div class="fixedFont">
-						<b>Registrar</b>(registrationStore)
-				</div>
-				
-				<div class="description">
-					Registrar constructor.
-					
-				</div>
-				
-				
-				
-				
-					
-						<dl class="detailList">
-						<dt class="heading">Parameters:</dt>
+				<div class="intro">
+					<p class="description summary">
+						A registrar allows for querying, updating, and deleting of registrations for a given user ID.
+					</p>
 						
-							<dt>
-								 <b>registrationStore</b>
-								
-							</dt>
-								<dd></dd>
-						
-						</dl>
 					
-					
-					
-					
-					
-					
-					
-
-			</div>
-			
-
-<!-- ============================== field details ========================== -->		
-			
-				<div class="sectionTitle">
-					Field Detail
-				</div>
-				
-					<a name="DeleteKeyModel"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{Model}</span>
-					<b>DeleteKeyModel</b>
-					
-					</div>
-					<div class="description">
-						JSON schema for delete parameter definitions.
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="RegistrationModel"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{Model}</span>
-					<b>RegistrationModel</b>
-					
-					</div>
-					<div class="description">
-						JSON schema for registration definitions.
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="RouteModel"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{Model}</span>
-					<b>RouteModel</b>
-					
-					</div>
-					<div class="description">
-						JSON schema for route definitions.
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="UserIdModel"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{Model}</span>
-					<b>UserIdModel</b>
-					
-					</div>
-					<div class="description">
-						JSON schema for userId values
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					
-				
-			
-
-<!-- ============================== method details ========================= -->		
-			
-				<div class="sectionTitle">
-					Method Detail
-				</div>
-				
-					<a name="addRegistration"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>addRegistration</b>(req, res)
-					
-					</div>
-					<div class="description">
-						Add or update a registration for a given user.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+						<ul class="summary">
 							
-								<dt>
-									<b>req</b>
+							
+							
+								<li>Defined in: <a href="../symbols/src/registrar.js.html">registrar.js</a></li>
+							
+							
+						</ul>
+					
+				</div>
+			</header>
+			
+			
+				<section>
+					<div class="props">
+						<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class Registrar.">
+							<caption class="sectionTitle">Class Summary</caption>
+							<thead>
+								<tr>
+									<th scope="col">Constructor Attributes</th>
+									<th scope="col">Constructor Name and Description</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription" >
+										<div class="fixedFont">
+											<b><a href="../symbols/Registrar.html#constructor">Registrar</a></b>(registrationStore)
+										</div>
+										<div class="description">Registrar constructor.</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</section>
+			
+			
+			
+				
+				<section>
+					
+						<nav>
+							<div class="props">
+								<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class Registrar.">
+									<caption class="sectionTitle">Field Summary</caption>
 									
-								</dt>
-								<dd>Contents of the incoming request. Expects a body in JSON format.
+									<thead>
+										<tr>
+											<th scope="col">Field Attributes</th>
+											<th scope="col">Field Name and Description</th>
+										</tr>
+									</thead>
+									
+									<tbody>
+										
+											<tr>
+												<td class="attributes">&nbsp;</td>
+												<td class="nameDescription">
+													<div class="fixedFont">
+													<b><a href="../symbols/Registrar.html#DeleteKeyModel">DeleteKeyModel</a></b>
+													</div>
+													<div class="description">JSON schema for delete parameter definitions.</div>
+												</td>
+											</tr>
+										
+											<tr>
+												<td class="attributes">&nbsp;</td>
+												<td class="nameDescription">
+													<div class="fixedFont">
+													<b><a href="../symbols/Registrar.html#RegistrationModel">RegistrationModel</a></b>
+													</div>
+													<div class="description">JSON schema for registration definitions.</div>
+												</td>
+											</tr>
+										
+											<tr>
+												<td class="attributes">&nbsp;</td>
+												<td class="nameDescription">
+													<div class="fixedFont">
+													<b><a href="../symbols/Registrar.html#RouteModel">RouteModel</a></b>
+													</div>
+													<div class="description">JSON schema for route definitions.</div>
+												</td>
+											</tr>
+										
+											<tr>
+												<td class="attributes">&nbsp;</td>
+												<td class="nameDescription">
+													<div class="fixedFont">
+													<b><a href="../symbols/Registrar.html#UserIdModel">UserIdModel</a></b>
+													</div>
+													<div class="description">JSON schema for userId values</div>
+												</td>
+											</tr>
+										
+									</tbody>
+								</table>
+							</div>
+						</nav>
+					
+					
+					
+				</section>
+			
+	<!--
+	#### METHODS SUMMARY
+	-->
+			
+				<section>
+					
+					
+					<div class="props">
+						<h2 class="sectionTitle">Method Summary</h2>
+						
+						
+							<nav>
+								<table class="summaryTable" id="MethodsList" cellspacing="0" summary="A summary of the methods documented in the class Registrar.">
+									<thead>
+										<tr>
+											<th scope="col">Method Attributes</th>
+											<th scope="col">Method Name and Description</th>
+										</tr>
+									</thead>
+									
+									<tbody>
+										
+										
+											<tr
+												 class='item0'
+											>
+												<td class="attributes">&nbsp;</td>
+												<td class="nameDescription">
+													<div class="fixedFont"><b><a href="../symbols/Registrar.html#addRegistration">addRegistration</a></b>(req, res)
+													</div>
+													<div class="description">Add or update a registration for a given user.</div>
+												</td>
+											</tr>
+										
+											<tr
+												 class='item1'
+											>
+												<td class="attributes">&nbsp;</td>
+												<td class="nameDescription">
+													<div class="fixedFont"><b><a href="../symbols/Registrar.html#deleteRegistration">deleteRegistration</a></b>(req, res)
+													</div>
+													<div class="description">Delete a registration or all registrations for a given user.</div>
+												</td>
+											</tr>
+										
+											<tr
+												 class='item2'
+											>
+												<td class="attributes">&nbsp;</td>
+												<td class="nameDescription">
+													<div class="fixedFont"><b><a href="../symbols/Registrar.html#getRegistrations">getRegistrations</a></b>(req, res)
+													</div>
+													<div class="description">Obtain the current registrations for a given user.</div>
+												</td>
+											</tr>
+										
+									</tbody>
+								</table>
+							</nav>
+						
+					
+						
+					</div>
+				</section>
+			
+			
+	<!--
+	#### EVENTS SUMMARY
+	-->
+			
+	<!--
+	#### CONSTRUCTOR DETAILS
+	-->
+			
+				<section>
+					<div class="details props">
+						<div class="innerProps">
+							<h2 class="sectionTitle" id="constructor">
+								Class Detail
+							</h2>
+							
+							<div class="fixedFont">
+								<b>Registrar</b>(registrationStore)
+							</div>
+							
+							<div class="description">
+								Registrar constructor.
+								
+							</div>
+							
+							
+						
+							
+								<dl class="detailList params">
+									<dt class="heading">Parameters:</dt>
+									
+										<dt>
+											 <b>registrationStore</b>
+											
+										</dt>
+										<dd></dd>
+									
+								</dl>
+							
+							
+							
+						</div>
+					</div>
+				</section>
+			
+	<!--
+	#### FIELD DETAILS
+	-->
+			
+				<section>
+					<div class="details props">
+						<div class="innerProps">
+							<h2 class="sectionTitle">
+								Field Detail
+							</h2>
+							
+							
+								<div class="fixedFont heading" id="DeleteKeyModel">
+									<span class='lighter'>
+									
+									</span>
+									
+									<span class="light">{Model}</span>
+									
+									<b>DeleteKeyModel</b>							
+								</div>
+								
+								<div class="description">
+									JSON schema for delete parameter definitions.
+									
+									
+									
+								</div>
+								
+								
+									
+								
+								<div class="hr"></div>
+							
+								<div class="fixedFont heading" id="RegistrationModel">
+									<span class='lighter'>
+									
+									</span>
+									
+									<span class="light">{Model}</span>
+									
+									<b>RegistrationModel</b>							
+								</div>
+								
+								<div class="description">
+									JSON schema for registration definitions.
+									
+									
+									
+								</div>
+								
+								
+									
+								
+								<div class="hr"></div>
+							
+								<div class="fixedFont heading" id="RouteModel">
+									<span class='lighter'>
+									
+									</span>
+									
+									<span class="light">{Model}</span>
+									
+									<b>RouteModel</b>							
+								</div>
+								
+								<div class="description">
+									JSON schema for route definitions.
+									
+									
+									
+								</div>
+								
+								
+									
+								
+								<div class="hr"></div>
+							
+								<div class="fixedFont heading" id="UserIdModel">
+									<span class='lighter'>
+									
+									</span>
+									
+									<span class="light">{Model}</span>
+									
+									<b>UserIdModel</b>							
+								</div>
+								
+								<div class="description">
+									JSON schema for userId values
+									
+									
+									
+								</div>
+								
+								
+									
+								
+								
+							
+						</div>
+					</div>
+				</section>
+			
+	<!--
+	#### METHOD DETAILS
+	-->		
+			
+				<section>
+					<div class="details props">
+						<div class="innerProps">
+							<h2 class="sectionTitle">
+								Method Detail
+							</h2>
+							
+							<ul class="methodDetail" id="MethodDetail">
+								
+								
+									<li 
+										 class='item0'
+									>
+										<div class="fixedFont heading" id="addRegistration">
+											<span class='lighter'>
+											
+											</span>
+											
+											
+											
+											<b>addRegistration</b>(req, res)
+										</div>
+										
+										<div class="description">
+											Add or update a registration for a given user.
+											
+											
+											
+											
+										</div>
+										
+										
+										
+										
+											<dl class="detailList params">
+												<dt class="heading">Parameters:</dt>
+												
+													<dt>
+														<b>req</b>
+														
+													</dt>
+													<dd>Contents of the incoming request. Expects a body in JSON format.
   - req.params.userId: the user to look for
   - req.body.registrationId: the registration to add/update.
   - req.body.templateVersion: the template version for this registration.
@@ -558,129 +480,138 @@ ul.inheritsList
     - name: the unique name of the route for this registration.
     - token: service-specific way to reach the user for notifications.
     - secondsToLive: the number of seconds into the future the token is valid.</dd>
-							
-								<dt>
-									<b>res</b>
-									
-								</dt>
-								<dd>Response generator for the request. Generates JSON output if the
+												
+													<dt>
+														<b>res</b>
+														
+													</dt>
+													<dd>Response generator for the request. Generates JSON output if the
   client requested JSON.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="deleteRegistration"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>deleteRegistration</b>(req, res)
-					
-					</div>
-					<div class="description">
-						Delete a registration or all registrations for a given user. If a JSON
+												
+											</dl>
+										
+										
+										
+										<div class="hr"></div>
+									</li>
+								
+									<li 
+										 class='item1'
+									>
+										<div class="fixedFont heading" id="deleteRegistration">
+											<span class='lighter'>
+											
+											</span>
+											
+											
+											
+											<b>deleteRegistration</b>(req, res)
+										</div>
+										
+										<div class="description">
+											Delete a registration or all registrations for a given user. If a JSON
 payload exits with a registrationId attribute, only delete the one entity
 matching the registrationId value. Otherwise, delete all registrations for the
 user.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<b>req</b>
-									
-								</dt>
-								<dd>Contents of the incoming request.
+											
+											
+											
+											
+										</div>
+										
+										
+										
+										
+											<dl class="detailList params">
+												<dt class="heading">Parameters:</dt>
+												
+													<dt>
+														<b>req</b>
+														
+													</dt>
+													<dd>Contents of the incoming request.
   - req.params.userId: the user to look for
   - req.body.registrationId (optional): the registration to delete</dd>
-							
-								<dt>
-									<b>res</b>
-									
-								</dt>
-								<dd>Response generator for the request. Generates JSON output if the
+												
+													<dt>
+														<b>res</b>
+														
+													</dt>
+													<dd>Response generator for the request. Generates JSON output if the
   client requested JSON.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="getRegistrations"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>getRegistrations</b>(req, res)
-					
-					</div>
-					<div class="description">
-						Obtain the current registrations for a given user.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<b>req</b>
-									
-								</dt>
-								<dd>Contents of the incoming request</dd>
-							
-								<dt>
-									<b>res</b>
-									
-								</dt>
-								<dd>Response generator for the request. Generates JSON output if the
+												
+											</dl>
+										
+										
+										
+										<div class="hr"></div>
+									</li>
+								
+									<li 
+										 class='item2'
+									>
+										<div class="fixedFont heading" id="getRegistrations">
+											<span class='lighter'>
+											
+											</span>
+											
+											
+											
+											<b>getRegistrations</b>(req, res)
+										</div>
+										
+										<div class="description">
+											Obtain the current registrations for a given user.
+											
+											
+											
+											
+										</div>
+										
+										
+										
+										
+											<dl class="detailList params">
+												<dt class="heading">Parameters:</dt>
+												
+													<dt>
+														<b>req</b>
+														
+													</dt>
+													<dd>Contents of the incoming request</dd>
+												
+													<dt>
+														<b>res</b>
+														
+													</dt>
+													<dd>Response generator for the request. Generates JSON output if the
   client requested JSON.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
+												
+											</dl>
+										
+										
+										
+										
+									</li>
+								
+							</ul>
+						</div>
+					</div>
+				</section>
+			
+			
+	<!--
+	#### EVENT DETAILS
+	-->		
+			
+		</article>
+	</div>
+</div>
 
-					
-				
-			
-			
-<!-- ============================== event details ========================= -->		
-			
-			
-			<hr />
-		</div>
-
-		
-<!-- ============================== footer ================================= -->
-		<div class="fineprint" style="clear:both">
-			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Fri Aug 03 2012 22:23:50 GMT+0200 (CEST)
-		</div>
+		<script type="text/javascript">
+			wbos.CssTools.MediaQueryFallBack.LoadCss('../css/screen.css', '../css/handheld.css', 660)
+			codeview.classFilter.Init()
+		</script>
 	</body>
 </html>
+

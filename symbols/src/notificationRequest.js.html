@@ -1,0 +1,37 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="STRN">'use strict'</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>  2</span> 
+<span class='line'>  3</span> </span><span class="COMM">/**
+<span class='line'>  4</span>  * @fileOverview Defines the NotficationRequest prototype and its methods.
+<span class='line'>  5</span>  */</span><span class="WHIT">
+<span class='line'>  6</span> </span><span class="NAME">module.exports</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">NotificationRequest</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>  7</span> 
+<span class='line'>  8</span> </span><span class="COMM">/**
+<span class='line'>  9</span>  * NotificationRequest constructor
+<span class='line'> 10</span>  *
+<span class='line'> 11</span>  * @class
+<span class='line'> 12</span>  *
+<span class='line'> 13</span>  * A NotificationRequest represents a notification request.
+<span class='line'> 14</span>  *
+<span class='line'> 15</span>  * @param {String} userId user to notify
+<span class='line'> 16</span>  * @param {String} token the value used to reach a specific device
+<span class='line'> 17</span>  * @param {Object} content the notification payload to send to the device. The 'content' attribute holds the actual
+<span class='line'> 18</span>  *  payload to deliver. Additional attributes may exist depending on the os-specific notification service being used
+<span class='line'> 19</span>  *  for delivery.
+<span class='line'> 20</span>  * @param {Number} secondsToLive how long this notification is valid
+<span class='line'> 21</span>  * @param {Function} removeRegistrationProc function to call to remove a token from further notifications
+<span class='line'> 22</span>  */</span><span class="WHIT">
+<span class='line'> 23</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">NotificationRequest</span><span class="PUNC">(</span><span class="NAME">userId</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">token</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">content</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">secondsToLive</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">removeRegistrationProc</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 24</span> </span><span class="WHIT">    </span><span class="NAME">this.userId</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">userId</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 25</span> </span><span class="WHIT">    </span><span class="NAME">this.token</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">token</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 26</span> </span><span class="WHIT">    </span><span class="NAME">this.content</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">content</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 27</span> </span><span class="WHIT">    </span><span class="NAME">this.secondsToLive</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">secondsToLive</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 28</span> </span><span class="WHIT">    </span><span class="NAME">this.removeRegistrationProc</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">removeRegistrationProc</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 29</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 30</span> </span></pre></body></html>
