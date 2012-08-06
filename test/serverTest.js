@@ -21,15 +21,14 @@ var server = null;
 
 log4js.configure(
     {
-        // Define the log appenders to use. These apply to all loggers.
         "appenders": [
             {
                 "type": "file",
                 "filename": "notifier.log",
                 "layout": { "type": "basic" }
-            }
+             }
         ]}
-    );
+);
 
 log4js.setGlobalLogLevel('DEBUG');
 
@@ -404,7 +403,22 @@ suite.addBatch(
                 'it should return 2 match': function (err, res) {
                     assert.isNull(err);
                     assert.isObject(res);
-                    assert.equal(res.body.count, 1);
+                    assert.equal(res.body.count, 2);
+                }
+            },
+            'a valid post request with an empty filter': {
+                topic: request(
+                    {
+                        uri:'/post/br.howes2',
+                        method: 'POST',
+                        json: validPost({"filter":{}})
+                    }
+                ),
+                'it should succeed with ACCEPTED': statusCheck(HTTPStatus.ACCEPTED),
+                'it should return 2 match': function (err, res) {
+                    assert.isNull(err);
+                    assert.isObject(res);
+                    assert.equal(res.body.count, 2);
                 }
             },
             'an invalid post request with missing eventId': {
@@ -416,21 +430,6 @@ suite.addBatch(
                     }
                 ),
                 'it should fail with BAD REQUEST': statusCheck(HTTPStatus.BAD_REQUEST)
-            },
-            'an invalid post request with empty subsitutions': {
-                topic: request(
-                    {
-                        uri:'/post/br.howes2',
-                        method: 'POST',
-                        json: invalidPost({"substitutions":{}})
-                    }
-                ),
-                'it should succeed with ACCEPTED': statusCheck(HTTPStatus.ACCEPTED),
-                'it should return 0 matches': function (err, res) {
-                    assert.isNull(err);
-                    assert.isObject(res);
-                    assert.equal(res.body.count, 0);
-                }
             }
         }
     }

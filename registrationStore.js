@@ -112,22 +112,29 @@ RegistrationStore.prototype = {
         var now = new Date();
         now = now.toISOString();
 
-        var routes = JSON.parse(registrationEntity.Routes);
+        var routes = [];
+        try {
+            routes = JSON.parse(registrationEntity.Routes);
+        }
+        catch (err) {
+            log.error('failed to parse registrationEntity.Routes:', registrationEntity.Routes);
+        }
+
         log.debug('routes:', routes);
 
         var valid = [];
         for (var each in routes) {
             var route = routes[each];
             if (route.Expiration > now) {
-                var index = (tokens instanceof Array) ? tokens.indexOf(route.Token) : 0;
-                log.debug('indexOf:', index);
-                if (index !== -1) {
+                route = {
+                    "name": route.Name,
+                    "token": route.Token,
+                    "expiration": route.Expiration
+                };
+
+                if (filter.passed(registration, route)) {
                     log.debug('using route', route.Name, 'token:', route.Token);
-                    valid.push( {
-                                    'name': route.Name,
-                                    'token': route.Token,
-                                    'expiration': route.Expiration
-                                } );
+                    valid.push(route);
                 }
             }
             else {
@@ -171,7 +178,7 @@ RegistrationStore.prototype = {
                 }
 
                 filter = new Filter(filter);
-                
+
                 var now = new Date();
                 now = now.toISOString();
 
@@ -329,7 +336,7 @@ RegistrationStore.prototype = {
                 var errors = null;
                 var awaiting = registrationEntities.length;
 
-                if (err || registrationEntities.length === 0) {
+                if (err || registrationEntities === null || registrationEntities.length === 0) {
                     callback(err);
                 }
                 else {

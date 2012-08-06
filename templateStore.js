@@ -99,13 +99,22 @@ TemplateStore.prototype = {
                         var matched = foundMap[key];
                         if (matched !== undefined) {
                             for (var matchIndex in matched) {
-                                var match = {
-                                    'service': service,
-                                    'token': route.token,
-                                    'template': JSON.parse(matched[matchIndex].Content)
-                                };
-                                log.debug('found match:', match);
-                                matches.push(match);
+                                var template = null;
+                                try {
+                                    template = JSON.parse(matched[matchIndex].Content);
+                                } catch (err) {
+                                    log.error('failed to parse template:', matched[matchIndex].Content);
+                                }
+
+                                if (template !== null) {
+                                    var match = {
+                                        'service': service,
+                                        'token': route.token,
+                                        'template': JSON.parse(matched[matchIndex].Content)
+                                    };
+                                    log.debug('found match:', match);
+                                    matches.push(match);
+                                }
                             }
                         }
                     }

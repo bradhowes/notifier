@@ -104,9 +104,14 @@ APNs.prototype = {
             }
         };
         notification.device = new apn.Device(new Buffer(req.token, 'base64'));
-        notification.payload = JSON.parse(req.content.content);
-        log.debug('payload:', req.content.content);
-        this.connection.sendNotification(notification);
+        try {
+            notification.payload = JSON.parse(req.content.content);
+            log.debug('payload:', req.content.content);
+            this.connection.sendNotification(notification);
+        }
+        catch (err) {
+            log.error('failed to parse APN payload:', req.content.content);
+        }
         log.END();
     }
 };

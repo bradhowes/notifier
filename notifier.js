@@ -65,8 +65,10 @@ function Notifier(templateStore, registrationStore, generator, senders) {
                     return value;
                 },
                 filter: function(value) {
-                    value = this.FilterModel.validate(value);
-                    if (value !== null) return null;
+                    var log = this.log.child('filter model');
+                    var err = this.FilterModel.validate(value);
+                    log.debug('filter validation:', err);
+                    if (err !== null) return null;
                     return value;
                 }.bind(this)
             }
@@ -113,6 +115,7 @@ Notifier.prototype = {
         var errors = this.PostModel.validate(params);
         if (errors !== null) {
             log.error('invalid params:', JSON.stringify(errors));
+            log.error(params);
             res.send(HTTPStatus.BAD_REQUEST);
             return;
         }
