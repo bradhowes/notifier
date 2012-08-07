@@ -5,6 +5,7 @@
  */
 module.exports = Registrar;
 
+var express = require('express');
 var Model = require('model.js');
 var HTTPStatus = require('http-status');
 
@@ -14,13 +15,19 @@ var HTTPStatus = require('http-status');
  * @class
  *
  * A registrar allows for querying, updating, and deleting of registrations for a given user ID.
+ *
+ * @param {RegistrationStore} registrationStore the RegistrationStore instance to rely on for persistent data
+ * operations.
  */
 function Registrar(registrationStore) {
     this.log = require('./config').log('Registrar');
     this.registrationStore = registrationStore;
 
     /**
-     * JSON schema for userId values
+     * JSON schema for userId values. Contains just one value:
+     *
+     * - userId: the user to operate on
+     *
      * @type Model
      */
     this.UserIdModel = Model.extend(
@@ -29,7 +36,12 @@ function Registrar(registrationStore) {
         });
 
     /**
-     * JSON schema for route definitions.
+     * JSON schema for route definitions. Attributes:
+     *
+     * - name: the name of the route. Only receives notifications from templates with a matching name value.
+     * - token: the OS-specific value associated with the device to notify
+     * - secondsToLive: the number of seconds this registration route will be valid
+     *
      * @type Model
      */
     this.RouteModel = Model.extend(
@@ -40,7 +52,16 @@ function Registrar(registrationStore) {
         });
 
     /**
-     * JSON schema for registration definitions.
+     * JSON schema for registration definitions. Attributes:
+     *
+     * - registrationId: the unique identifier associated with the device being registered. This must be unique across
+     *   all devices, but it should be constant for the same device.
+     * - templateVersion: the version to look for when searching for templates to use for this device
+     * - templateLanguage: the language to look for when searching for templates to use for this device
+     * - service: identifier of the OS-specific service that handles notification delivery ("wns", "apns", "gcm")
+     * - routes: an array of one or more {@link Registrar#RouteModel} objects that define the registration delivery
+     *           paths for the device
+     *
      * @type Model
      */
     this.RegistrationModel = this.UserIdModel.extend(
@@ -66,7 +87,11 @@ function Registrar(registrationStore) {
         });
 
     /**
-     * JSON schema for delete parameter definitions.
+     * JSON schema for delete parameter definitions. Attributes:
+     *
+     * - registrationId: the unique identifier associated with the device to be removed. See
+     *   {@link Registrar#RegistrationModel} for additional information.
+     *
      * @type Model
      */
     this.DeleteKeyModel = this.UserIdModel.extend(
@@ -83,17 +108,36 @@ function Registrar(registrationStore) {
 Registrar.prototype = {
 
     /**
-     * Obtain the current registrations for a given user.
+     * Add Express routes for the Registrar API.
      *
-     * @param req
-     *   Contents of the incoming request
-     *
-     * @param res
-     *   Response generator for the request. Generates JSON output if the
-     *   client requested JSON.
+     * @param {Express.App} app the application to route
      */
-    getRegistrations: function (req, res) {
-        var log = this.log.child('getRegistrations');
+    route: function(app) {
+        var log = this.log.child('route');
+        log.BEGIN('adding bindings');
+        app.get('/registrations/:userId', this.get.bind(this));
+        app.post('/registrations/:userId', this.set.bind(this));
+        app.del('/registrations/:userId', this.del.bind(this));
+        log.END();
+    },
+
+    /**
+     * Obtain the current registrations for a given user. Parameters:
+     *
+     * - userId: the user to look for (found in the URL)
+     *
+     * HTTP Responses:
+     *
+     * - 400 BAD REQUEST: missing or invalid query attribute(s)
+     * - 404 NOT FOUND: no templates were found for the given key attributes
+     * - 200 OK: one or more registrations were found
+     *
+     * @param req Contents of the incoming request.
+     *
+     * @param res Response generator for the request. Generates JSON output if there are registrations
+     */
+    get: function (req, res) {
+        var log = this.log.child('get');
         log.BEGIN();
 
         var params = {userId: req.param('userId')};
@@ -127,27 +171,30 @@ Registrar.prototype = {
     },
 
     /**
-     * Add or update a registration for a given user.
+     * Add or update a registration for a given user. Parameters:
      *
-     * @param req
-     *   Contents of the incoming request. Expects a body in JSON format.
-     *   - req.params.userId: the user to look for
-     *   - req.body.registrationId: the registration to add/update.
-     *   - req.body.templateVersion: the template version for this registration.
-     *   - req.body.templateLanguage: the template language for this registration.
-     *   - req.body.service: the notification service for this registration.
-     *   - req.body.routes: array of one or more route dicts with keys:
-     *     - name: the unique name of the route for this registration.
-     *     - token: service-specific way to reach the user for notifications.
-     *     - secondsToLive: the number of seconds into the future the token is valid.
+     * - userId: the user to look for (found in the URL)
+     * - registrationId: the registration to add/update.
+     * - templateVersion: the template version for this registration.
+     * - templateLanguage: the template language for this registration.
+     * - service: the notification service for this registration.
+     * - routes: array of one or more route dicts with keys:
+     *   - name: the unique name of the route for this registration.
+     *   - token: service-specific way to reach the user for notifications.
+     *   - secondsToLive: the number of seconds into the future the token is valid.
      *
-     * @param res
-     *   Response generator for the request. Generates JSON output if the
-     *   client requested JSON.
+     * HTTP Responses:
+     *
+     * - 400 BAD REQUEST: missing or invalid template attribute(s)
+     * - 200 OK: one or moret templates were found
+     *
+     * @param req Contents of the incoming request.
+     *
+     * @param res Response generator for the request.
      */
-    addRegistration: function (req, res) {
+    set: function (req, res) {
         var self = this;
-        var log = this.log.child('addRegistration');
+        var log = this.log.child('set');
         log.BEGIN('req:', req.body);
 
         var params = req.body;
@@ -186,18 +233,22 @@ Registrar.prototype = {
      * matching the registrationId value. Otherwise, delete all registrations for the
      * user.
      *
-     * @param req
-     *   Contents of the incoming request.
-     *   - req.params.userId: the user to look for
-     *   - req.body.registrationId (optional): the registration to delete
+     * - userId: the user to look for (found in the URL)
+     * - registrationId (optional): the registration to delete
      *
-     * @param res
-     *   Response generator for the request. Generates JSON output if the
-     *   client requested JSON.
+     * HTTP Responses:
+     *
+     * - 400 BAD REQUEST: missing or invalid template attribute(s)
+     * - 404 NOT FOUND: unable to locate any registration to delete
+     * - 204 NO CONTENT: found and delete the registration(s)
+     *
+     * @param req Contents of the incoming request.
+     *
+     * @param res Response generator for the request.
      */
-    deleteRegistration: function (req, res) {
-        var log = this.log.child('deleteRegistration');
-        log.BEGIN();
+    del: function (req, res) {
+        var log = this.log.child('del');
+        log.BEGIN('body:', req.body);
 
         var params = {
             userId: req.param('userId')

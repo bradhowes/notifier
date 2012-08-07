@@ -15,6 +15,7 @@ var Filter = require('./filter');
  * @class RegistrationStore
  */
 function RegistrationStore(tableName, callback) {
+    var self = this;
     var log = this.log = require('./config').log('RegistrationStore');
     log.BEGIN(tableName);
     if (tableName === undefined) {
@@ -23,10 +24,24 @@ function RegistrationStore(tableName, callback) {
 
     this.tableName = tableName;
     this.store = azure.createTableService();
-    this.store.createTableIfNotExists(tableName, function (err, b, c) {
-                                          log.END(err, b, c);
-                                          if (callback) callback(err);
-                                      });
+
+    var checkCreateTableIfNotExists = function(err, b, c) {
+        if (err) {
+            log.error(err);
+            if (err.statusCode === 409) {
+                Q.delay(1000)   // Wait for one second and try again.
+                    .then(function () {
+                              self.store.createTableIfNotExists(tableName, checkCreateTableIfNotExists);
+                          });
+                return;
+            }
+        }
+
+        log.END(err, b, c);
+        if (callback) callback(err);
+    };
+
+    this.store.createTableIfNotExists(tableName, checkCreateTableIfNotExists);
 }
 
 /**

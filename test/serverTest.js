@@ -440,11 +440,22 @@ suite.addBatch(
     {
         'deleting entries from server': {
             topic: listen(),
-            'deleting previous registration': {
+            'deleting previous WNS registration': {
                 topic: request(
                     {
                         uri:'/registrations/br.howes2',
-                        method: 'DELETE'
+                        method: 'DELETE',
+                        json: {registrationId: "myregistration_WNS"}
+                    }
+                ),
+                'it should succeed with NO CONTENT': statusCheck(HTTPStatus.NO_CONTENT)
+            },
+            'deleting previous APNS registration': {
+                topic: request(
+                    {
+                        uri:'/registrations/br.howes2',
+                        method: 'DELETE',
+                        json: {registrationId: "myregistration_APNS"}
                     }
                 ),
                 'it should succeed with NO CONTENT': statusCheck(HTTPStatus.NO_CONTENT)

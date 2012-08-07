@@ -5,6 +5,7 @@ module.exports = TemplateStore;
 
 var azure = require('azure');
 var config = require('./config');
+var Q = require('q');
 
 /**
  * Initializes a new TemplateStore object. A TemplateStore reads from and writes to an Azure table store.
@@ -15,6 +16,7 @@ var config = require('./config');
  * @param {Function} callback the function to invoke when the table store exits
  */
 function TemplateStore(tableName, callback) {
+    var self = this;
     var log = this.log = config.log('TemplateStore');
     log.BEGIN(tableName);
     if (tableName === undefined) {
@@ -23,14 +25,27 @@ function TemplateStore(tableName, callback) {
 
     this.tableName = tableName;
     this.store = azure.createTableService();
-    this.store.createTableIfNotExists(tableName, function (err, b, c) {
-                                          log.END(err, b, c);
-                                          if (callback) callback(err);
-                                      });
-
     this.findKeyGenerators = [this.makeKey.bind(this),
                               this.makeBaseLanguageKey.bind(this),
                               this.makeDefaultLanguageKey.bind(this) ];
+
+    var checkCreateTableIfNotExists = function(err, b, c) {
+        if (err) {
+            log.error(err);
+            if (err.statusCode === 409) {
+                Q.delay(1000)   // Wait for one second and try again.
+                    .then(function () {
+                              self.store.createTableIfNotExists(tableName, checkCreateTableIfNotExists);
+                          });
+                return;
+            }
+        }
+
+        log.END(err, b, c);
+        if (callback) callback(err);
+    };
+
+    this.store.createTableIfNotExists(tableName, checkCreateTableIfNotExists);
 }
 
 TemplateStore.prototype = {

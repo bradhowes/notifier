@@ -72,14 +72,9 @@ App.prototype = {
                 var senders = {'wns': new WNS(), 'apns': new APNs(), 'gcm': new GCM()};
                 var generator = new PayloadGenerator();
                 var service = new Notifier(templateStore, registrationStore, generator, senders);
-                self.notifier = service;
-                clog.info('adding bindings to notifier');
-                app.post('/post/:userId', service.postNotification.bind(service));
-                app.post('/logReceipt', service.logReceipt.bind(service));
-                clog.END();
-
+                service.route(app)
                 callback(app, errors);
-
+                clog.END();
                 return;
             }
 
@@ -88,38 +83,30 @@ App.prototype = {
 
         log.BEGIN();
 
-        app.configure(
-            function () {
-                app.use(app.router);
-            });
+        app.use(app.router);
 
-        app.configure('development', function(){
+        app.configure('development', function () {
                           app.use(express.errorHandler({dumpExceptions: true, showStack: true}));
                       });
 
-        app.configure('production', function(){
+        app.configure('production', function () {
                           app.use(express.errorHandler());
                       });
 
         app.post('*', express.json());
+        app.del('*', express.json());
 
         registrationStore = new RegistrationStore(this.registrationStoreName, function(err) {
                 log.info('creating registrar');
-                var service = self.registrar = new Registrar(registrationStore);
-                log.info('adding bindings to registrar');
-                app.get('/registrations/:userId', service.getRegistrations.bind(service));
-                app.post('/registrations/:userId', service.addRegistration.bind(service));
-                app.del('/registrations/:userId', service.deleteRegistration.bind(service));
+                var service = new Registrar(registrationStore);
+                service.route(app);
                 continuation('registrationStore', err);
             });
 
         templateStore = new TemplateStore(this.templateStoreName, function(err) {
                 log.info('creating template manager');
                 var service = new TemplateManager(templateStore);
-                log.info('adding bindings to template manager');
-                app.get('/templates', service.getTemplates.bind(service));
-                app.post('/templates', service.addTemplate.bind(service));
-                app.del('/templates', express.json(), service.deleteTemplate.bind(service));
+                service.route(app);
                 continuation('templateStore', err);
             });
 

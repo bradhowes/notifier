@@ -5,6 +5,7 @@
  */
 module.exports = Notifier;
 
+var express = require('express');
 var HTTPStatus = require('http-status');
 var Model = require('model.js');
 var PostTracker = require('./postTracker');
@@ -89,6 +90,19 @@ function Notifier(templateStore, registrationStore, generator, senders) {
  * Defines the methods available to an Notifier instance.
  */
 Notifier.prototype = {
+
+    /**
+     * Add Express routes for the Notifier API.
+     *
+     * @param {Express.App} app the application to route
+     */
+    route: function(app) {
+        var log = this.log.child('route');
+        log.BEGIN('adding bindings');
+        app.post('/post/:userId', express.json(), this.postNotification.bind(this));
+        app.post('/logReceipt', express.json(), this.logReceipt.bind(this));
+        log.END();
+    },
 
     /**
      * Post a notification to a user.
