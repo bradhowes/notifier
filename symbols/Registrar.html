@@ -54,8 +54,6 @@
 				
 					<li><a href="../symbols/LoggerUtils.html">LoggerUtils</a></li>
 				
-					<li><a href="../symbols/NotificationRequest.html">NotificationRequest</a></li>
-				
 					<li><a href="../symbols/Notifier.html">Notifier</a></li>
 				
 					<li><a href="../symbols/PayloadGenerator.html">PayloadGenerator</a></li>
@@ -83,7 +81,7 @@
 			Documentation generator: <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0<br />
 			Template: <a href="http://www.thebrightlines.com/2010/05/06/new-template-for-jsdoctoolkit-codeview/" target="_blank">Codeview</a> 1.2<br />
 			Generated on:
-			<time datetime='2012-7-6' pubdate>2012-7-6 21:49</time>
+			<time datetime='2012-7-7' pubdate>2012-7-7 18:54</time>
 		</footer>
 	</div>
 </div>
@@ -135,7 +133,7 @@
 										<div class="fixedFont">
 											<b><a href="../symbols/Registrar.html#constructor">Registrar</a></b>(registrationStore)
 										</div>
-										<div class="description">Registrar constructor.</div>
+										<div class="description"><p>Registrar constructor.</div>
 									</td>
 								</tr>
 							</tbody>
@@ -168,7 +166,7 @@
 													<div class="fixedFont">
 													<b><a href="../symbols/Registrar.html#DeleteKeyModel">DeleteKeyModel</a></b>
 													</div>
-													<div class="description">JSON schema for delete parameter definitions.</div>
+													<div class="description"><p>JSON schema for delete parameter definitions.</div>
 												</td>
 											</tr>
 										
@@ -178,7 +176,7 @@
 													<div class="fixedFont">
 													<b><a href="../symbols/Registrar.html#RegistrationModel">RegistrationModel</a></b>
 													</div>
-													<div class="description">JSON schema for registration definitions.</div>
+													<div class="description"><p>JSON schema for registration definitions.</div>
 												</td>
 											</tr>
 										
@@ -188,7 +186,7 @@
 													<div class="fixedFont">
 													<b><a href="../symbols/Registrar.html#RouteModel">RouteModel</a></b>
 													</div>
-													<div class="description">JSON schema for route definitions.</div>
+													<div class="description"><p>JSON schema for route definitions.</div>
 												</td>
 											</tr>
 										
@@ -198,7 +196,7 @@
 													<div class="fixedFont">
 													<b><a href="../symbols/Registrar.html#UserIdModel">UserIdModel</a></b>
 													</div>
-													<div class="description">JSON schema for userId values</div>
+													<div class="description"><p>JSON schema for userId values.</div>
 												</td>
 											</tr>
 										
@@ -239,9 +237,9 @@
 											>
 												<td class="attributes">&nbsp;</td>
 												<td class="nameDescription">
-													<div class="fixedFont"><b><a href="../symbols/Registrar.html#addRegistration">addRegistration</a></b>(req, res)
+													<div class="fixedFont"><b><a href="../symbols/Registrar.html#del">del</a></b>(req, res)
 													</div>
-													<div class="description">Add or update a registration for a given user.</div>
+													<div class="description"><p>Delete a registration or all registrations for a given user.</div>
 												</td>
 											</tr>
 										
@@ -250,9 +248,9 @@
 											>
 												<td class="attributes">&nbsp;</td>
 												<td class="nameDescription">
-													<div class="fixedFont"><b><a href="../symbols/Registrar.html#deleteRegistration">deleteRegistration</a></b>(req, res)
+													<div class="fixedFont"><b><a href="../symbols/Registrar.html#get">get</a></b>(req, res)
 													</div>
-													<div class="description">Delete a registration or all registrations for a given user.</div>
+													<div class="description"><p>Obtain the current registrations for a given user.</div>
 												</td>
 											</tr>
 										
@@ -261,9 +259,20 @@
 											>
 												<td class="attributes">&nbsp;</td>
 												<td class="nameDescription">
-													<div class="fixedFont"><b><a href="../symbols/Registrar.html#getRegistrations">getRegistrations</a></b>(req, res)
+													<div class="fixedFont"><b><a href="../symbols/Registrar.html#route">route</a></b>(app)
 													</div>
-													<div class="description">Obtain the current registrations for a given user.</div>
+													<div class="description"><p>Add Express routes for the Registrar API.</div>
+												</td>
+											</tr>
+										
+											<tr
+												 class='item3'
+											>
+												<td class="attributes">&nbsp;</td>
+												<td class="nameDescription">
+													<div class="fixedFont"><b><a href="../symbols/Registrar.html#set">set</a></b>(req, res)
+													</div>
+													<div class="description"><p>Add or update a registration for a given user.</div>
 												</td>
 											</tr>
 										
@@ -297,7 +306,7 @@
 							</div>
 							
 							<div class="description">
-								Registrar constructor.
+								<p>Registrar constructor.</p>
 								
 							</div>
 							
@@ -308,10 +317,11 @@
 									<dt class="heading">Parameters:</dt>
 									
 										<dt>
-											 <b>registrationStore</b>
+											<span class="light fixedFont">{<a href="../symbols/RegistrationStore.html">RegistrationStore</a>}</span>  <b>registrationStore</b>
 											
 										</dt>
-										<dd></dd>
+										<dd>the RegistrationStore instance to rely on for persistent data
+operations.</dd>
 									
 								</dl>
 							
@@ -344,7 +354,12 @@
 								</div>
 								
 								<div class="description">
-									JSON schema for delete parameter definitions.
+									<p>JSON schema for delete parameter definitions. Attributes:</p>
+
+<ul>
+<li>registrationId: the unique identifier associated with the device to be removed. See
+<a href="../symbols/Registrar.html#RegistrationModel">Registrar#RegistrationModel</a> for additional information.</li>
+</ul>
 									
 									
 									
@@ -366,7 +381,17 @@
 								</div>
 								
 								<div class="description">
-									JSON schema for registration definitions.
+									<p>JSON schema for registration definitions. Attributes:</p>
+
+<ul>
+<li>registrationId: the unique identifier associated with the device being registered. This must be unique across
+all devices, but it should be constant for the same device.</li>
+<li>templateVersion: the version to look for when searching for templates to use for this device</li>
+<li>templateLanguage: the language to look for when searching for templates to use for this device</li>
+<li>service: identifier of the OS-specific service that handles notification delivery ("wns", "apns", "gcm")</li>
+<li>routes: an array of one or more <a href="../symbols/Registrar.html#RouteModel">Registrar#RouteModel</a> objects that define the registration delivery
+      paths for the device</li>
+</ul>
 									
 									
 									
@@ -388,7 +413,13 @@
 								</div>
 								
 								<div class="description">
-									JSON schema for route definitions.
+									<p>JSON schema for route definitions. Attributes:</p>
+
+<ul>
+<li>name: the name of the route. Only receives notifications from templates with a matching name value.</li>
+<li>token: the OS-specific value associated with the device to notify</li>
+<li>secondsToLive: the number of seconds this registration route will be valid</li>
+</ul>
 									
 									
 									
@@ -410,7 +441,11 @@
 								</div>
 								
 								<div class="description">
-									JSON schema for userId values
+									<p>JSON schema for userId values. Contains just one value:</p>
+
+<ul>
+<li>userId: the user to operate on</li>
+</ul>
 									
 									
 									
@@ -442,18 +477,34 @@
 									<li 
 										 class='item0'
 									>
-										<div class="fixedFont heading" id="addRegistration">
+										<div class="fixedFont heading" id="del">
 											<span class='lighter'>
 											
 											</span>
 											
 											
 											
-											<b>addRegistration</b>(req, res)
+											<b>del</b>(req, res)
 										</div>
 										
 										<div class="description">
-											Add or update a registration for a given user.
+											<p>Delete a registration or all registrations for a given user. If a JSON
+payload exits with a registrationId attribute, only delete the one entity
+matching the registrationId value. Otherwise, delete all registrations for the
+user.</p>
+
+<ul>
+<li>userId: the user to look for (found in the URL)</li>
+<li>registrationId (optional): the registration to delete</li>
+</ul>
+
+<p>HTTP Responses:</p>
+
+<ul>
+<li>400 BAD REQUEST: missing or invalid template attribute(s)</li>
+<li>404 NOT FOUND: unable to locate any registration to delete</li>
+<li>204 NO CONTENT: found and delete the registration(s)</li>
+</ul>
 											
 											
 											
@@ -470,23 +521,13 @@
 														<b>req</b>
 														
 													</dt>
-													<dd>Contents of the incoming request. Expects a body in JSON format.
-  - req.params.userId: the user to look for
-  - req.body.registrationId: the registration to add/update.
-  - req.body.templateVersion: the template version for this registration.
-  - req.body.templateLanguage: the template language for this registration.
-  - req.body.service: the notification service for this registration.
-  - req.body.routes: array of one or more route dicts with keys:
-    - name: the unique name of the route for this registration.
-    - token: service-specific way to reach the user for notifications.
-    - secondsToLive: the number of seconds into the future the token is valid.</dd>
+													<dd>Contents of the incoming request.</dd>
 												
 													<dt>
 														<b>res</b>
 														
 													</dt>
-													<dd>Response generator for the request. Generates JSON output if the
-  client requested JSON.</dd>
+													<dd>Response generator for the request.</dd>
 												
 											</dl>
 										
@@ -498,21 +539,30 @@
 									<li 
 										 class='item1'
 									>
-										<div class="fixedFont heading" id="deleteRegistration">
+										<div class="fixedFont heading" id="get">
 											<span class='lighter'>
 											
 											</span>
 											
 											
 											
-											<b>deleteRegistration</b>(req, res)
+											<b>get</b>(req, res)
 										</div>
 										
 										<div class="description">
-											Delete a registration or all registrations for a given user. If a JSON
-payload exits with a registrationId attribute, only delete the one entity
-matching the registrationId value. Otherwise, delete all registrations for the
-user.
+											<p>Obtain the current registrations for a given user. Parameters:</p>
+
+<ul>
+<li>userId: the user to look for (found in the URL)</li>
+</ul>
+
+<p>HTTP Responses:</p>
+
+<ul>
+<li>400 BAD REQUEST: missing or invalid query attribute(s)</li>
+<li>404 NOT FOUND: no templates were found for the given key attributes</li>
+<li>200 OK: one or more registrations were found</li>
+</ul>
 											
 											
 											
@@ -529,16 +579,13 @@ user.
 														<b>req</b>
 														
 													</dt>
-													<dd>Contents of the incoming request.
-  - req.params.userId: the user to look for
-  - req.body.registrationId (optional): the registration to delete</dd>
+													<dd>Contents of the incoming request.</dd>
 												
 													<dt>
 														<b>res</b>
 														
 													</dt>
-													<dd>Response generator for the request. Generates JSON output if the
-  client requested JSON.</dd>
+													<dd>Response generator for the request. Generates JSON output if there are registrations</dd>
 												
 											</dl>
 										
@@ -550,18 +597,77 @@ user.
 									<li 
 										 class='item2'
 									>
-										<div class="fixedFont heading" id="getRegistrations">
+										<div class="fixedFont heading" id="route">
 											<span class='lighter'>
 											
 											</span>
 											
 											
 											
-											<b>getRegistrations</b>(req, res)
+											<b>route</b>(app)
 										</div>
 										
 										<div class="description">
-											Obtain the current registrations for a given user.
+											<p>Add Express routes for the Registrar API.</p>
+											
+											
+											
+											
+										</div>
+										
+										
+										
+										
+											<dl class="detailList params">
+												<dt class="heading">Parameters:</dt>
+												
+													<dt>
+														<span class="light fixedFont">{Express.App}</span> <b>app</b>
+														
+													</dt>
+													<dd>the application to route</dd>
+												
+											</dl>
+										
+										
+										
+										<div class="hr"></div>
+									</li>
+								
+									<li 
+										 class='item3'
+									>
+										<div class="fixedFont heading" id="set">
+											<span class='lighter'>
+											
+											</span>
+											
+											
+											
+											<b>set</b>(req, res)
+										</div>
+										
+										<div class="description">
+											<p>Add or update a registration for a given user. Parameters:</p>
+
+<ul>
+<li>userId: the user to look for (found in the URL)</li>
+<li>registrationId: the registration to add/update.</li>
+<li>templateVersion: the template version for this registration.</li>
+<li>templateLanguage: the template language for this registration.</li>
+<li>service: the notification service for this registration.</li>
+<li>routes: array of one or more route dicts with keys:
+<ul><li>name: the unique name of the route for this registration.</li>
+<li>token: service-specific way to reach the user for notifications.</li>
+<li>secondsToLive: the number of seconds into the future the token is valid.</li></ul></li>
+</ul>
+
+<p>HTTP Responses:</p>
+
+<ul>
+<li>400 BAD REQUEST: missing or invalid template attribute(s)</li>
+<li>200 OK: one or moret templates were found</li>
+</ul>
 											
 											
 											
@@ -578,14 +684,13 @@ user.
 														<b>req</b>
 														
 													</dt>
-													<dd>Contents of the incoming request</dd>
+													<dd>Contents of the incoming request.</dd>
 												
 													<dt>
 														<b>res</b>
 														
 													</dt>
-													<dd>Response generator for the request. Generates JSON output if the
-  client requested JSON.</dd>
+													<dd>Response generator for the request.</dd>
 												
 											</dl>
 										

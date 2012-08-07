@@ -54,8 +54,6 @@
 				
 					<li><a href="../symbols/LoggerUtils.html">LoggerUtils</a></li>
 				
-					<li><a href="../symbols/NotificationRequest.html">NotificationRequest</a></li>
-				
 					<li><a href="../symbols/Notifier.html">Notifier</a></li>
 				
 					<li><a href="../symbols/PayloadGenerator.html">PayloadGenerator</a></li>
@@ -83,7 +81,7 @@
 			Documentation generator: <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0<br />
 			Template: <a href="http://www.thebrightlines.com/2010/05/06/new-template-for-jsdoctoolkit-codeview/" target="_blank">Codeview</a> 1.2<br />
 			Generated on:
-			<time datetime='2012-7-6' pubdate>2012-7-6 21:49</time>
+			<time datetime='2012-7-7' pubdate>2012-7-7 18:54</time>
 		</footer>
 	</div>
 </div>
@@ -101,7 +99,10 @@
 				
 				<div class="intro">
 					<p class="description summary">
-						Filter
+						A Filter object determines of a device registration is to be used for notifications. A Filter contains one or more
+attributes names that correspond to attribute names found in a registration or registration route. Each attribute
+name is associated with an array of allowed values. If a registration/route pair given to the passed method does not
+have the required values, the registration/route will fail to pass the filter.
 					</p>
 						
 					
@@ -135,7 +136,7 @@
 										<div class="fixedFont">
 											<b><a href="../symbols/Filter.html#constructor">Filter</a></b>(init)
 										</div>
-										<div class="description">Filter constructor.</div>
+										<div class="description"><p>Filter constructor.</div>
 									</td>
 								</tr>
 							</tbody>
@@ -148,6 +149,45 @@
 	<!--
 	#### METHODS SUMMARY
 	-->
+			
+				<section>
+					
+					
+					<div class="props">
+						<h2 class="sectionTitle">Method Summary</h2>
+						
+						
+							<nav>
+								<table class="summaryTable" id="MethodsList" cellspacing="0" summary="A summary of the methods documented in the class Filter.">
+									<thead>
+										<tr>
+											<th scope="col">Method Attributes</th>
+											<th scope="col">Method Name and Description</th>
+										</tr>
+									</thead>
+									
+									<tbody>
+										
+										
+											<tr
+												 class='item0'
+											>
+												<td class="attributes">&nbsp;</td>
+												<td class="nameDescription">
+													<div class="fixedFont"><b><a href="../symbols/Filter.html#passed">passed</a></b>(registration, route)
+													</div>
+													<div class="description"><p>Apply the filter to a registration and route defintion.</div>
+												</td>
+											</tr>
+										
+									</tbody>
+								</table>
+							</nav>
+						
+					
+						
+					</div>
+				</section>
 			
 			
 	<!--
@@ -170,7 +210,7 @@
 							</div>
 							
 							<div class="description">
-								Filter constructor.
+								<p>Filter constructor.</p>
 								
 							</div>
 							
@@ -181,10 +221,10 @@
 									<dt class="heading">Parameters:</dt>
 									
 										<dt>
-											 <b>init</b>
+											<span class="light fixedFont">{Object}</span>  <b>init</b>
 											
 										</dt>
-										<dd></dd>
+										<dd>defines the attributes to filter against</dd>
 									
 								</dl>
 							
@@ -201,6 +241,89 @@
 	<!--
 	#### METHOD DETAILS
 	-->		
+			
+				<section>
+					<div class="details props">
+						<div class="innerProps">
+							<h2 class="sectionTitle">
+								Method Detail
+							</h2>
+							
+							<ul class="methodDetail" id="MethodDetail">
+								
+								
+									<li 
+										 class='item0'
+									>
+										<div class="fixedFont heading" id="passed">
+											<span class='lighter'>
+											
+											</span>
+											
+											
+											
+											<b>passed</b>(registration, route)
+										</div>
+										
+										<div class="description">
+											<p>Apply the filter to a registration and route defintion.</p>
+											
+											
+											
+											
+										</div>
+										
+										
+										
+										
+											<dl class="detailList params">
+												<dt class="heading">Parameters:</dt>
+												
+													<dt>
+														<span class="light fixedFont">{Object}</span> <b>registration</b>
+														
+													</dt>
+													<dd>a registration definition. See <a href="../symbols/Registrar.html#RegistrationModel">Registrar#RegistrationModel</a> for the
+                             definition.</dd>
+												
+													<dt>
+														<span class="light fixedFont">{Object}</span> <b>route</b>
+														
+													</dt>
+													<dd>a registration route definition. See <a href="../symbols/Registrar.html#RouteModel">Registrar#RouteModel</a> for the definition.</dd>
+												
+											</dl>
+										
+										
+										
+											<dl class="detailList nomargin">
+											
+												
+												
+												
+												
+												
+												
+												
+													<dt class="heading">Returns:</dt>
+													
+														<dd>true if passes the filter, false otherwise.</dd>
+													
+												
+												
+												
+												
+												
+											
+											</dl>
+										
+										
+									</li>
+								
+							</ul>
+						</div>
+					</div>
+				</section>
 			
 			
 	<!--

@@ -13,7 +13,8 @@
  * BEGIN BROWSER RESET
  */
 
-body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,p,pre,form,fieldset,input,textarea,p,blockquote,th,td {
+/* body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,p,pre,form,fieldset,input,textarea,p,blockquote,th,td { */
+body,div,dl,dt,dd,h1,h2,h3,h4,h5,h6,p,pre,form,fieldset,input,textarea,p,blockquote,th,td {
 	margin:0;
 	padding:0
 }
@@ -22,7 +23,7 @@ html {
 	overflow:-moz-scrollbars-vertical;
 	overflow-x:auto
 }
-table {
+table 
 	border:0;
 	border-collapse:collapse;
 	border-spacing:0
@@ -40,9 +41,11 @@ em,cite {
 strong {
 	font-weight:bold
 }
+/*
 ol,ul {
 	list-style:none
 }
+*/
 caption,th {
 	text-align:left
 }
@@ -215,7 +218,8 @@ div.index div.fineprint a {
 
 
 /* Start content */
-div.content ul {
+/* div.content ul { */
+div.content {
 	padding-left: 0;
 }
 
