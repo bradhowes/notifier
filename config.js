@@ -122,13 +122,37 @@ function Config () {
      * The FQDN of the host to use to deliver APNs notifcation payloads.
      * @type {String}
      */
-    this.apns_service_host = 'gateway.sandbox.push.apple.com';
+    this.apns_service_host = 'gateway.sandbox.push.apple.com'; // or 'gateway.push.apple.com'
 
     /**
      * The port of the host to connect to for APNs notifications.
      * @type {Number}
      */
     this.apns_service_port = 2195;
+
+    /**
+     * The FQDN of the host to connect to for APNs feedback.
+     * @type {String}
+     */
+    this.apns_feedback_host = 'feedback.sandbox.push.apple.com'; // or 'feedback.push.apple.com'
+
+    /**
+     * The port of the host to connect to for APNs feedback.
+     * @type {Number}
+     */
+    this.apns_feedback_port = 2196;
+
+    /**
+     * The number of seconds between checks for APNs feedback (zero to disable).
+     * @type {Number}
+     */
+    this.apns_feedback_interval = 3600;
+
+    /**
+     * The max number of entries in the APNs device cache used to locate a user when Apple's feedback service says the
+     * device token is no longer valid.
+     */
+    this.apns_device_cache_size = 10000;
 
     /**
      * The file holding the root certificate used to authenticate the remote server.

@@ -50,14 +50,10 @@ PostTracker.prototype = {
     add: function (sequenceId, when) {
         var log = this.log.child('add');
         log.BEGIN(sequenceId, when);
-        var node;
         if (this.active.size() === this.maxSize) {
-            node = this.active.popBack();
-            delete this.mapping[node.sequence];
+            delete this.mapping[this.active.popBack().data.sequence];
         }
-        node = new PostTracker.Node(sequenceId, when);
-        this.active.pushFront(node);
-        this.mapping[sequenceId] = node;
+        this.mapping[sequenceId] = this.active.pushFront(new PostTracker.Node(sequenceId, when));
         log.END();
     },
 
@@ -72,9 +68,8 @@ PostTracker.prototype = {
         var log = this.log.child('track');
         log.BEGIN(sequenceId, when);
         var node = this.mapping[sequenceId];
-        log.debug(node);
         if (node) {
-            var duration = when - node.when;
+            var duration = when - node.data.when;
             log.debug('when.getTime:', when);
             log.info(sequenceId, ' receipt - duration:', duration, 'msecs');
         }

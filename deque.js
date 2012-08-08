@@ -29,9 +29,17 @@ function Deque() {
  * A Node object simple maintains links to a Deque double linked list.
  */
 Deque.Node = function(data) {
-    this._data = data;
+    this.data = data;
     this._prev = null;
     this._next = null;
+};
+
+Deque.Node.prototype = {
+
+    extricate: function () {
+        this._prev._next = this._next;
+        this._next._prev = this._prev;
+    }
 };
 
 /**
@@ -60,6 +68,20 @@ Deque.prototype = {
     },
 
     /**
+     * Add an existing Node instance to the back of the queue.
+     *
+     * @param {Node} node Node instance to add to the queue
+     */
+    pushBackNode: function (node) {
+        node._prev = this._tail._prev;
+        node._prev._next = node;
+        node._next = this._tail;
+        this._tail._prev = node;
+        ++this._size;
+        return node;
+    },
+
+    /**
      * Add a new Node instance to the back of the queue.
      *
      * @param {Object} data value to add to the queue
@@ -71,12 +93,13 @@ Deque.prototype = {
         node._next = this._tail;
         this._tail._prev = node;
         ++this._size;
+        return node;
     },
 
     /**
      * Remove a Node instance from the back of the queue.
      *
-     * @returns {Object} held data value
+     * @returns {Node} last Node in the queue
      */
     popBack: function () {
         if (this.empty()) {
@@ -86,13 +109,27 @@ Deque.prototype = {
         var node = this._tail._prev;
         this._tail._prev = node._prev;
         node._prev._next = this._tail;
-        return node._data;
+        return node;
+    },
+
+    /**
+     * Add an existing Node instance to the front of the queue.
+     *
+     * @param {Node} node Node instance to add to the queue
+     */
+    pushFrontNode: function (node) {
+        node._next = this._head._next;
+        node._next._prev = node;
+        node._prev = this._head;
+        this._head._next = node;
+        ++this._size;
+        return node;
     },
 
     /**
      * Add a new Node instance to the front of the queue.
      *
-     * @param {Object} data value to add to the queue
+     * @param {Node} data value to add to the queue
      */
     pushFront: function (data) {
         var node = new Deque.Node(data);
@@ -101,12 +138,13 @@ Deque.prototype = {
         node._prev = this._head;
         this._head._next = node;
         ++this._size;
+        return node;
     },
 
     /**
      * Remove a Node instance from the front of the queue.
      *
-     * @returns {Object} held data value
+     * @returns {Object} first Node in the queue
      */
     popFront: function () {
         if (this.empty()) {
@@ -116,6 +154,6 @@ Deque.prototype = {
         var node = this._head._next;
         this._head._next = node._next;
         node._next._prev = this._head;
-        return node._data;
+        return node;
     }
 };

@@ -5,8 +5,9 @@
  */
 module.exports = APNs;
 
-var config = require("./config");
-var apn = require("apn");
+var config = require('./config');
+var apn = require('apn');
+var UserDeviceTracker = require('./userDeviceTracker');
 
 /**
  * APNs constructor.
@@ -15,8 +16,15 @@ var apn = require("apn");
  *
  * An APNs object sends JSON payloads to an APNs server for delivery to a specific iOS device.
  */
-function APNs() {
+function APNs(registrationStore) {
     this.log = config.log('APNs');
+
+    this.registrationStore = registrationStore;
+
+    /**
+     * Cache of the N most recently seen userId / device token pairs.
+     */
+    this.userDeviceTracker = new UserDeviceTracker(config.apns_device_cache_size);
 
     // Terrible attempt to support a callback when notification gets sent out.
     this.lastSentNotification = null;
@@ -80,6 +88,21 @@ function APNs() {
         this.lastSentNotification = notification;
         apn.Connection.prototype.sendNotification.call(this.connection, notification);
     }.bind(this);
+
+    if (typeof config.apns_feedback_interval !== 'undefined' && config.apns_feedback_interval > 0) {
+        this.log.info('starting feedback service');
+        this.feedback = new apn.Feedback(
+            {
+                "cert": config.apns_client_certificate_file,
+                "key": config.apns_client_private_key_file,
+                "address": config.apns_feedback_host,
+                "port": config.apns_feedback_port,
+                "enhanced": true,
+                "errorCallback": errorCallback,
+                "feedback": this.feedbackCallback.bind(this),
+                "interval": 3600
+            });
+    }
 }
 
 /**
@@ -88,6 +111,22 @@ function APNs() {
  * Defines the methods available to an APNs instance.
  */
 APNs.prototype = {
+
+    feedbackCallback: function (timestamp, device) {
+        var log = this.log.child('feedbackCallback');
+        var self = this;
+        log.BEGIN(timestamp, device);
+        var userId = this.userDeviceTracker.find(device);
+        if (this.registrationStore && userId) {
+            log.info('removing registration for user ', userId, ' and device token ', device);
+            this.registrationStore.deleteRegistration(userId, device, function (err) {
+                                                          if (err) {
+                                                              log.error('failed to delete registration:', err);
+                                                          }
+                                                      });
+        }
+        log.END();
+    },
 
     /**
      * Send a notification payload to an APNs server.
