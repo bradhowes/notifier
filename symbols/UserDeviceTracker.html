@@ -4,7 +4,7 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
-		<title>APNs | JsDoc Reference</title>
+		<title>UserDeviceTracker | JsDoc Reference</title>
 
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 		<meta name="mobileoptimized" content="0" />
@@ -98,12 +98,13 @@
 			<header>
 				<h1 class="classTitle">
 					
-					Class <span>APNs</span>
+					Class <span>UserDeviceTracker</span>
 				</h1>
 				
 				<div class="intro">
 					<p class="description summary">
-						An APNs object sends JSON payloads to an APNs server for delivery to a specific iOS device.
+						A UserDeviceTracker instance maintains a LIFO size-limited queue that contains Node instances that define a
+relationship between a user ID and an APNs device token.
 					</p>
 						
 					
@@ -111,7 +112,7 @@
 							
 							
 							
-								<li>Defined in: <a href="../symbols/src/APNs.js.html">APNs.js</a></li>
+								<li>Defined in: <a href="../symbols/src/userDeviceTracker.js.html">userDeviceTracker.js</a></li>
 							
 							
 						</ul>
@@ -122,7 +123,7 @@
 			
 				<section>
 					<div class="props">
-						<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class APNs.">
+						<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class UserDeviceTracker.">
 							<caption class="sectionTitle">Class Summary</caption>
 							<thead>
 								<tr>
@@ -135,9 +136,9 @@
 									<td class="attributes">&nbsp;</td>
 									<td class="nameDescription" >
 										<div class="fixedFont">
-											<b><a href="../symbols/APNs.html#constructor">APNs</a></b>(registrationStore)
+											<b><a href="../symbols/UserDeviceTracker.html#constructor">UserDeviceTracker</a></b>(maxSize)
 										</div>
-										<div class="description"><p>APNs constructor.</div>
+										<div class="description"><p>UserDeviceTracker constructor</p></div>
 									</td>
 								</tr>
 							</tbody>
@@ -146,52 +147,6 @@
 				</section>
 			
 			
-			
-				
-				<section>
-					
-						<nav>
-							<div class="props">
-								<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class APNs.">
-									<caption class="sectionTitle">Field Summary</caption>
-									
-									<thead>
-										<tr>
-											<th scope="col">Field Attributes</th>
-											<th scope="col">Field Name and Description</th>
-										</tr>
-									</thead>
-									
-									<tbody>
-										
-											<tr>
-												<td class="attributes">&nbsp;</td>
-												<td class="nameDescription">
-													<div class="fixedFont">
-													<b><a href="../symbols/APNs.html#connection">connection</a></b>
-													</div>
-													<div class="description"><p>Connection to APNs server.</div>
-												</td>
-											</tr>
-										
-											<tr>
-												<td class="attributes">&nbsp;</td>
-												<td class="nameDescription">
-													<div class="fixedFont">
-													<b><a href="../symbols/APNs.html#userDeviceTracker">userDeviceTracker</a></b>
-													</div>
-													<div class="description"><p>Cache of the N most recently seen userId / device token pairs.</div>
-												</td>
-											</tr>
-										
-									</tbody>
-								</table>
-							</div>
-						</nav>
-					
-					
-					
-				</section>
 			
 	<!--
 	#### METHODS SUMMARY
@@ -205,7 +160,7 @@
 						
 						
 							<nav>
-								<table class="summaryTable" id="MethodsList" cellspacing="0" summary="A summary of the methods documented in the class APNs.">
+								<table class="summaryTable" id="MethodsList" cellspacing="0" summary="A summary of the methods documented in the class UserDeviceTracker.">
 									<thead>
 										<tr>
 											<th scope="col">Method Attributes</th>
@@ -219,11 +174,11 @@
 											<tr
 												 class='item0'
 											>
-												<td class="attributes">&lt;inner&gt; &nbsp;</td>
+												<td class="attributes">&nbsp;</td>
 												<td class="nameDescription">
-													<div class="fixedFont"><b><a href="../symbols/APNs.html#-errorCallback">errorCallback</a></b>(errNum, notification)
+													<div class="fixedFont"><b><a href="../symbols/UserDeviceTracker.html#add">add</a></b>(userId, device)
 													</div>
-													<div class="description"><p>Error callback invoked whenever an error response comes over the connection.</div>
+													<div class="description"><p>Create a new Node instance and add to the LIFO size-limited queue.</div>
 												</td>
 											</tr>
 										
@@ -232,9 +187,9 @@
 											>
 												<td class="attributes">&nbsp;</td>
 												<td class="nameDescription">
-													<div class="fixedFont"><b><a href="../symbols/APNs.html#sendNotification">sendNotification</a></b>(req)
+													<div class="fixedFont"><b><a href="../symbols/UserDeviceTracker.html#find">find</a></b>(device)
 													</div>
-													<div class="description"><p>Send a notification payload to an APNs server.</div>
+													<div class="description"><p>Attempt to locate the user ID that belongs to a given iOS device token.</div>
 												</td>
 											</tr>
 										
@@ -264,11 +219,11 @@
 							</h2>
 							
 							<div class="fixedFont">
-								<b>APNs</b>(registrationStore)
+								<b>UserDeviceTracker</b>(maxSize)
 							</div>
 							
 							<div class="description">
-								<p>APNs constructor.</p>
+								<p>UserDeviceTracker constructor</p>
 								
 							</div>
 							
@@ -279,7 +234,7 @@
 									<dt class="heading">Parameters:</dt>
 									
 										<dt>
-											 <b>registrationStore</b>
+											 <b>maxSize</b>
 											
 										</dt>
 										<dd></dd>
@@ -295,62 +250,6 @@
 	<!--
 	#### FIELD DETAILS
 	-->
-			
-				<section>
-					<div class="details props">
-						<div class="innerProps">
-							<h2 class="sectionTitle">
-								Field Detail
-							</h2>
-							
-							
-								<div class="fixedFont heading" id="connection">
-									<span class='lighter'>
-									
-									</span>
-									
-									<span class="light">{apn.Connection}</span>
-									
-									<b>connection</b>							
-								</div>
-								
-								<div class="description">
-									<p>Connection to APNs server.</p>
-									
-									
-									
-								</div>
-								
-								
-									
-								
-								<div class="hr"></div>
-							
-								<div class="fixedFont heading" id="userDeviceTracker">
-									<span class='lighter'>
-									
-									</span>
-									
-									
-									
-									<b>userDeviceTracker</b>							
-								</div>
-								
-								<div class="description">
-									<p>Cache of the N most recently seen userId / device token pairs.</p>
-									
-									
-									
-								</div>
-								
-								
-									
-								
-								
-							
-						</div>
-					</div>
-				</section>
 			
 	<!--
 	#### METHOD DETAILS
@@ -369,19 +268,18 @@
 									<li 
 										 class='item0'
 									>
-										<div class="fixedFont heading" id="-errorCallback">
+										<div class="fixedFont heading" id="add">
 											<span class='lighter'>
-											&lt;inner&gt; 
+											
 											</span>
 											
 											
 											
-											<b>errorCallback</b>(errNum, notification)
+											<b>add</b>(userId, device)
 										</div>
 										
 										<div class="description">
-											<p>Error callback invoked whenever an error response comes over the connection. If the notification object is
-valid and has a callback associated with it, invoke the callback.</p>
+											<p>Create a new Node instance and add to the LIFO size-limited queue.</p>
 											
 											
 											
@@ -395,16 +293,16 @@ valid and has a callback associated with it, invoke the callback.</p>
 												<dt class="heading">Parameters:</dt>
 												
 													<dt>
-														<span class="light fixedFont">{Number}</span> <b>errNum</b>
+														<span class="light fixedFont">{String}</span> <b>userId</b>
 														
 													</dt>
-													<dd>numeric response returned by APNs server before it closed the connection</dd>
+													<dd>the user identifier to remember</dd>
 												
 													<dt>
-														<span class="light fixedFont">{apn.Notification}</span> <b>notification</b>
+														<span class="light fixedFont">{String}</span> <b>device</b>
 														
 													</dt>
-													<dd>the Notification instance that triggered he error</dd>
+													<dd>the iOS device token to remember</dd>
 												
 											</dl>
 										
@@ -416,18 +314,18 @@ valid and has a callback associated with it, invoke the callback.</p>
 									<li 
 										 class='item1'
 									>
-										<div class="fixedFont heading" id="sendNotification">
+										<div class="fixedFont heading" id="find">
 											<span class='lighter'>
 											
 											</span>
 											
 											
 											
-											<b>sendNotification</b>(req)
+											<b>find</b>(device)
 										</div>
 										
 										<div class="description">
-											<p>Send a notification payload to an APNs server.</p>
+											<p>Attempt to locate the user ID that belongs to a given iOS device token.</p>
 											
 											
 											
@@ -441,10 +339,10 @@ valid and has a callback associated with it, invoke the callback.</p>
 												<dt class="heading">Parameters:</dt>
 												
 													<dt>
-														<span class="light fixedFont">{NotificationRequest}</span> <b>req</b>
+														<span class="light fixedFont">{String}</span> <b>device</b>
 														
 													</dt>
-													<dd>attributes of the notification to send</dd>
+													<dd>the iOS device token to look for</dd>
 												
 											</dl>
 										

@@ -129,7 +129,7 @@
 <span class='line'>122</span>      * The FQDN of the host to use to deliver APNs notifcation payloads.
 <span class='line'>123</span>      * @type {String}
 <span class='line'>124</span>      */</span><span class="WHIT">
-<span class='line'>125</span> </span><span class="WHIT">    </span><span class="NAME">this.apns_service_host</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">'gateway.sandbox.push.apple.com'</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>125</span> </span><span class="WHIT">    </span><span class="NAME">this.apns_service_host</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">'gateway.sandbox.push.apple.com'</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="COMM">// or 'gateway.push.apple.com'</span><span class="WHIT">
 <span class='line'>126</span> 
 <span class='line'>127</span> </span><span class="WHIT">    </span><span class="COMM">/**
 <span class='line'>128</span>      * The port of the host to connect to for APNs notifications.
@@ -138,76 +138,100 @@
 <span class='line'>131</span> </span><span class="WHIT">    </span><span class="NAME">this.apns_service_port</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">2195</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>132</span> 
 <span class='line'>133</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>134</span>      * The file holding the root certificate used to authenticate the remote server.
+<span class='line'>134</span>      * The FQDN of the host to connect to for APNs feedback.
 <span class='line'>135</span>      * @type {String}
 <span class='line'>136</span>      */</span><span class="WHIT">
-<span class='line'>137</span> </span><span class="WHIT">    </span><span class="NAME">this.apns_root_certificate_file</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">'private/EntrustRootCertificationAuthority.pem'</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>137</span> </span><span class="WHIT">    </span><span class="NAME">this.apns_feedback_host</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">'feedback.sandbox.push.apple.com'</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="COMM">// or 'feedback.push.apple.com'</span><span class="WHIT">
 <span class='line'>138</span> 
 <span class='line'>139</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>140</span>      * The file holding the private key certificate used to authenticate to the remote server.
-<span class='line'>141</span>      * @type {String}
+<span class='line'>140</span>      * The port of the host to connect to for APNs feedback.
+<span class='line'>141</span>      * @type {Number}
 <span class='line'>142</span>      */</span><span class="WHIT">
-<span class='line'>143</span> </span><span class="WHIT">    </span><span class="NAME">this.apns_client_private_key_file</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">'private/NotificationHubTestDevPush_pkey.pem'</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>143</span> </span><span class="WHIT">    </span><span class="NAME">this.apns_feedback_port</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">2196</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>144</span> 
 <span class='line'>145</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>146</span>      * The file holding the credentials used to authenticate to the remote server for application notifications.
-<span class='line'>147</span>      * @type {String}
+<span class='line'>146</span>      * The number of seconds between checks for APNs feedback (zero to disable).
+<span class='line'>147</span>      * @type {Number}
 <span class='line'>148</span>      */</span><span class="WHIT">
-<span class='line'>149</span> </span><span class="WHIT">    </span><span class="NAME">this.apns_client_certificate_file</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">'private/NotificationHubTestDevPush_cred.pem'</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>149</span> </span><span class="WHIT">    </span><span class="NAME">this.apns_feedback_interval</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">3600</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>150</span> 
 <span class='line'>151</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>152</span>      * The Azure storage account to use for table stores.
-<span class='line'>153</span>      * @type {String}
+<span class='line'>152</span>      * The max number of entries in the APNs device cache used to locate a user when Apple's feedback service says the
+<span class='line'>153</span>      * device token is no longer valid.
 <span class='line'>154</span>      */</span><span class="WHIT">
-<span class='line'>155</span> </span><span class="WHIT">    </span><span class="NAME">this.azure_storage_account</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">priv.azure_storage_account</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>155</span> </span><span class="WHIT">    </span><span class="NAME">this.apns_device_cache_size</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">10000</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>156</span> 
 <span class='line'>157</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>158</span>      * The access key for the above Azure storage account
+<span class='line'>158</span>      * The file holding the root certificate used to authenticate the remote server.
 <span class='line'>159</span>      * @type {String}
 <span class='line'>160</span>      */</span><span class="WHIT">
-<span class='line'>161</span> </span><span class="WHIT">    </span><span class="NAME">this.azure_storage_access_key</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">priv.azure_storage_access_key</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>161</span> </span><span class="WHIT">    </span><span class="NAME">this.apns_root_certificate_file</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">'private/EntrustRootCertificationAuthority.pem'</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>162</span> 
-<span class='line'>163</span> </span><span class="WHIT">    </span><span class="COMM">// Make sure our environment reflects these Azure settings.</span><span class="WHIT">
-<span class='line'>164</span> </span><span class="WHIT">    </span><span class="NAME">process.env.AZURE_STORAGE_ACCOUNT</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.azure_storage_account</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>165</span> </span><span class="WHIT">    </span><span class="NAME">process.env.AZURE_STORAGE_ACCESS_KEY</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.azure_storage_access_key</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>166</span> 
-<span class='line'>167</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>168</span>      * The authorization key from Google for sending GCM messages
-<span class='line'>169</span>      * @type {String}
-<span class='line'>170</span>      */</span><span class="WHIT">
-<span class='line'>171</span> </span><span class="WHIT">    </span><span class="NAME">this.gcm_authorization_key</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">priv.gcm_authorization_key</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>172</span> 
-<span class='line'>173</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>174</span>      * The URI for the GCM server
-<span class='line'>175</span>      * @type {String}
-<span class='line'>176</span>      */</span><span class="WHIT">
-<span class='line'>177</span> </span><span class="WHIT">    </span><span class="NAME">this.gcm_uri</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">'https://android.googleapis.com/gcm/send'</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>178</span> 
-<span class='line'>179</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>180</span>      * Name of the Azure table to create and use for user registrations.
-<span class='line'>181</span>      * @type {String}
-<span class='line'>182</span>      */</span><span class="WHIT">
-<span class='line'>183</span> </span><span class="WHIT">    </span><span class="NAME">this.registrations_table_name</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">'notifierRegistrations'</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>184</span> 
-<span class='line'>185</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>186</span>      * Name of the Azure table to create and use for notification templates.
-<span class='line'>187</span>      * @type {String}
-<span class='line'>188</span>      */</span><span class="WHIT">
-<span class='line'>189</span> </span><span class="WHIT">    </span><span class="NAME">this.templates_table_name</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">'notifierTemplates'</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>163</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>164</span>      * The file holding the private key certificate used to authenticate to the remote server.
+<span class='line'>165</span>      * @type {String}
+<span class='line'>166</span>      */</span><span class="WHIT">
+<span class='line'>167</span> </span><span class="WHIT">    </span><span class="NAME">this.apns_client_private_key_file</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">'private/NotificationHubTestDevPush_pkey.pem'</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>168</span> 
+<span class='line'>169</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>170</span>      * The file holding the credentials used to authenticate to the remote server for application notifications.
+<span class='line'>171</span>      * @type {String}
+<span class='line'>172</span>      */</span><span class="WHIT">
+<span class='line'>173</span> </span><span class="WHIT">    </span><span class="NAME">this.apns_client_certificate_file</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">'private/NotificationHubTestDevPush_cred.pem'</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>174</span> 
+<span class='line'>175</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>176</span>      * The Azure storage account to use for table stores.
+<span class='line'>177</span>      * @type {String}
+<span class='line'>178</span>      */</span><span class="WHIT">
+<span class='line'>179</span> </span><span class="WHIT">    </span><span class="NAME">this.azure_storage_account</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">priv.azure_storage_account</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>180</span> 
+<span class='line'>181</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>182</span>      * The access key for the above Azure storage account
+<span class='line'>183</span>      * @type {String}
+<span class='line'>184</span>      */</span><span class="WHIT">
+<span class='line'>185</span> </span><span class="WHIT">    </span><span class="NAME">this.azure_storage_access_key</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">priv.azure_storage_access_key</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>186</span> 
+<span class='line'>187</span> </span><span class="WHIT">    </span><span class="COMM">// Make sure our environment reflects these Azure settings.</span><span class="WHIT">
+<span class='line'>188</span> </span><span class="WHIT">    </span><span class="NAME">process.env.AZURE_STORAGE_ACCOUNT</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.azure_storage_account</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>189</span> </span><span class="WHIT">    </span><span class="NAME">process.env.AZURE_STORAGE_ACCESS_KEY</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.azure_storage_access_key</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>190</span> 
 <span class='line'>191</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>192</span>      * The regular-expression (RE) that matches placeholders in a template.
-<span class='line'>193</span>      *
-<span class='line'>194</span>      * Placeholders are signaled by two '@' characters, followed by a name of alphanumeric characters and underscores.
-<span class='line'>195</span>      * There may also be an optional default value, signaled by a '=' character after the name. The stock one below
-<span class='line'>196</span>      * matches fields such as: @@ABC@@, @@FooBar=default value@@
-<span class='line'>197</span>      *
-<span class='line'>198</span>      * NOTE: if you change this, odds are you have to change the RE processing code in payloadGenerator.js
-<span class='line'>199</span>      *
-<span class='line'>200</span>      * @type {String}
-<span class='line'>201</span>      */</span><span class="WHIT">
-<span class='line'>202</span> </span><span class="WHIT">    </span><span class="NAME">this.templates_placeholder_re</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">'@@([A-Za-z0-9_]+)(=([^@]*))?@@'</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>203</span> </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>204</span> 
-<span class='line'>205</span> </span><span class="NAME">module.exports</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Config</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>206</span> </span></pre></body></html>
+<span class='line'>192</span>      * The authorization key from Google for sending GCM messages
+<span class='line'>193</span>      * @type {String}
+<span class='line'>194</span>      */</span><span class="WHIT">
+<span class='line'>195</span> </span><span class="WHIT">    </span><span class="NAME">this.gcm_authorization_key</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">priv.gcm_authorization_key</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>196</span> 
+<span class='line'>197</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>198</span>      * The URI for the GCM server
+<span class='line'>199</span>      * @type {String}
+<span class='line'>200</span>      */</span><span class="WHIT">
+<span class='line'>201</span> </span><span class="WHIT">    </span><span class="NAME">this.gcm_uri</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">'https://android.googleapis.com/gcm/send'</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>202</span> 
+<span class='line'>203</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>204</span>      * Name of the Azure table to create and use for user registrations.
+<span class='line'>205</span>      * @type {String}
+<span class='line'>206</span>      */</span><span class="WHIT">
+<span class='line'>207</span> </span><span class="WHIT">    </span><span class="NAME">this.registrations_table_name</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">'notifierRegistrations'</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>208</span> 
+<span class='line'>209</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>210</span>      * Name of the Azure table to create and use for notification templates.
+<span class='line'>211</span>      * @type {String}
+<span class='line'>212</span>      */</span><span class="WHIT">
+<span class='line'>213</span> </span><span class="WHIT">    </span><span class="NAME">this.templates_table_name</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">'notifierTemplates'</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>214</span> 
+<span class='line'>215</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>216</span>      * The regular-expression (RE) that matches placeholders in a template.
+<span class='line'>217</span>      *
+<span class='line'>218</span>      * Placeholders are signaled by two '@' characters, followed by a name of alphanumeric characters and underscores.
+<span class='line'>219</span>      * There may also be an optional default value, signaled by a '=' character after the name. The stock one below
+<span class='line'>220</span>      * matches fields such as: @@ABC@@, @@FooBar=default value@@
+<span class='line'>221</span>      *
+<span class='line'>222</span>      * NOTE: if you change this, odds are you have to change the RE processing code in payloadGenerator.js
+<span class='line'>223</span>      *
+<span class='line'>224</span>      * @type {String}
+<span class='line'>225</span>      */</span><span class="WHIT">
+<span class='line'>226</span> </span><span class="WHIT">    </span><span class="NAME">this.templates_placeholder_re</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">'@@([A-Za-z0-9_]+)(=([^@]*))?@@'</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>227</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>228</span> 
+<span class='line'>229</span> </span><span class="NAME">module.exports</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Config</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>230</span> </span></pre></body></html>
