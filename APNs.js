@@ -116,7 +116,7 @@ APNs.prototype = {
         var log = this.log.child('feedbackCallback');
         var self = this;
         log.BEGIN(timestamp, device);
-        var userId = this.userDeviceTracker.find(device);
+        var userId = this.userDeviceTracker.find(device.toString());
         if (this.registrationStore && userId) {
             log.info('removing registration for user ', userId, ' and device token ', device);
             this.registrationStore.deleteRegistration(userId, device, function (err) {
@@ -142,7 +142,10 @@ APNs.prototype = {
                 req.removeRegistrationProc();
             }
         };
+
         notification.device = new apn.Device(new Buffer(req.token, 'base64'));
+        this.userDeviceTracker.add(req.userId, notification.device.toString());
+
         try {
             notification.payload = JSON.parse(req.content.content);
             log.debug('payload:', req.content.content);
