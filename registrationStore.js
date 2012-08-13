@@ -7,7 +7,7 @@ module.exports = RegistrationStore;
 
 var azure = require('azure');
 var async = require('async');
-var Filter = require('./filter');
+var RegistrationFilter = require('./registrationFilter');
 
 /**
  * RegistrationStore constructor.
@@ -190,7 +190,7 @@ RegistrationStore.prototype = {
                 return;
             }
 
-            filter = new Filter(filter);
+            filter = new RegistrationFilter(filter);
 
             var now = new Date();
             now = now.toISOString();

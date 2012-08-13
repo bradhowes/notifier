@@ -1,9 +1,9 @@
 'use strict';
 
 /**
- * @fileOverview Defines a Filter prototype and its methods.
+ * @fileOverview Defines a RegistrationFilter prototype and its methods.
  */
-module.exports = Filter;
+module.exports = RegistrationFilter;
 
 /**
  * Filter constructor.
@@ -12,12 +12,12 @@ module.exports = Filter;
  *
  * @class
  *
- * A Filter object determines of a device registration is to be used for notifications. A Filter contains one or more
- * attributes names that correspond to attribute names found in a registration or registration route. Each attribute
- * name is associated with an array of allowed values. If a registration/route pair given to the passed method does not
- * have the required values, the registration/route will fail to pass the filter.
+ * A RegistrationFilter object determines which device registrations will be be used for notifications. A filter
+ * contains one or more attributes names that correspond to attribute names found in a registration or registration
+ * route. Each attribute name is associated with an array of allowed values. If a registration/route pair given to the
+ * passed method does not have the required values, the registration/route will fail to pass the filter.
  */
-function Filter(init) {
+function RegistrationFilter(init) {
     this.log = require('./config').log('Filter');
     this.log.BEGIN(init);
     if (init === undefined || init === {}) {
@@ -27,11 +27,11 @@ function Filter(init) {
 }
 
 /**
- * Filter prototype.
+ * RegistrationFilter prototype.
  *
- * Defines the methods available to a Filter instance.
+ * Defines the methods available to a RegistrationFilter instance.
  */
-Filter.prototype = {
+RegistrationFilter.prototype = {
 
     /**
      * Apply the filter to a registration and route defintion.
