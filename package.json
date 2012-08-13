@@ -11,6 +11,7 @@
         "http-status": "0.1.x",
         "log4js": "0.5.x",
         "model.js": "0.0.1",
+        "pegjs": "0.7.0",
         "q": "0.8.x",
         "request": "2.9.x",
         "xregexp": "2.0.x"

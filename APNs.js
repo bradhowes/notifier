@@ -120,10 +120,10 @@ APNs.prototype = {
         if (this.registrationStore && userId) {
             log.info('removing registration for user ', userId, ' and device token ', device);
             this.registrationStore.deleteRegistration(userId, device, function (err) {
-                                                          if (err) {
-                                                              log.error('failed to delete registration:', err);
-                                                          }
-                                                      });
+                if (err) {
+                    log.error('failed to delete registration:', err);
+                }
+            });
         }
         log.END();
     },

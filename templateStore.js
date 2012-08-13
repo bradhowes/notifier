@@ -25,9 +25,11 @@ function TemplateStore(tableName, callback) {
 
     this.tableName = tableName;
     this.store = azure.createTableService();
-    this.findKeyGenerators = [this.makeKey.bind(this),
-                              this.makeBaseLanguageKey.bind(this),
-                              this.makeDefaultLanguageKey.bind(this) ];
+    this.findKeyGenerators = [
+        this.makeKey.bind(this),
+        this.makeBaseLanguageKey.bind(this),
+        this.makeDefaultLanguageKey.bind(this)
+    ];
 
     var checkCreateTableIfNotExists = function(err, b, c) {
         if (err) {
@@ -35,8 +37,8 @@ function TemplateStore(tableName, callback) {
             if (err.statusCode === 409) {
                 Q.delay(1000)   // Wait for one second and try again.
                     .then(function () {
-                              self.store.createTableIfNotExists(tableName, checkCreateTableIfNotExists);
-                          });
+                        self.store.createTableIfNotExists(tableName, checkCreateTableIfNotExists);
+                    });
                 return;
             }
         }
@@ -59,13 +61,11 @@ TemplateStore.prototype = {
 
         log.BEGIN(eventId, registrations);
 
-        var query = azure.TableQuery
-            .select()
-            .from(this.tableName)
-            .where('PartitionKey eq ?', this.makePartitionKey(eventId.toString()));
+        var query = azure.TableQuery.select()
+                                    .from(this.tableName)
+                                    .where('PartitionKey eq ?', this.makePartitionKey(eventId.toString()));
 
-        this.store.queryEntities(query, function(err, found)
-        {
+        this.store.queryEntities(query, function(err, found) {
             var entity, bits, routeName, templateVersion, templateLanguage,
                 service, key, matches, routes, routeIndex, route;
             if (err) {
@@ -167,15 +167,15 @@ TemplateStore.prototype = {
         };
 
         self.store.updateEntity(self.tableName, templateEntity, function(err, tmp) {
-                                    if (err !== null) {
-                                        log.warn('TableService.updateEntity error:', err);
-                                        self.store.insertEntity(self.tableName, templateEntity, callback);
-                                    }
-                                    else {
-                                        callback(err, tmp);
-                                    }
-                                    log.END();
-                                });
+            if (err !== null) {
+                log.warn('TableService.updateEntity error:', err);
+                self.store.insertEntity(self.tableName, templateEntity, callback);
+            }
+            else {
+                callback(err, tmp);
+            }
+            log.END();
+        });
     },
 
     /**

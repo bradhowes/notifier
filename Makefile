@@ -1,5 +1,8 @@
 
-all: tests doc
+all: tests doc placeholderParser.js
+
+templateParser.js: templateParser.pegjs
+	node_modules/pegjs/bin/pegjs $^ $@
 
 doc: README.html doc/*.html
 

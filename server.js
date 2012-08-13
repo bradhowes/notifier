@@ -72,7 +72,7 @@ App.prototype = {
                 var senders = {'wns': new WNS(), 'apns': new APNs(), 'gcm': new GCM()};
                 var generator = new PayloadGenerator();
                 var service = new Notifier(templateStore, registrationStore, generator, senders);
-                service.route(app)
+                service.route(app);
                 callback(app, errors);
                 clog.END();
                 return;
@@ -86,29 +86,29 @@ App.prototype = {
         app.use(app.router);
 
         app.configure('development', function () {
-                          app.use(express.errorHandler({dumpExceptions: true, showStack: true}));
-                      });
+            app.use(express.errorHandler({dumpExceptions: true, showStack: true}));
+        });
 
         app.configure('production', function () {
-                          app.use(express.errorHandler());
-                      });
+            app.use(express.errorHandler());
+        });
 
         app.post('*', express.json());
         app.del('*', express.json());
 
         registrationStore = new RegistrationStore(this.registrationStoreName, function(err) {
-                log.info('creating registrar');
-                var service = new Registrar(registrationStore);
-                service.route(app);
-                continuation('registrationStore', err);
-            });
+            log.info('creating registrar');
+            var service = new Registrar(registrationStore);
+            service.route(app);
+            continuation('registrationStore', err);
+        });
 
         templateStore = new TemplateStore(this.templateStoreName, function(err) {
-                log.info('creating template manager');
-                var service = new TemplateManager(templateStore);
-                service.route(app);
-                continuation('templateStore', err);
-            });
+            log.info('creating template manager');
+            var service = new TemplateManager(templateStore);
+            service.route(app);
+            continuation('templateStore', err);
+        });
 
         log.END();
     }

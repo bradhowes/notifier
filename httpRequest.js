@@ -16,9 +16,9 @@ function HTTPRequest(req, callback) {
 
     if (typeof req.retryStatusCheck === 'undefined') {
         req.retryStatusCheck =
-            function (statusCode) {
-                return statusCode >= 500;
-            };
+        function (statusCode) {
+            return statusCode >= 500;
+        };
     }
 
     if (typeof req.secondsToLive === 'undefined') {
@@ -46,29 +46,28 @@ function initiateRequest(req, lifetime, callback) {
 
     // Invoke request() method wrapping it in a Q promise.
     return Q.ncall(request, null, req)
-        .then(function (args) {
-                  var resp = args[0];
-                  var body = args[1];
-                  // Success - but is it something we want?
-                  if (req.retryStatusCheck(resp.statusCode)) {
-                      log.warn('failed response code check:', resp.statusCode);
-                      log.debug('retrying in ',req.retryTimeout, 'ms');
-                      return Q.delay(req.retryTimeout)
-                          .then(function () {
-                                    return initiateRequest(req, lifetime, callback);
-                                });
-                  }
-                  log.info('response:', resp.statusCode);
-                  log.debug('body:', body);
-                  return callback(null, resp, body);
-              },
-              function (err) {
-                  // Wait configured amount of time and redo the request
-                  log.error('error:', err);
-                  log.debug('retrying in ',req.retryTimeout, 'ms');
-                  return Q.delay(req.retryTimeout)
-                      .then(function () {
+            .then(function (args) {
+                var resp = args[0];
+                var body = args[1];
+                // Success - but is it something we want?
+                if (req.retryStatusCheck(resp.statusCode)) {
+                    log.warn('failed response code check:', resp.statusCode);
+                    log.debug('retrying in ',req.retryTimeout, 'ms');
+                    return Q.delay(req.retryTimeout)
+                            .then(function () {
                                 return initiateRequest(req, lifetime, callback);
                             });
+                }
+                log.info('response:', resp.statusCode);
+                log.debug('body:', body);
+                return callback(null, resp, body);
+            }, function (err) {
+                // Wait configured amount of time and redo the request
+                log.error('error:', err);
+                log.debug('retrying in ',req.retryTimeout, 'ms');
+                return Q.delay(req.retryTimeout)
+                        .then(function () {
+                            return initiateRequest(req, lifetime, callback);
+                        });
             });
 }

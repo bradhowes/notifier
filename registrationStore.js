@@ -25,14 +25,14 @@ function RegistrationStore(tableName, callback) {
     this.tableName = tableName;
     this.store = azure.createTableService();
 
-    var checkCreateTableIfNotExists = function(err, b, c) {
+    var checkCreateTableIfNotExists = function (err, b, c) {
         if (err) {
             log.error(err);
             if (err.statusCode === 409) {
                 Q.delay(1000)   // Wait for one second and try again.
                     .then(function () {
-                              self.store.createTableIfNotExists(tableName, checkCreateTableIfNotExists);
-                          });
+                        self.store.createTableIfNotExists(tableName, checkCreateTableIfNotExists);
+                    });
                 return;
             }
         }
@@ -51,11 +51,11 @@ function RegistrationStore(tableName, callback) {
  */
 RegistrationStore.prototype = {
 
-    makePartitionKey: function(value) {
+    makePartitionKey: function (value) {
         return new Buffer(value).toString('base64');
     },
 
-    makeRowKey: function(value) {
+    makeRowKey: function (value) {
         return new Buffer(value).toString('base64');
     },
 
@@ -76,8 +76,8 @@ RegistrationStore.prototype = {
         var log = this.log.child('getAllRegistrationEntities');
         log.BEGIN(partitionKey);
         var query = azure.TableQuery.select()
-            .from(this.tableName)
-            .where('PartitionKey eq ?', partitionKey);
+                                    .from(this.tableName)
+                                    .where('PartitionKey eq ?', partitionKey);
         this.store.queryEntities(query, callback);
         log.END();
     },
@@ -104,11 +104,10 @@ RegistrationStore.prototype = {
             PartitionKey: partitionKey,
             RowKey: rowKey
         };
-        this.store.deleteEntity(this.tableName, entity,
-                                function (err) {
-                                    callback(err);
-                                    log.END(err);
-                                });
+        this.store.deleteEntity(this.tableName, entity, function (err) {
+            callback(err);
+            log.END(err);
+        });
     },
 
     _getRegistration: function (registrationEntity, filter) {
@@ -169,53 +168,51 @@ RegistrationStore.prototype = {
         return registration;
     },
 
-    getRegistrations: function(userId, filter, callback) {
+    getRegistrations: function (userId, filter, callback) {
         var self = this;
         var log = self.log.child('getRegistrations');
         log.BEGIN(userId, filter);
 
         var partitionKey = this.makePartitionKey(userId);
 
-        this._getAllRegistrationEntities(
-            partitionKey, function(err, regs) {
-                if (err !== null) {
-                    log.error('_getAllRegistrationEntities error:', err);
-                    callback(err, null);
-                    return;
-                }
+        this._getAllRegistrationEntities(partitionKey, function (err, regs) {
+            if (err !== null) {
+                log.error('_getAllRegistrationEntities error:', err);
+                callback(err, null);
+                return;
+            }
 
-                var registrations = [];
+            var registrations = [];
 
-                if (regs.length === 0) {
-                    log.info('no registrations found');
-                    callback(null, registrations);
-                    return;
-                }
-
-                filter = new Filter(filter);
-
-                var now = new Date();
-                now = now.toISOString();
-
-                function deleteRegistrationCallback (err) {
-                    if (err) log.error('_deleteRegistrationEntity error:', err);
-                }
-
-                for (var index in regs) {
-                    var registrationEntity = regs[index];
-                    if (registrationEntity.Expiration <= now) {
-                        log.info('registration has expired:', registrationEntity.RowKey);
-                        self._deleteRegistrationEntity(partitionKey, registrationEntity.RowKey,
-                                                       deleteRegistrationCallback);
-                    }
-                    else {
-                        var r = self._getRegistration(registrationEntity, filter);
-                        if (r) registrations.push(r);
-                    }
-                }
+            if (regs.length === 0) {
+                log.info('no registrations found');
                 callback(null, registrations);
-                log.END();
-            });
+                return;
+            }
+
+            filter = new Filter(filter);
+
+            var now = new Date();
+            now = now.toISOString();
+
+            function deleteRegistrationCallback (err) {
+                if (err) log.error('_deleteRegistrationEntity error:', err);
+            }
+
+            for (var index in regs) {
+                var registrationEntity = regs[index];
+                if (registrationEntity.Expiration <= now) {
+                    log.info('registration has expired:', registrationEntity.RowKey);
+                    self._deleteRegistrationEntity(partitionKey, registrationEntity.RowKey, deleteRegistrationCallback);
+                }
+                else {
+                    var r = self._getRegistration(registrationEntity, filter);
+                    if (r) registrations.push(r);
+                }
+            }
+            callback(null, registrations);
+            log.END();
+        });
     },
 
     /**
@@ -244,7 +241,7 @@ RegistrationStore.prototype = {
      *   - err: if not null, definition of the error that took place
      *   - found: if no error, the existing registration entity
      */
-    updateRegistration: function(registration, callback) {
+    updateRegistration: function (registration, callback) {
         var self = this;
         var log = self.log.child('updateRegistration');
         log.BEGIN(registration);
@@ -255,51 +252,50 @@ RegistrationStore.prototype = {
         var rowKey = this.makeRowKey(registration.registrationId);
         log.debug('rowKey:', rowKey);
 
-        self.store.queryEntity(
-            self.tableName, partitionKey, rowKey, function (err, found) {
-                log.info('queryEntity results:', err, found);
+        self.store.queryEntity(self.tableName, partitionKey, rowKey, function (err, found) {
+            log.info('queryEntity results:', err, found);
 
-                var registrationEntity = {
-                    'PartitionKey': partitionKey,
-                    'RowKey': rowKey,
-                    'TemplateLanguage': registration.templateLanguage,
-                    'TemplateVersion': 'v' + registration.templateVersion,
-                    'Service': registration.service,
-                    'Expiration': null,
-                    'Routes': null
+            var registrationEntity = {
+                'PartitionKey': partitionKey,
+                'RowKey': rowKey,
+                'TemplateLanguage': registration.templateLanguage,
+                'TemplateVersion': 'v' + registration.templateVersion,
+                'Service': registration.service,
+                'Expiration': null,
+                'Routes': null
+            };
+
+            var now = Date.now();
+            var oldest = now;
+            var routes = registration.routes;
+
+            for (var index in registration.routes) {
+                var route = routes[index];
+                var expiration = now + route.secondsToLive * 1000;
+                if (oldest < expiration) {
+                    oldest = expiration;
+                }
+                route = {
+                    'Name': route.name,
+                    'Token': route.token,
+                    'Expiration': (new Date(expiration)).toISOString()
                 };
 
-                var now = Date.now();
-                var oldest = now;
-                var routes = registration.routes;
+                log.debug('new route:', route);
+                routes[index] = route;
+            }
 
-                for (var index in registration.routes) {
-                    var route = routes[index];
-                    var expiration = now + route.secondsToLive * 1000;
-                    if (oldest < expiration) {
-                        oldest = expiration;
-                    }
-                    route = {
-                        'Name': route.name,
-                        'Token': route.token,
-                        'Expiration': (new Date(expiration)).toISOString()
-                    };
+            registrationEntity.Expiration = (new Date(oldest)).toISOString();
+            registrationEntity.Routes = JSON.stringify(routes);
+            if (! found) {
+                self.store.insertEntity(self.tableName, registrationEntity, callback);
+            }
+            else {
+                self.store.updateEntity(self.tableName, registrationEntity, callback);
+            }
 
-                    log.debug('new route:', route);
-                    routes[index] = route;
-                }
-
-                registrationEntity.Expiration = (new Date(oldest)).toISOString();
-                registrationEntity.Routes = JSON.stringify(routes);
-                if (! found) {
-                    self.store.insertEntity(self.tableName, registrationEntity, callback);
-                }
-                else {
-                    self.store.updateEntity(self.tableName, registrationEntity, callback);
-                }
-
-                log.END();
-	    });
+            log.END();
+	});
     },
 
     /**
@@ -320,12 +316,10 @@ RegistrationStore.prototype = {
     deleteRegistration: function (userId, registrationId, callback) {
         var log = this.log.child('deleteRegistration');
         log.BEGIN(userId, registrationId);
-        this._deleteRegistrationEntity(this.makePartitionKey(userId),
-                                       this.makeRowKey(registrationId),
-                                       function (err) {
-                                           callback(err);
-                                           log.END(err);
-                                       });
+        this._deleteRegistrationEntity(this.makePartitionKey(userId), this.makeRowKey(registrationId), function (err) {
+            callback(err);
+            log.END(err);
+        });
     },
 
     /**
@@ -341,41 +335,38 @@ RegistrationStore.prototype = {
     deleteAllRegistrations: function (userId, callback) {
         var self = this;
         var log = self.log.child('deleteAllRegistrations');
-        log.BEGIN(userId);
-
+        var errors = null;
         var partitionKey = this.makePartitionKey(userId);
+
+        function mapper(entity, entityCallback) {
+            var rowKey = entity.RowKey;
+            log.debug('deleting registration', rowKey);
+            self._deleteRegistrationEntity(
+                partitionKey, rowKey, function (err) {
+                    if (err) {
+                        if (errors === null) {
+                            errors = {};
+                        }
+                        errors[rowKey] = err;
+                    }
+                    entityCallback(null, null);
+                });
+        }
+
+        function reducer(err, results) {
+            callback(errors);
+            log.END();
+        }
+
+        log.BEGIN(userId);
 
         self._getAllRegistrationEntities(
             partitionKey, function (err, registrationEntities) {
-                var rowKey = null;
-                var errors = null;
-                var awaiting = registrationEntities.length;
-
                 if (err || registrationEntities === null || registrationEntities.length === 0) {
                     callback(err);
                 }
                 else {
-                    async.map(registrationEntities,
-                              // Function to invoke for each entity
-                              function (entity, entityCallback) {
-                                  rowKey = entity.RowKey;
-                                  log.debug('deleting registration', rowKey);
-                                  self._deleteRegistrationEntity(
-                                      partitionKey, rowKey, function (err) {
-                                          if (err) {
-                                              if (errors === null) {
-                                                  errors = {};
-                                              }
-                                              errors[rowKey] = err;
-                                          }
-                                          entityCallback(null, null);
-                                      });
-                              },
-                              // Function to call once all per-entity callbacks have been invoked
-                             function (err, results) {
-                                 callback(errors);
-                                 log.END();
-                             });
+                    async.map(registrationEntities, mapper, reducer);
                 }
             });
     }

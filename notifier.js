@@ -65,7 +65,7 @@ function Notifier(templateStore, registrationStore, generator, senders) {
                     }
                     return value;
                 },
-                filter: function(value) {
+                filter: function (value) {
                     var log = this.log.child('filter model');
                     var err = this.FilterModel.validate(value);
                     log.debug('filter validation:', err);
@@ -96,7 +96,7 @@ Notifier.prototype = {
      *
      * @param {Express.App} app the application to route
      */
-    route: function(app) {
+    route: function (app) {
         var log = this.log.child('route');
         log.BEGIN('adding bindings');
         app.post('/post/:userId', express.json(), this.postNotification.bind(this));
@@ -111,7 +111,7 @@ Notifier.prototype = {
      *
      * @param {Response} res outgoing HTTP response values
      */
-    postNotification: function(req, res) {
+    postNotification: function (req, res) {
         var self = this, duration;
         var log = self.log.child('postNotification');
         var result = {count: 0};
@@ -148,7 +148,7 @@ Notifier.prototype = {
         this.postTracker.add(sequenceId, start);
 
         // Fetch the registrations for the given user
-        this.registrationStore.getRegistrations(params.userId, params.filter, function(err, registrations) {
+        this.registrationStore.getRegistrations(params.userId, params.filter, function (err, registrations) {
             if (err !== null) {
                 log.error('RegistrationStore.getRegistrations error:', err);
                 res.send(HTTPStatus.INTERNAL_SERVER_ERROR);
@@ -164,7 +164,7 @@ Notifier.prototype = {
             }
 
             // Find the templates that apply for the given registrations
-            self.templateStore.findTemplates(params.eventId, registrations, function(err, matches) {
+            self.templateStore.findTemplates(params.eventId, registrations, function (err, matches) {
                 var token = null;
                 if (err !== null) {
                     log.error('TemplateStore.findTemplates error:', err);
@@ -183,10 +183,9 @@ Notifier.prototype = {
 
                 var removeRegistrationProc = function () {
                     log.debug('callback:', params.userId, token, result);
-                    self.registrationStore.deleteRegistrationEntity(params.userId, token,
-                                                                    function (err) {
-                                                                        log.error('removeCallback:', err);
-                                                                    });
+                    self.registrationStore.deleteRegistrationEntity(params.userId, token, function (err) {
+                        log.error('removeCallback:', err);
+                    });
                 };
 
                 // For each template, generate a notification payload and send it on its way.
@@ -212,7 +211,7 @@ Notifier.prototype = {
      *
      * @param {Response} res outgoing HTTP response values
      */
-    logReceipt: function(req, res) {
+    logReceipt: function (req, res) {
         var log = this.log.child('logReceipt');
         log.BEGIN();
 
@@ -243,7 +242,7 @@ Notifier.prototype = {
      *
      * @param {NotificationRequest} request description of the request to send
      */
-    deliver: function(service, request) {
+    deliver: function (service, request) {
         this.senders[service].sendNotification(request);
     }
 };

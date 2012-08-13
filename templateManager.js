@@ -155,8 +155,7 @@ TemplateManager.prototype = {
         };
 
         var start = Date.now();
-        this.templateStore.findTemplates(params.eventId, [reg], function (err, templates)
-        {
+        this.templateStore.findTemplates(params.eventId, [reg], function (err, templates) {
             var duration = Date.now() - start;
             if (err) {
                 log.error('TemplateStore.findTemplates error:', err);
@@ -204,13 +203,13 @@ TemplateManager.prototype = {
         log.BEGIN();
 
         var params = {
-          eventId: req.param('eventId'),
-          notificationId: req.param('notificationId'),
-          route: req.param('route'),
-          templateVersion: req.param('templateVersion'),
-          templateLanguage: req.param('templateLanguage'),
-          service: req.param('service'),
-          template: req.param('template')
+            eventId: req.param('eventId'),
+            notificationId: req.param('notificationId'),
+            route: req.param('route'),
+            templateVersion: req.param('templateVersion'),
+            templateLanguage: req.param('templateLanguage'),
+            service: req.param('service'),
+            template: req.param('template')
         };
 
         log.info('params:', params);
@@ -270,12 +269,12 @@ TemplateManager.prototype = {
         log.BEGIN();
 
         var params = {
-          eventId: req.param('eventId'),
-          notificationId: req.param('notificationId'),
-          route: req.param('route'),
-          templateVersion: req.param('templateVersion'),
-          templateLanguage: req.param('templateLanguage'),
-          service: req.param('service')
+            eventId: req.param('eventId'),
+            notificationId: req.param('notificationId'),
+            route: req.param('route'),
+            templateVersion: req.param('templateVersion'),
+            templateLanguage: req.param('templateLanguage'),
+            service: req.param('service')
         };
 
         log.info('params:', params);
@@ -288,8 +287,7 @@ TemplateManager.prototype = {
         }
 
         var start = Date.now();
-        this.templateStore.removeTemplate(params, function (err, templateEntity)
-        {
+        this.templateStore.removeTemplate(params, function (err, templateEntity) {
             var duration = Date.now() - start;
             if (err !== null) {
                 log.error('TemplateStore.removeTemplate error:', err);

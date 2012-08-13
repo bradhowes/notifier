@@ -209,8 +209,7 @@ Registrar.prototype = {
         }
 
         var start = Date.now();
-        this.registrationStore.updateRegistration(params, function (err, registrationEntity)
-        {
+        this.registrationStore.updateRegistration(params, function (err, registrationEntity) {
             var duration = Date.now() - start;
             if (err) {
                 log.error('RegistrationStore.updateRegistration error:', err);
