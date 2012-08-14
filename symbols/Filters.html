@@ -4,7 +4,7 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
-		<title>Registrar | JsDoc Reference</title>
+		<title>Filters | JsDoc Reference</title>
 
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 		<meta name="mobileoptimized" content="0" />
@@ -100,12 +100,13 @@
 			<header>
 				<h1 class="classTitle">
 					
-					Class <span>Registrar</span>
+					Class <span>Filters</span>
 				</h1>
 				
 				<div class="intro">
 					<p class="description summary">
-						A registrar allows for querying, updating, and deleting of registrations for a given user ID.
+						A Filter instance contains methods that provide for filtering of template placeholder data before it is used to fill
+in the placeholder.
 					</p>
 						
 					
@@ -113,7 +114,7 @@
 							
 							
 							
-								<li>Defined in: <a href="../symbols/src/registrar.js.html">registrar.js</a></li>
+								<li>Defined in: <a href="../symbols/src/filters.js.html">filters.js</a></li>
 							
 							
 						</ul>
@@ -124,7 +125,7 @@
 			
 				<section>
 					<div class="props">
-						<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class Registrar.">
+						<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class Filters.">
 							<caption class="sectionTitle">Class Summary</caption>
 							<thead>
 								<tr>
@@ -137,9 +138,9 @@
 									<td class="attributes">&nbsp;</td>
 									<td class="nameDescription" >
 										<div class="fixedFont">
-											<b><a href="../symbols/Registrar.html#constructor">Registrar</a></b>(registrationStore)
+											<b><a href="../symbols/Filters.html#constructor">Filters</a></b>()
 										</div>
-										<div class="description"><p>Registrar constructor.</div>
+										<div class="description"><p>Filters constructor.</div>
 									</td>
 								</tr>
 							</tbody>
@@ -154,7 +155,7 @@
 					
 						<nav>
 							<div class="props">
-								<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class Registrar.">
+								<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class Filters.">
 									<caption class="sectionTitle">Field Summary</caption>
 									
 									<thead>
@@ -170,9 +171,10 @@
 												<td class="attributes">&nbsp;</td>
 												<td class="nameDescription">
 													<div class="fixedFont">
-													<b><a href="../symbols/Registrar.html#DeleteKeyModel">DeleteKeyModel</a></b>
+													<b><a href="../symbols/Filters.html#enforceMaxByteSize_RE">enforceMaxByteSize_RE</a></b>
 													</div>
-													<div class="description"><p>JSON schema for delete parameter definitions.</div>
+													<div class="description"><p>Regular expression that matches a squence of characters that must not be broken by a shortening due to the
+enforceMaxByteSize method.</div>
 												</td>
 											</tr>
 										
@@ -180,9 +182,10 @@
 												<td class="attributes">&nbsp;</td>
 												<td class="nameDescription">
 													<div class="fixedFont">
-													<b><a href="../symbols/Registrar.html#RegistrationModel">RegistrationModel</a></b>
+													<b><a href="../symbols/Filters.html#escapeJSON_RE">escapeJSON_RE</a></b>
 													</div>
-													<div class="description"><p>JSON schema for registration definitions.</div>
+													<div class="description"><p>Regular expression for matching JSON characters that must be escaped before being introduced inside of a JSON
+value.</div>
 												</td>
 											</tr>
 										
@@ -190,9 +193,10 @@
 												<td class="attributes">&nbsp;</td>
 												<td class="nameDescription">
 													<div class="fixedFont">
-													<b><a href="../symbols/Registrar.html#RouteModel">RouteModel</a></b>
+													<b><a href="../symbols/Filters.html#escapeXML_RE">escapeXML_RE</a></b>
 													</div>
-													<div class="description"><p>JSON schema for route definitions.</div>
+													<div class="description"><p>Regular expression that matches characters which must be converted into XML entities before being introduced
+inside of an XML value.</div>
 												</td>
 											</tr>
 										
@@ -200,9 +204,20 @@
 												<td class="attributes">&nbsp;</td>
 												<td class="nameDescription">
 													<div class="fixedFont">
-													<b><a href="../symbols/Registrar.html#UserIdModel">UserIdModel</a></b>
+													<b><a href="../symbols/Filters.html#escapeXMLMap">escapeXMLMap</a></b>
 													</div>
-													<div class="description"><p>JSON schema for userId values.</div>
+													<div class="description"><p>Mapping of XML characters that must be translated into XML entities before being introduced inside of an XML
+value.</div>
+												</td>
+											</tr>
+										
+											<tr>
+												<td class="attributes">&nbsp;</td>
+												<td class="nameDescription">
+													<div class="fixedFont">
+													<b><a href="../symbols/Filters.html#filters">filters</a></b>
+													</div>
+													<div class="description"><p>Mapping of available filters and their names as they appear in a placeholder filter chain.</div>
 												</td>
 											</tr>
 										
@@ -227,7 +242,7 @@
 						
 						
 							<nav>
-								<table class="summaryTable" id="MethodsList" cellspacing="0" summary="A summary of the methods documented in the class Registrar.">
+								<table class="summaryTable" id="MethodsList" cellspacing="0" summary="A summary of the methods documented in the class Filters.">
 									<thead>
 										<tr>
 											<th scope="col">Method Attributes</th>
@@ -243,9 +258,9 @@
 											>
 												<td class="attributes">&nbsp;</td>
 												<td class="nameDescription">
-													<div class="fixedFont"><b><a href="../symbols/Registrar.html#del">del</a></b>(req, res)
+													<div class="fixedFont"><b><a href="../symbols/Filters.html#defaultValue">defaultValue</a></b>(value, defaultValue)
 													</div>
-													<div class="description"><p>Delete a registration or all registrations for a given user.</div>
+													<div class="description"><p>Supply a default value when the given one is undefined or empty.</div>
 												</td>
 											</tr>
 										
@@ -254,9 +269,9 @@
 											>
 												<td class="attributes">&nbsp;</td>
 												<td class="nameDescription">
-													<div class="fixedFont"><b><a href="../symbols/Registrar.html#get">get</a></b>(req, res)
+													<div class="fixedFont"><b><a href="../symbols/Filters.html#enforceMaxByteSize">enforceMaxByteSize</a></b>(value, maxByteSize, tail)
 													</div>
-													<div class="description"><p>Obtain the current registrations for a given user.</div>
+													<div class="description"><p>Make sure the resulting value is no more than maxByteSize in length, when measured in bytes.</div>
 												</td>
 											</tr>
 										
@@ -265,9 +280,9 @@
 											>
 												<td class="attributes">&nbsp;</td>
 												<td class="nameDescription">
-													<div class="fixedFont"><b><a href="../symbols/Registrar.html#route">route</a></b>(app)
+													<div class="fixedFont"><b><a href="../symbols/Filters.html#escapeJSON">escapeJSON</a></b>(value)
 													</div>
-													<div class="description"><p>Add Express routes for the Registrar API.</div>
+													<div class="description"><p>Escape certain characters within the given value so that the result may safely be added inside a JSON payload.</div>
 												</td>
 											</tr>
 										
@@ -276,9 +291,9 @@
 											>
 												<td class="attributes">&nbsp;</td>
 												<td class="nameDescription">
-													<div class="fixedFont"><b><a href="../symbols/Registrar.html#set">set</a></b>(req, res)
+													<div class="fixedFont"><b><a href="../symbols/Filters.html#escapeXML">escapeXML</a></b>(value)
 													</div>
-													<div class="description"><p>Add or update a registration for a given user.</div>
+													<div class="description"><p>Escape certain characters within the given value so that the result may safely be added inside an XML payload.</div>
 												</td>
 											</tr>
 										
@@ -308,28 +323,16 @@
 							</h2>
 							
 							<div class="fixedFont">
-								<b>Registrar</b>(registrationStore)
+								<b>Filters</b>()
 							</div>
 							
 							<div class="description">
-								<p>Registrar constructor.</p>
+								<p>Filters constructor.</p>
 								
 							</div>
 							
 							
 						
-							
-								<dl class="detailList params">
-									<dt class="heading">Parameters:</dt>
-									
-										<dt>
-											<span class="light fixedFont">{<a href="../symbols/RegistrationStore.html">RegistrationStore</a>}</span>  <b>registrationStore</b>
-											
-										</dt>
-										<dd>the RegistrationStore instance to rely on for persistent data
-operations.</dd>
-									
-								</dl>
 							
 							
 							
@@ -349,23 +352,19 @@ operations.</dd>
 							</h2>
 							
 							
-								<div class="fixedFont heading" id="DeleteKeyModel">
+								<div class="fixedFont heading" id="enforceMaxByteSize_RE">
 									<span class='lighter'>
 									
 									</span>
 									
-									<span class="light">{Model}</span>
 									
-									<b>DeleteKeyModel</b>							
+									
+									<b>enforceMaxByteSize_RE</b>							
 								</div>
 								
 								<div class="description">
-									<p>JSON schema for delete parameter definitions. Attributes:</p>
-
-<ul>
-<li>registrationId: the unique identifier associated with the device to be removed. See
-<a href="../symbols/Registrar.html#RegistrationModel">Registrar#RegistrationModel</a> for additional information.</li>
-</ul>
+									<p>Regular expression that matches a squence of characters that must not be broken by a shortening due to the
+enforceMaxByteSize method. If a cut point occurs within such a sequence, the cut point will move before it.</p>
 									
 									
 									
@@ -376,28 +375,19 @@ operations.</dd>
 								
 								<div class="hr"></div>
 							
-								<div class="fixedFont heading" id="RegistrationModel">
+								<div class="fixedFont heading" id="escapeJSON_RE">
 									<span class='lighter'>
 									
 									</span>
 									
-									<span class="light">{Model}</span>
 									
-									<b>RegistrationModel</b>							
+									
+									<b>escapeJSON_RE</b>							
 								</div>
 								
 								<div class="description">
-									<p>JSON schema for registration definitions. Attributes:</p>
-
-<ul>
-<li>registrationId: the unique identifier associated with the device being registered. This must be unique across
-all devices, but it should be constant for the same device.</li>
-<li>templateVersion: the version to look for when searching for templates to use for this device</li>
-<li>templateLanguage: the language to look for when searching for templates to use for this device</li>
-<li>service: identifier of the OS-specific service that handles notification delivery ("wns", "apns", "gcm")</li>
-<li>routes: an array of one or more <a href="../symbols/Registrar.html#RouteModel">Registrar#RouteModel</a> objects that define the registration delivery
-      paths for the device</li>
-</ul>
+									<p>Regular expression for matching JSON characters that must be escaped before being introduced inside of a JSON
+value.</p>
 									
 									
 									
@@ -408,24 +398,19 @@ all devices, but it should be constant for the same device.</li>
 								
 								<div class="hr"></div>
 							
-								<div class="fixedFont heading" id="RouteModel">
+								<div class="fixedFont heading" id="escapeXML_RE">
 									<span class='lighter'>
 									
 									</span>
 									
-									<span class="light">{Model}</span>
 									
-									<b>RouteModel</b>							
+									
+									<b>escapeXML_RE</b>							
 								</div>
 								
 								<div class="description">
-									<p>JSON schema for route definitions. Attributes:</p>
-
-<ul>
-<li>name: the name of the route. Only receives notifications from templates with a matching name value.</li>
-<li>token: the OS-specific value associated with the device to notify</li>
-<li>secondsToLive: the number of seconds this registration route will be valid</li>
-</ul>
+									<p>Regular expression that matches characters which must be converted into XML entities before being introduced
+inside of an XML value. Specail care taken to not match an '&amp;' already part of an XML entity.</p>
 									
 									
 									
@@ -436,22 +421,43 @@ all devices, but it should be constant for the same device.</li>
 								
 								<div class="hr"></div>
 							
-								<div class="fixedFont heading" id="UserIdModel">
+								<div class="fixedFont heading" id="escapeXMLMap">
 									<span class='lighter'>
 									
 									</span>
 									
-									<span class="light">{Model}</span>
 									
-									<b>UserIdModel</b>							
+									
+									<b>escapeXMLMap</b>							
 								</div>
 								
 								<div class="description">
-									<p>JSON schema for userId values. Contains just one value:</p>
+									<p>Mapping of XML characters that must be translated into XML entities before being introduced inside of an XML
+value.</p>
+									
+									
+									
+								</div>
+								
+								
+									
+								
+								<div class="hr"></div>
+							
+								<div class="fixedFont heading" id="filters">
+									<span class='lighter'>
+									
+									</span>
+									
+									
+									
+									<b>filters</b>							
+								</div>
+								
+								<div class="description">
+									<p>Mapping of available filters and their names as they appear in a placeholder filter chain.</p>
 
-<ul>
-<li>userId: the user to operate on</li>
-</ul>
+<p>Example: @@FOO|default("bar")|escJSON|maxSize(8)@@</p>
 									
 									
 									
@@ -483,34 +489,18 @@ all devices, but it should be constant for the same device.</li>
 									<li 
 										 class='item0'
 									>
-										<div class="fixedFont heading" id="del">
+										<div class="fixedFont heading" id="defaultValue">
 											<span class='lighter'>
 											
 											</span>
 											
+											<span class="light">{String}</span>
 											
-											
-											<b>del</b>(req, res)
+											<b>defaultValue</b>(value, defaultValue)
 										</div>
 										
 										<div class="description">
-											<p>Delete a registration or all registrations for a given user. If a JSON
-payload exits with a registrationId attribute, only delete the one entity
-matching the registrationId value. Otherwise, delete all registrations for the
-user.</p>
-
-<ul>
-<li>userId: the user to look for (found in the URL)</li>
-<li>registrationId (optional): the registration to delete</li>
-</ul>
-
-<p>HTTP Responses:</p>
-
-<ul>
-<li>400 BAD REQUEST: missing or invalid template attribute(s)</li>
-<li>404 NOT FOUND: unable to locate any registration to delete</li>
-<li>204 NO CONTENT: found and delete the registration(s)</li>
-</ul>
+											<p>Supply a default value when the given one is undefined or empty.</p>
 											
 											
 											
@@ -524,20 +514,41 @@ user.</p>
 												<dt class="heading">Parameters:</dt>
 												
 													<dt>
-														<b>req</b>
+														<span class="light fixedFont">{String}</span> <b>value</b>
 														
 													</dt>
-													<dd>Contents of the incoming request.</dd>
+													<dd>the value to work with</dd>
 												
 													<dt>
-														<b>res</b>
+														<span class="light fixedFont">{String}</span> <b>defaultValue</b>
 														
 													</dt>
-													<dd>Response generator for the request.</dd>
+													<dd>the default value to supply if necessary</dd>
 												
 											</dl>
 										
 										
+										
+											<dl class="detailList nomargin">
+											
+												
+												
+												
+												
+												
+												
+												
+													<dt class="heading">Returns:</dt>
+													
+														<dd><span class="light fixedFont">{String}</span> the new value</dd>
+													
+												
+												
+												
+												
+												
+											
+											</dl>
 										
 										<div class="hr"></div>
 									</li>
@@ -545,30 +556,20 @@ user.</p>
 									<li 
 										 class='item1'
 									>
-										<div class="fixedFont heading" id="get">
+										<div class="fixedFont heading" id="enforceMaxByteSize">
 											<span class='lighter'>
 											
 											</span>
 											
+											<span class="light">{String}</span>
 											
-											
-											<b>get</b>(req, res)
+											<b>enforceMaxByteSize</b>(value, maxByteSize, tail)
 										</div>
 										
 										<div class="description">
-											<p>Obtain the current registrations for a given user. Parameters:</p>
-
-<ul>
-<li>userId: the user to look for (found in the URL)</li>
-</ul>
-
-<p>HTTP Responses:</p>
-
-<ul>
-<li>400 BAD REQUEST: missing or invalid query attribute(s)</li>
-<li>404 NOT FOUND: no templates were found for the given key attributes</li>
-<li>200 OK: one or more registrations were found</li>
-</ul>
+											<p>Make sure the resulting value is no more than maxByteSize in length, when measured in bytes. If shortening is
+necessary, do so in such a way that certain, important character runs are not broken, and add a tail to the
+result to indicate that shortening took place.</p>
 											
 											
 											
@@ -582,20 +583,47 @@ user.</p>
 												<dt class="heading">Parameters:</dt>
 												
 													<dt>
-														<b>req</b>
+														<span class="light fixedFont">{String}</span> <b>value</b>
 														
 													</dt>
-													<dd>Contents of the incoming request.</dd>
+													<dd>the value to work with</dd>
 												
 													<dt>
-														<b>res</b>
+														<span class="light fixedFont">{Integer}</span> <b>maxByteSize</b>
 														
 													</dt>
-													<dd>Response generator for the request. Generates JSON output if there are registrations</dd>
+													<dd>the maximum number of bytes to return</dd>
+												
+													<dt>
+														<span class="light fixedFont">{String}</span> <b>tail</b>
+														
+													</dt>
+													<dd>the value to append to the result to indicate a truncated value</dd>
 												
 											</dl>
 										
 										
+										
+											<dl class="detailList nomargin">
+											
+												
+												
+												
+												
+												
+												
+												
+													<dt class="heading">Returns:</dt>
+													
+														<dd><span class="light fixedFont">{String}</span> the new value</dd>
+													
+												
+												
+												
+												
+												
+											
+											</dl>
 										
 										<div class="hr"></div>
 									</li>
@@ -603,18 +631,18 @@ user.</p>
 									<li 
 										 class='item2'
 									>
-										<div class="fixedFont heading" id="route">
+										<div class="fixedFont heading" id="escapeJSON">
 											<span class='lighter'>
 											
 											</span>
 											
+											<span class="light">{String}</span>
 											
-											
-											<b>route</b>(app)
+											<b>escapeJSON</b>(value)
 										</div>
 										
 										<div class="description">
-											<p>Add Express routes for the Registrar API.</p>
+											<p>Escape certain characters within the given value so that the result may safely be added inside a JSON payload.</p>
 											
 											
 											
@@ -628,14 +656,35 @@ user.</p>
 												<dt class="heading">Parameters:</dt>
 												
 													<dt>
-														<span class="light fixedFont">{Express.App}</span> <b>app</b>
+														<span class="light fixedFont">{String}</span> <b>value</b>
 														
 													</dt>
-													<dd>the application to route</dd>
+													<dd>the value to work with</dd>
 												
 											</dl>
 										
 										
+										
+											<dl class="detailList nomargin">
+											
+												
+												
+												
+												
+												
+												
+												
+													<dt class="heading">Returns:</dt>
+													
+														<dd><span class="light fixedFont">{String}</span> the new value</dd>
+													
+												
+												
+												
+												
+												
+											
+											</dl>
 										
 										<div class="hr"></div>
 									</li>
@@ -643,37 +692,18 @@ user.</p>
 									<li 
 										 class='item3'
 									>
-										<div class="fixedFont heading" id="set">
+										<div class="fixedFont heading" id="escapeXML">
 											<span class='lighter'>
 											
 											</span>
 											
+											<span class="light">{String}</span>
 											
-											
-											<b>set</b>(req, res)
+											<b>escapeXML</b>(value)
 										</div>
 										
 										<div class="description">
-											<p>Add or update a registration for a given user. Parameters:</p>
-
-<ul>
-<li>userId: the user to look for (found in the URL)</li>
-<li>registrationId: the registration to add/update.</li>
-<li>templateVersion: the template version for this registration.</li>
-<li>templateLanguage: the template language for this registration.</li>
-<li>service: the notification service for this registration.</li>
-<li>routes: array of one or more route dicts with keys:
-<ul><li>name: the unique name of the route for this registration.</li>
-<li>token: service-specific way to reach the user for notifications.</li>
-<li>secondsToLive: the number of seconds into the future the token is valid.</li></ul></li>
-</ul>
-
-<p>HTTP Responses:</p>
-
-<ul>
-<li>400 BAD REQUEST: missing or invalid template attribute(s)</li>
-<li>200 OK: one or moret templates were found</li>
-</ul>
+											<p>Escape certain characters within the given value so that the result may safely be added inside an XML payload.</p>
 											
 											
 											
@@ -687,20 +717,35 @@ user.</p>
 												<dt class="heading">Parameters:</dt>
 												
 													<dt>
-														<b>req</b>
+														<span class="light fixedFont">{String}</span> <b>value</b>
 														
 													</dt>
-													<dd>Contents of the incoming request.</dd>
-												
-													<dt>
-														<b>res</b>
-														
-													</dt>
-													<dd>Response generator for the request.</dd>
+													<dd>the value to work with</dd>
 												
 											</dl>
 										
 										
+										
+											<dl class="detailList nomargin">
+											
+												
+												
+												
+												
+												
+												
+												
+													<dt class="heading">Returns:</dt>
+													
+														<dd><span class="light fixedFont">{String}</span> the new value</dd>
+													
+												
+												
+												
+												
+												
+											
+											</dl>
 										
 										
 									</li>

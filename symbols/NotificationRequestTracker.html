@@ -4,7 +4,7 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
-		<title>UserDeviceTracker | JsDoc Reference</title>
+		<title>NotificationRequestTracker | JsDoc Reference</title>
 
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 		<meta name="mobileoptimized" content="0" />
@@ -48,17 +48,19 @@
 				
 					<li><a href="../symbols/Deque.Node.html">Deque<span class='break'> </span>.<span class='break'> </span>Node</a></li>
 				
+					<li><a href="../symbols/Filters.html">Filters</a></li>
+				
 					<li><a href="../symbols/GCM.html">GCM</a></li>
 				
 					<li><a href="../symbols/LoggerUtils.html">LoggerUtils</a></li>
 				
+					<li><a href="../symbols/NotificationRequest.html">NotificationRequest</a></li>
+				
+					<li><a href="../symbols/NotificationRequestTracker.html">NotificationRequestTracker</a></li>
+				
 					<li><a href="../symbols/Notifier.html">Notifier</a></li>
 				
-					<li><a href="../symbols/PayloadGenerator.html">PayloadGenerator</a></li>
-				
 					<li><a href="../symbols/PostTracker.html">PostTracker</a></li>
-				
-					<li><a href="../symbols/PostTracker.Node.html">PostTracker<span class='break'> </span>.<span class='break'> </span>Node</a></li>
 				
 					<li><a href="../symbols/Registrar.html">Registrar</a></li>
 				
@@ -66,13 +68,13 @@
 				
 					<li><a href="../symbols/RegistrationStore.html">RegistrationStore</a></li>
 				
+					<li><a href="../symbols/TemplateCache.html">TemplateCache</a></li>
+				
+					<li><a href="../symbols/TemplateCache.Entry.html">TemplateCache<span class='break'> </span>.<span class='break'> </span>Entry</a></li>
+				
 					<li><a href="../symbols/TemplateManager.html">TemplateManager</a></li>
 				
 					<li><a href="../symbols/TemplateStore.html">TemplateStore</a></li>
-				
-					<li><a href="../symbols/UserDeviceTracker.html">UserDeviceTracker</a></li>
-				
-					<li><a href="../symbols/UserDeviceTracker.Node.html">UserDeviceTracker<span class='break'> </span>.<span class='break'> </span>Node</a></li>
 				
 					<li><a href="../symbols/WNS.html">WNS</a></li>
 				
@@ -85,7 +87,7 @@
 			Documentation generator: <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0<br />
 			Template: <a href="http://www.thebrightlines.com/2010/05/06/new-template-for-jsdoctoolkit-codeview/" target="_blank">Codeview</a> 1.2<br />
 			Generated on:
-			<time datetime='2012-7-13' pubdate>2012-7-13 18:51</time>
+			<time datetime='2012-7-15' pubdate>2012-7-15 0:56</time>
 		</footer>
 	</div>
 </div>
@@ -98,12 +100,12 @@
 			<header>
 				<h1 class="classTitle">
 					
-					Class <span>UserDeviceTracker</span>
+					Class <span>NotificationRequestTracker</span>
 				</h1>
 				
 				<div class="intro">
 					<p class="description summary">
-						A UserDeviceTracker instance maintains a LIFO size-limited queue that contains Node instances that define a
+						A NotificationRequestTracker instance maintains a LIFO size-limited queue that contains Node instances that define a
 relationship between a user ID and an APNs device token.
 					</p>
 						
@@ -112,7 +114,7 @@ relationship between a user ID and an APNs device token.
 							
 							
 							
-								<li>Defined in: <a href="../symbols/src/userDeviceTracker.js.html">userDeviceTracker.js</a></li>
+								<li>Defined in: <a href="../symbols/src/notificationRequestTracker.js.html">notificationRequestTracker.js</a></li>
 							
 							
 						</ul>
@@ -123,7 +125,7 @@ relationship between a user ID and an APNs device token.
 			
 				<section>
 					<div class="props">
-						<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class UserDeviceTracker.">
+						<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class NotificationRequestTracker.">
 							<caption class="sectionTitle">Class Summary</caption>
 							<thead>
 								<tr>
@@ -136,9 +138,9 @@ relationship between a user ID and an APNs device token.
 									<td class="attributes">&nbsp;</td>
 									<td class="nameDescription" >
 										<div class="fixedFont">
-											<b><a href="../symbols/UserDeviceTracker.html#constructor">UserDeviceTracker</a></b>(maxSize)
+											<b><a href="../symbols/NotificationRequestTracker.html#constructor">NotificationRequestTracker</a></b>(maxSize)
 										</div>
-										<div class="description"><p>UserDeviceTracker constructor</p></div>
+										<div class="description"><p>NotificationRequestTracker constructor</p></div>
 									</td>
 								</tr>
 							</tbody>
@@ -160,7 +162,7 @@ relationship between a user ID and an APNs device token.
 						
 						
 							<nav>
-								<table class="summaryTable" id="MethodsList" cellspacing="0" summary="A summary of the methods documented in the class UserDeviceTracker.">
+								<table class="summaryTable" id="MethodsList" cellspacing="0" summary="A summary of the methods documented in the class NotificationRequestTracker.">
 									<thead>
 										<tr>
 											<th scope="col">Method Attributes</th>
@@ -176,7 +178,7 @@ relationship between a user ID and an APNs device token.
 											>
 												<td class="attributes">&nbsp;</td>
 												<td class="nameDescription">
-													<div class="fixedFont"><b><a href="../symbols/UserDeviceTracker.html#add">add</a></b>(userId, device)
+													<div class="fixedFont"><b><a href="../symbols/NotificationRequestTracker.html#add">add</a></b>(request)
 													</div>
 													<div class="description"><p>Create a new Node instance and add to the LIFO size-limited queue.</div>
 												</td>
@@ -187,9 +189,9 @@ relationship between a user ID and an APNs device token.
 											>
 												<td class="attributes">&nbsp;</td>
 												<td class="nameDescription">
-													<div class="fixedFont"><b><a href="../symbols/UserDeviceTracker.html#find">find</a></b>(device)
+													<div class="fixedFont"><b><a href="../symbols/NotificationRequestTracker.html#find">find</a></b>(token)
 													</div>
-													<div class="description"><p>Attempt to locate the user ID that belongs to a given iOS device token.</div>
+													<div class="description"><p>Attempt to locate the NoificationRequest that belongs to a given iOS device token.</div>
 												</td>
 											</tr>
 										
@@ -219,11 +221,11 @@ relationship between a user ID and an APNs device token.
 							</h2>
 							
 							<div class="fixedFont">
-								<b>UserDeviceTracker</b>(maxSize)
+								<b>NotificationRequestTracker</b>(maxSize)
 							</div>
 							
 							<div class="description">
-								<p>UserDeviceTracker constructor</p>
+								<p>NotificationRequestTracker constructor</p>
 								
 							</div>
 							
@@ -275,7 +277,7 @@ relationship between a user ID and an APNs device token.
 											
 											
 											
-											<b>add</b>(userId, device)
+											<b>add</b>(request)
 										</div>
 										
 										<div class="description">
@@ -293,16 +295,10 @@ relationship between a user ID and an APNs device token.
 												<dt class="heading">Parameters:</dt>
 												
 													<dt>
-														<span class="light fixedFont">{String}</span> <b>userId</b>
+														<span class="light fixedFont">{<a href="../symbols/NotificationRequest.html">NotificationRequest</a>}</span> <b>request</b>
 														
 													</dt>
-													<dd>the user identifier to remember</dd>
-												
-													<dt>
-														<span class="light fixedFont">{String}</span> <b>device</b>
-														
-													</dt>
-													<dd>the iOS device token to remember</dd>
+													<dd>the request to remember</dd>
 												
 											</dl>
 										
@@ -319,13 +315,13 @@ relationship between a user ID and an APNs device token.
 											
 											</span>
 											
+											<span class="light">{<a href="../symbols/NotificationRequest.html">NotificationRequest</a>}</span>
 											
-											
-											<b>find</b>(device)
+											<b>find</b>(token)
 										</div>
 										
 										<div class="description">
-											<p>Attempt to locate the user ID that belongs to a given iOS device token.</p>
+											<p>Attempt to locate the NoificationRequest that belongs to a given iOS device token.</p>
 											
 											
 											
@@ -339,14 +335,35 @@ relationship between a user ID and an APNs device token.
 												<dt class="heading">Parameters:</dt>
 												
 													<dt>
-														<span class="light fixedFont">{String}</span> <b>device</b>
+														<span class="light fixedFont">{String}</span> <b>token</b>
 														
 													</dt>
-													<dd>the iOS device token to look for</dd>
+													<dd>the route token to look for</dd>
 												
 											</dl>
 										
 										
+										
+											<dl class="detailList nomargin">
+											
+												
+												
+												
+												
+												
+												
+												
+													<dt class="heading">Returns:</dt>
+													
+														<dd><span class="light fixedFont">{<a href="../symbols/NotificationRequest.html">NotificationRequest</a>}</span> related request or null.</dd>
+													
+												
+												
+												
+												
+												
+											
+											</dl>
 										
 										
 									</li>

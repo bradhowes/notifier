@@ -17,21 +17,47 @@
 <span class='line'> 10</span>  *
 <span class='line'> 11</span>  * @class
 <span class='line'> 12</span>  *
-<span class='line'> 13</span>  * A NotificationRequest represents a notification request.
+<span class='line'> 13</span>  * A NotificationRequest represents a notification request from an extenal entity.
 <span class='line'> 14</span>  *
-<span class='line'> 15</span>  * @param {String} userId user to notify
-<span class='line'> 16</span>  * @param {String} token the value used to reach a specific device
-<span class='line'> 17</span>  * @param {Object} content the notification payload to send to the device. The 'content' attribute holds the actual
-<span class='line'> 18</span>  *  payload to deliver. Additional attributes may exist depending on the os-specific notification service being used
-<span class='line'> 19</span>  *  for delivery.
-<span class='line'> 20</span>  * @param {Number} secondsToLive how long this notification is valid
-<span class='line'> 21</span>  * @param {Function} removeRegistrationProc function to call to remove a token from further notifications
-<span class='line'> 22</span>  */</span><span class="WHIT">
-<span class='line'> 23</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">NotificationRequest</span><span class="PUNC">(</span><span class="NAME">userId</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">token</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">content</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">secondsToLive</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">removeRegistrationProc</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'> 24</span> </span><span class="WHIT">    </span><span class="NAME">this.userId</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">userId</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 25</span> </span><span class="WHIT">    </span><span class="NAME">this.token</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">token</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 26</span> </span><span class="WHIT">    </span><span class="NAME">this.content</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">content</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 27</span> </span><span class="WHIT">    </span><span class="NAME">this.secondsToLive</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">secondsToLive</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 28</span> </span><span class="WHIT">    </span><span class="NAME">this.removeRegistrationProc</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">removeRegistrationProc</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 29</span> </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'> 30</span> </span></pre></body></html>
+<span class='line'> 15</span>  * @param {String} registrationId the registration of a user that was used to select a payload
+<span class='line'> 16</span>  * @param {String} service the OS-specific service being used for notification delivery
+<span class='line'> 17</span>  * @param {String} token the OS-specifc identifier used for notification delivery to a specific device
+<span class='line'> 18</span>  * @param {Object} template defines the notification payload to generate.
+<span class='line'> 19</span>  */</span><span class="WHIT">
+<span class='line'> 20</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">NotificationRequest</span><span class="PUNC">(</span><span class="NAME">registrationId</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">service</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">token</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">template</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 21</span> </span><span class="WHIT">    </span><span class="NAME">this.registrationId</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">registrationId</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 22</span> </span><span class="WHIT">    </span><span class="NAME">this.service</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">service</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 23</span> </span><span class="WHIT">    </span><span class="NAME">this.token</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">token</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 24</span> </span><span class="WHIT">    </span><span class="NAME">this.template</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">template</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 25</span> </span><span class="WHIT">    </span><span class="NAME">this.content</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 26</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 27</span> 
+<span class='line'> 28</span> </span><span class="NAME">NotificationRequest.prototype</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 29</span> 
+<span class='line'> 30</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 31</span>      * Prepare a notification payload using the given values. Updates the content attribute with the payload text.
+<span class='line'> 32</span>      *
+<span class='line'> 33</span>      * @param {Object} substitutions mapping of placeholder names and the values to use when substituting placeholder
+<span class='line'> 34</span>      * tags within a notification template.
+<span class='line'> 35</span>      *
+<span class='line'> 36</span>      * @param {String} userId the ID of the user being notified
+<span class='line'> 37</span>      * @param {RegistrationStore} registrationStore the storage used for registrations. Used if the OS-specific service
+<span class='line'> 38</span>      * flags a token as invalid
+<span class='line'> 39</span>      * @param {Integer} secondsToLive number of seconds this request is valid
+<span class='line'> 40</span>      */</span><span class="WHIT">
+<span class='line'> 41</span> </span><span class="WHIT">    </span><span class="NAME">prepare</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">substitutions</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">userId</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">registrationStore</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">secondsToLive</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 42</span> </span><span class="WHIT">        </span><span class="NAME">this.userId</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">userId</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 43</span> </span><span class="WHIT">        </span><span class="NAME">this.registrationStore</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">registrationStore</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 44</span> </span><span class="WHIT">        </span><span class="NAME">this.secondsToLive</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">secondsToLive</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 45</span> </span><span class="WHIT">        </span><span class="COMM">// Generate the notification payload from the parsed template and the given substitution values.</span><span class="WHIT">
+<span class='line'> 46</span> </span><span class="WHIT">        </span><span class="NAME">this.content</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.template.content</span><span class="PUNC">(</span><span class="NAME">substitutions</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 47</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 48</span> 
+<span class='line'> 49</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 50</span>      * Remove the route used to deliver the last notification as it was deemed invalid by the OS-specific service.
+<span class='line'> 51</span>      */</span><span class="WHIT">
+<span class='line'> 52</span> </span><span class="WHIT">    </span><span class="NAME">forgetRoute</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 53</span> </span><span class="WHIT">        </span><span class="NAME">this.registrationStore.delRoute</span><span class="PUNC">(</span><span class="NAME">this.userId</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">this.registrationId</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">this.token</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 54</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 55</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 56</span> </span></pre></body></html>

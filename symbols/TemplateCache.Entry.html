@@ -4,7 +4,7 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
-		<title>UserDeviceTracker.Node | JsDoc Reference</title>
+		<title>TemplateCache.Entry | JsDoc Reference</title>
 
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 		<meta name="mobileoptimized" content="0" />
@@ -48,17 +48,19 @@
 				
 					<li><a href="../symbols/Deque.Node.html">Deque<span class='break'> </span>.<span class='break'> </span>Node</a></li>
 				
+					<li><a href="../symbols/Filters.html">Filters</a></li>
+				
 					<li><a href="../symbols/GCM.html">GCM</a></li>
 				
 					<li><a href="../symbols/LoggerUtils.html">LoggerUtils</a></li>
 				
+					<li><a href="../symbols/NotificationRequest.html">NotificationRequest</a></li>
+				
+					<li><a href="../symbols/NotificationRequestTracker.html">NotificationRequestTracker</a></li>
+				
 					<li><a href="../symbols/Notifier.html">Notifier</a></li>
 				
-					<li><a href="../symbols/PayloadGenerator.html">PayloadGenerator</a></li>
-				
 					<li><a href="../symbols/PostTracker.html">PostTracker</a></li>
-				
-					<li><a href="../symbols/PostTracker.Node.html">PostTracker<span class='break'> </span>.<span class='break'> </span>Node</a></li>
 				
 					<li><a href="../symbols/Registrar.html">Registrar</a></li>
 				
@@ -66,13 +68,13 @@
 				
 					<li><a href="../symbols/RegistrationStore.html">RegistrationStore</a></li>
 				
+					<li><a href="../symbols/TemplateCache.html">TemplateCache</a></li>
+				
+					<li><a href="../symbols/TemplateCache.Entry.html">TemplateCache<span class='break'> </span>.<span class='break'> </span>Entry</a></li>
+				
 					<li><a href="../symbols/TemplateManager.html">TemplateManager</a></li>
 				
 					<li><a href="../symbols/TemplateStore.html">TemplateStore</a></li>
-				
-					<li><a href="../symbols/UserDeviceTracker.html">UserDeviceTracker</a></li>
-				
-					<li><a href="../symbols/UserDeviceTracker.Node.html">UserDeviceTracker<span class='break'> </span>.<span class='break'> </span>Node</a></li>
 				
 					<li><a href="../symbols/WNS.html">WNS</a></li>
 				
@@ -85,7 +87,7 @@
 			Documentation generator: <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0<br />
 			Template: <a href="http://www.thebrightlines.com/2010/05/06/new-template-for-jsdoctoolkit-codeview/" target="_blank">Codeview</a> 1.2<br />
 			Generated on:
-			<time datetime='2012-7-13' pubdate>2012-7-13 18:51</time>
+			<time datetime='2012-7-15' pubdate>2012-7-15 0:56</time>
 		</footer>
 	</div>
 </div>
@@ -98,12 +100,13 @@
 			<header>
 				<h1 class="classTitle">
 					
-					Class <span>UserDeviceTracker.Node</span>
+					Class <span>TemplateCache.Entry</span>
 				</h1>
 				
 				<div class="intro">
 					<p class="description summary">
-						A UserDeviceTracker.Node instance contains a user ID and a device token.
+						Represents entries in the cache. Each one has a parsed template function to be used to generate notification
+payloads.
 					</p>
 						
 					
@@ -111,7 +114,7 @@
 							
 							
 							
-								<li>Defined in: <a href="../symbols/src/userDeviceTracker.js.html">userDeviceTracker.js</a></li>
+								<li>Defined in: <a href="../symbols/src/templateCache.js.html">templateCache.js</a></li>
 							
 							
 						</ul>
@@ -122,7 +125,7 @@
 			
 				<section>
 					<div class="props">
-						<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class UserDeviceTracker.Node.">
+						<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class TemplateCache.Entry.">
 							<caption class="sectionTitle">Class Summary</caption>
 							<thead>
 								<tr>
@@ -135,9 +138,9 @@
 									<td class="attributes">&nbsp;</td>
 									<td class="nameDescription" >
 										<div class="fixedFont">
-											<b><a href="../symbols/UserDeviceTracker.Node.html#constructor">UserDeviceTracker.Node</a></b>(userId, device)
+											<b><a href="../symbols/TemplateCache.Entry.html#constructor">TemplateCache.Entry</a></b>(entity)
 										</div>
-										<div class="description"><p>UserDeviceTracker.Node constructor</p></div>
+										<div class="description"><p>TemplateCache.Entry constructor.</div>
 									</td>
 								</tr>
 							</tbody>
@@ -168,11 +171,11 @@
 							</h2>
 							
 							<div class="fixedFont">
-								<b>UserDeviceTracker.Node</b>(userId, device)
+								<b>TemplateCache.Entry</b>(entity)
 							</div>
 							
 							<div class="description">
-								<p>UserDeviceTracker.Node constructor</p>
+								<p>TemplateCache.Entry constructor.</p>
 								
 							</div>
 							
@@ -183,13 +186,7 @@
 									<dt class="heading">Parameters:</dt>
 									
 										<dt>
-											 <b>userId</b>
-											
-										</dt>
-										<dd></dd>
-									
-										<dt>
-											 <b>device</b>
+											 <b>entity</b>
 											
 										</dt>
 										<dd></dd>

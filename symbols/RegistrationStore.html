@@ -48,17 +48,19 @@
 				
 					<li><a href="../symbols/Deque.Node.html">Deque<span class='break'> </span>.<span class='break'> </span>Node</a></li>
 				
+					<li><a href="../symbols/Filters.html">Filters</a></li>
+				
 					<li><a href="../symbols/GCM.html">GCM</a></li>
 				
 					<li><a href="../symbols/LoggerUtils.html">LoggerUtils</a></li>
 				
+					<li><a href="../symbols/NotificationRequest.html">NotificationRequest</a></li>
+				
+					<li><a href="../symbols/NotificationRequestTracker.html">NotificationRequestTracker</a></li>
+				
 					<li><a href="../symbols/Notifier.html">Notifier</a></li>
 				
-					<li><a href="../symbols/PayloadGenerator.html">PayloadGenerator</a></li>
-				
 					<li><a href="../symbols/PostTracker.html">PostTracker</a></li>
-				
-					<li><a href="../symbols/PostTracker.Node.html">PostTracker<span class='break'> </span>.<span class='break'> </span>Node</a></li>
 				
 					<li><a href="../symbols/Registrar.html">Registrar</a></li>
 				
@@ -66,13 +68,13 @@
 				
 					<li><a href="../symbols/RegistrationStore.html">RegistrationStore</a></li>
 				
+					<li><a href="../symbols/TemplateCache.html">TemplateCache</a></li>
+				
+					<li><a href="../symbols/TemplateCache.Entry.html">TemplateCache<span class='break'> </span>.<span class='break'> </span>Entry</a></li>
+				
 					<li><a href="../symbols/TemplateManager.html">TemplateManager</a></li>
 				
 					<li><a href="../symbols/TemplateStore.html">TemplateStore</a></li>
-				
-					<li><a href="../symbols/UserDeviceTracker.html">UserDeviceTracker</a></li>
-				
-					<li><a href="../symbols/UserDeviceTracker.Node.html">UserDeviceTracker<span class='break'> </span>.<span class='break'> </span>Node</a></li>
 				
 					<li><a href="../symbols/WNS.html">WNS</a></li>
 				
@@ -85,7 +87,7 @@
 			Documentation generator: <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0<br />
 			Template: <a href="http://www.thebrightlines.com/2010/05/06/new-template-for-jsdoctoolkit-codeview/" target="_blank">Codeview</a> 1.2<br />
 			Generated on:
-			<time datetime='2012-7-13' pubdate>2012-7-13 18:51</time>
+			<time datetime='2012-7-15' pubdate>2012-7-15 0:56</time>
 		</footer>
 	</div>
 </div>
@@ -175,7 +177,7 @@
 											>
 												<td class="attributes">&nbsp;</td>
 												<td class="nameDescription">
-													<div class="fixedFont"><b><a href="../symbols/RegistrationStore.html#deleteAllRegistrations">deleteAllRegistrations</a></b>(userId, callback)
+													<div class="fixedFont"><b><a href="../symbols/RegistrationStore.html#delAll">delAll</a></b>(userId, callback)
 													</div>
 													<div class="description"><p>Delete all registrations for a given user.</div>
 												</td>
@@ -186,7 +188,18 @@
 											>
 												<td class="attributes">&nbsp;</td>
 												<td class="nameDescription">
-													<div class="fixedFont"><b><a href="../symbols/RegistrationStore.html#updateRegistration">updateRegistration</a></b>(userId, registrationId, templateVersion, templateLanguage, context, routes, callback)
+													<div class="fixedFont"><b><a href="../symbols/RegistrationStore.html#get">get</a></b>(userId, filter, callback)
+													</div>
+													<div class="description"><p>Obtain the registrations for a given user, subject to them passing the given filter.</div>
+												</td>
+											</tr>
+										
+											<tr
+												 class='item2'
+											>
+												<td class="attributes">&nbsp;</td>
+												<td class="nameDescription">
+													<div class="fixedFont"><b><a href="../symbols/RegistrationStore.html#set">set</a></b>(registration, callback)
 													</div>
 													<div class="description"><p>Update a specific registration for a given user.</div>
 												</td>
@@ -273,14 +286,14 @@
 									<li 
 										 class='item0'
 									>
-										<div class="fixedFont heading" id="deleteAllRegistrations">
+										<div class="fixedFont heading" id="delAll">
 											<span class='lighter'>
 											
 											</span>
 											
 											
 											
-											<b>deleteAllRegistrations</b>(userId, callback)
+											<b>delAll</b>(userId, callback)
 										</div>
 										
 										<div class="description">
@@ -320,14 +333,66 @@
 									<li 
 										 class='item1'
 									>
-										<div class="fixedFont heading" id="updateRegistration">
+										<div class="fixedFont heading" id="get">
 											<span class='lighter'>
 											
 											</span>
 											
 											
 											
-											<b>updateRegistration</b>(userId, registrationId, templateVersion, templateLanguage, context, routes, callback)
+											<b>get</b>(userId, filter, callback)
+										</div>
+										
+										<div class="description">
+											<p>Obtain the registrations for a given user, subject to them passing the given filter.</p>
+											
+											
+											
+											
+										</div>
+										
+										
+										
+										
+											<dl class="detailList params">
+												<dt class="heading">Parameters:</dt>
+												
+													<dt>
+														<span class="light fixedFont">{String}</span> <b>userId</b>
+														
+													</dt>
+													<dd>the user to query</dd>
+												
+													<dt>
+														<span class="light fixedFont">{Object}</span> <b>filter</b>
+														
+													</dt>
+													<dd>attributes to use to pass only certain registrations</dd>
+												
+													<dt>
+														<span class="light fixedFont">{function(err|registrations)}</span> <b>callback</b>
+														
+													</dt>
+													<dd>methoed to invoke when the fetching is done</dd>
+												
+											</dl>
+										
+										
+										
+										<div class="hr"></div>
+									</li>
+								
+									<li 
+										 class='item2'
+									>
+										<div class="fixedFont heading" id="set">
+											<span class='lighter'>
+											
+											</span>
+											
+											
+											
+											<b>set</b>(registration, callback)
 										</div>
 										
 										<div class="description">
@@ -345,48 +410,16 @@
 												<dt class="heading">Parameters:</dt>
 												
 													<dt>
-														<b>userId</b>
+														<span class="light fixedFont">{Object}</span> <b>registration</b>
 														
 													</dt>
-													<dd>The user to update.</dd>
+													<dd>the registration settings to use or update</dd>
 												
 													<dt>
-														<b>registrationId</b>
+														<span class="light fixedFont">{Function}</span> <b>callback</b>
 														
 													</dt>
-													<dd>The registration to add or update.</dd>
-												
-													<dt>
-														<b>templateVersion</b>
-														
-													</dt>
-													<dd>The template version that this registration expects.</dd>
-												
-													<dt>
-														<b>templateLanguage</b>
-														
-													</dt>
-													<dd>The text language that this registration expects.</dd>
-												
-													<dt>
-														<b>context</b>
-														
-													</dt>
-													<dd>The service that will handle final notification delivery.</dd>
-												
-													<dt>
-														<b>routes</b>
-														
-													</dt>
-													<dd>Array of one or more notification routes for this registration.</dd>
-												
-													<dt>
-														<b>callback</b>
-														
-													</dt>
-													<dd>Method to invoke when the query is done
-  - err: if not null, definition of the error that took place
-  - found: if no error, the existing registration entity</dd>
+													<dd>nethod to invoke when the query is done</dd>
 												
 											</dl>
 										

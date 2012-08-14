@@ -48,7 +48,7 @@
 				
 					<li><a href="../symbols/Deque.Node.html">Deque<span class='break'> </span>.<span class='break'> </span>Node</a></li>
 				
-					<li><a href="../symbols/Filter.html">Filter</a></li>
+					<li><a href="../symbols/Filters.html">Filters</a></li>
 				
 					<li><a href="../symbols/GCM.html">GCM</a></li>
 				
@@ -56,17 +56,21 @@
 				
 					<li><a href="../symbols/NotificationRequest.html">NotificationRequest</a></li>
 				
-					<li><a href="../symbols/Notifier.html">Notifier</a></li>
+					<li><a href="../symbols/NotificationRequestTracker.html">NotificationRequestTracker</a></li>
 				
-					<li><a href="../symbols/PayloadGenerator.html">PayloadGenerator</a></li>
+					<li><a href="../symbols/Notifier.html">Notifier</a></li>
 				
 					<li><a href="../symbols/PostTracker.html">PostTracker</a></li>
 				
-					<li><a href="../symbols/PostTracker.Node.html">PostTracker<span class='break'> </span>.<span class='break'> </span>Node</a></li>
-				
 					<li><a href="../symbols/Registrar.html">Registrar</a></li>
 				
+					<li><a href="../symbols/RegistrationFilter.html">RegistrationFilter</a></li>
+				
 					<li><a href="../symbols/RegistrationStore.html">RegistrationStore</a></li>
+				
+					<li><a href="../symbols/TemplateCache.html">TemplateCache</a></li>
+				
+					<li><a href="../symbols/TemplateCache.Entry.html">TemplateCache<span class='break'> </span>.<span class='break'> </span>Entry</a></li>
 				
 					<li><a href="../symbols/TemplateManager.html">TemplateManager</a></li>
 				
@@ -83,7 +87,7 @@
 			Documentation generator: <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0<br />
 			Template: <a href="http://www.thebrightlines.com/2010/05/06/new-template-for-jsdoctoolkit-codeview/" target="_blank">Codeview</a> 1.2<br />
 			Generated on:
-			<time datetime='2012-7-7' pubdate>2012-7-7 18:43</time>
+			<time datetime='2012-7-15' pubdate>2012-7-15 0:56</time>
 		</footer>
 	</div>
 </div>
@@ -101,7 +105,7 @@
 				
 				<div class="intro">
 					<p class="description summary">
-						A NotificationRequest represents a notification request.
+						A NotificationRequest represents a notification request from an extenal entity.
 					</p>
 						
 					
@@ -133,7 +137,7 @@
 									<td class="attributes">&nbsp;</td>
 									<td class="nameDescription" >
 										<div class="fixedFont">
-											<b><a href="../symbols/NotificationRequest.html#constructor">NotificationRequest</a></b>(userId, token, content, secondsToLive, removeRegistrationProc)
+											<b><a href="../symbols/NotificationRequest.html#constructor">NotificationRequest</a></b>(registrationId, service, token, template)
 										</div>
 										<div class="description"><p>NotificationRequest constructor</p></div>
 									</td>
@@ -148,6 +152,56 @@
 	<!--
 	#### METHODS SUMMARY
 	-->
+			
+				<section>
+					
+					
+					<div class="props">
+						<h2 class="sectionTitle">Method Summary</h2>
+						
+						
+							<nav>
+								<table class="summaryTable" id="MethodsList" cellspacing="0" summary="A summary of the methods documented in the class NotificationRequest.">
+									<thead>
+										<tr>
+											<th scope="col">Method Attributes</th>
+											<th scope="col">Method Name and Description</th>
+										</tr>
+									</thead>
+									
+									<tbody>
+										
+										
+											<tr
+												 class='item0'
+											>
+												<td class="attributes">&nbsp;</td>
+												<td class="nameDescription">
+													<div class="fixedFont"><b><a href="../symbols/NotificationRequest.html#forgetRoute">forgetRoute</a></b>()
+													</div>
+													<div class="description"><p>Remove the route used to deliver the last notification as it was deemed invalid by the OS-specific service.</div>
+												</td>
+											</tr>
+										
+											<tr
+												 class='item1'
+											>
+												<td class="attributes">&nbsp;</td>
+												<td class="nameDescription">
+													<div class="fixedFont"><b><a href="../symbols/NotificationRequest.html#prepare">prepare</a></b>(substitutions, userId, registrationStore, secondsToLive)
+													</div>
+													<div class="description"><p>Prepare a notification payload using the given values.</div>
+												</td>
+											</tr>
+										
+									</tbody>
+								</table>
+							</nav>
+						
+					
+						
+					</div>
+				</section>
 			
 			
 	<!--
@@ -166,7 +220,7 @@
 							</h2>
 							
 							<div class="fixedFont">
-								<b>NotificationRequest</b>(userId, token, content, secondsToLive, removeRegistrationProc)
+								<b>NotificationRequest</b>(registrationId, service, token, template)
 							</div>
 							
 							<div class="description">
@@ -181,36 +235,28 @@
 									<dt class="heading">Parameters:</dt>
 									
 										<dt>
-											<span class="light fixedFont">{String}</span>  <b>userId</b>
+											<span class="light fixedFont">{String}</span>  <b>registrationId</b>
 											
 										</dt>
-										<dd>user to notify</dd>
+										<dd>the registration of a user that was used to select a payload</dd>
+									
+										<dt>
+											<span class="light fixedFont">{String}</span>  <b>service</b>
+											
+										</dt>
+										<dd>the OS-specific service being used for notification delivery</dd>
 									
 										<dt>
 											<span class="light fixedFont">{String}</span>  <b>token</b>
 											
 										</dt>
-										<dd>the value used to reach a specific device</dd>
+										<dd>the OS-specifc identifier used for notification delivery to a specific device</dd>
 									
 										<dt>
-											<span class="light fixedFont">{Object}</span>  <b>content</b>
+											<span class="light fixedFont">{Object}</span>  <b>template</b>
 											
 										</dt>
-										<dd>the notification payload to send to the device. The 'content' attribute holds the actual
- payload to deliver. Additional attributes may exist depending on the os-specific notification service being used
- for delivery.</dd>
-									
-										<dt>
-											<span class="light fixedFont">{Number}</span>  <b>secondsToLive</b>
-											
-										</dt>
-										<dd>how long this notification is valid</dd>
-									
-										<dt>
-											<span class="light fixedFont">{Function}</span>  <b>removeRegistrationProc</b>
-											
-										</dt>
-										<dd>function to call to remove a token from further notifications</dd>
+										<dd>defines the notification payload to generate.</dd>
 									
 								</dl>
 							
@@ -227,6 +273,110 @@
 	<!--
 	#### METHOD DETAILS
 	-->		
+			
+				<section>
+					<div class="details props">
+						<div class="innerProps">
+							<h2 class="sectionTitle">
+								Method Detail
+							</h2>
+							
+							<ul class="methodDetail" id="MethodDetail">
+								
+								
+									<li 
+										 class='item0'
+									>
+										<div class="fixedFont heading" id="forgetRoute">
+											<span class='lighter'>
+											
+											</span>
+											
+											
+											
+											<b>forgetRoute</b>()
+										</div>
+										
+										<div class="description">
+											<p>Remove the route used to deliver the last notification as it was deemed invalid by the OS-specific service.</p>
+											
+											
+											
+											
+										</div>
+										
+										
+										
+										
+										
+										
+										<div class="hr"></div>
+									</li>
+								
+									<li 
+										 class='item1'
+									>
+										<div class="fixedFont heading" id="prepare">
+											<span class='lighter'>
+											
+											</span>
+											
+											
+											
+											<b>prepare</b>(substitutions, userId, registrationStore, secondsToLive)
+										</div>
+										
+										<div class="description">
+											<p>Prepare a notification payload using the given values. Updates the content attribute with the payload text.</p>
+											
+											
+											
+											
+										</div>
+										
+										
+										
+										
+											<dl class="detailList params">
+												<dt class="heading">Parameters:</dt>
+												
+													<dt>
+														<span class="light fixedFont">{Object}</span> <b>substitutions</b>
+														
+													</dt>
+													<dd>mapping of placeholder names and the values to use when substituting placeholder
+tags within a notification template.</dd>
+												
+													<dt>
+														<span class="light fixedFont">{String}</span> <b>userId</b>
+														
+													</dt>
+													<dd>the ID of the user being notified</dd>
+												
+													<dt>
+														<span class="light fixedFont">{<a href="../symbols/RegistrationStore.html">RegistrationStore</a>}</span> <b>registrationStore</b>
+														
+													</dt>
+													<dd>the storage used for registrations. Used if the OS-specific service
+flags a token as invalid</dd>
+												
+													<dt>
+														<span class="light fixedFont">{Integer}</span> <b>secondsToLive</b>
+														
+													</dt>
+													<dd>number of seconds this request is valid</dd>
+												
+											</dl>
+										
+										
+										
+										
+									</li>
+								
+							</ul>
+						</div>
+					</div>
+				</section>
 			
 			
 	<!--

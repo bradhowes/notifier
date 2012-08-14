@@ -48,17 +48,19 @@
 				
 					<li><a href="symbols/Deque.Node.html">Deque<span class='break'> </span>.<span class='break'> </span>Node</a></li>
 				
+					<li><a href="symbols/Filters.html">Filters</a></li>
+				
 					<li><a href="symbols/GCM.html">GCM</a></li>
 				
 					<li><a href="symbols/LoggerUtils.html">LoggerUtils</a></li>
 				
+					<li><a href="symbols/NotificationRequest.html">NotificationRequest</a></li>
+				
+					<li><a href="symbols/NotificationRequestTracker.html">NotificationRequestTracker</a></li>
+				
 					<li><a href="symbols/Notifier.html">Notifier</a></li>
 				
-					<li><a href="symbols/PayloadGenerator.html">PayloadGenerator</a></li>
-				
 					<li><a href="symbols/PostTracker.html">PostTracker</a></li>
-				
-					<li><a href="symbols/PostTracker.Node.html">PostTracker<span class='break'> </span>.<span class='break'> </span>Node</a></li>
 				
 					<li><a href="symbols/Registrar.html">Registrar</a></li>
 				
@@ -66,13 +68,13 @@
 				
 					<li><a href="symbols/RegistrationStore.html">RegistrationStore</a></li>
 				
+					<li><a href="symbols/TemplateCache.html">TemplateCache</a></li>
+				
+					<li><a href="symbols/TemplateCache.Entry.html">TemplateCache<span class='break'> </span>.<span class='break'> </span>Entry</a></li>
+				
 					<li><a href="symbols/TemplateManager.html">TemplateManager</a></li>
 				
 					<li><a href="symbols/TemplateStore.html">TemplateStore</a></li>
-				
-					<li><a href="symbols/UserDeviceTracker.html">UserDeviceTracker</a></li>
-				
-					<li><a href="symbols/UserDeviceTracker.Node.html">UserDeviceTracker<span class='break'> </span>.<span class='break'> </span>Node</a></li>
 				
 					<li><a href="symbols/WNS.html">WNS</a></li>
 				
@@ -85,7 +87,7 @@
 			Documentation generator: <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0<br />
 			Template: <a href="http://www.thebrightlines.com/2010/05/06/new-template-for-jsdoctoolkit-codeview/" target="_blank">Codeview</a> 1.2<br />
 			Generated on:
-			<time datetime='2012-7-13' pubdate>2012-7-13 18:51</time>
+			<time datetime='2012-7-15' pubdate>2012-7-15 0:56</time>
 		</footer>
 	</div>
 </div>
@@ -132,6 +134,12 @@ Configuration parameters for the notifier service.</p>
 					</li>
 				
 					<li>
+						<h2 class="classname"><a href="symbols/Filters.html">Filters</a></h2>
+						<p>A Filter instance contains methods that provide for filtering of template placeholder data before it is used to fill
+in the placeholder.</p>
+					</li>
+				
+					<li>
 						<h2 class="classname"><a href="symbols/GCM.html">GCM</a></h2>
 						<p>A GCM object sends JSON payloads to a GCM server for delivery to a specific Android device.</p>
 					</li>
@@ -142,25 +150,25 @@ Configuration parameters for the notifier service.</p>
 					</li>
 				
 					<li>
-						<h2 class="classname"><a href="symbols/Notifier.html">Notifier</a></h2>
-						<p>A Notifier pairs notification templates to user registrations and emits those that match.</p>
+						<h2 class="classname"><a href="symbols/NotificationRequest.html">NotificationRequest</a></h2>
+						<p>A NotificationRequest represents a notification request from an extenal entity.</p>
 					</li>
 				
 					<li>
-						<h2 class="classname"><a href="symbols/PayloadGenerator.html">PayloadGenerator</a></h2>
-						<p>A PayloadGenerator transforms notification template into notification payloads, replacing any placeholdes with live
-data.</p>
+						<h2 class="classname"><a href="symbols/NotificationRequestTracker.html">NotificationRequestTracker</a></h2>
+						<p>A NotificationRequestTracker instance maintains a LIFO size-limited queue that contains Node instances that define a
+relationship between a user ID and an APNs device token.</p>
+					</li>
+				
+					<li>
+						<h2 class="classname"><a href="symbols/Notifier.html">Notifier</a></h2>
+						<p>A Notifier pairs notification templates to user registrations and emits those that match.</p>
 					</li>
 				
 					<li>
 						<h2 class="classname"><a href="symbols/PostTracker.html">PostTracker</a></h2>
 						<p>A PostTracker instance maintains a LIFO size-limited queue that contains Node instances that describe when a
 notification request was received for processing.</p>
-					</li>
-				
-					<li>
-						<h2 class="classname"><a href="symbols/PostTracker.Node.html">PostTracker.Node</a></h2>
-						<p>A PostTracker.Node instance contains attributes associated with a post notification request.</p>
 					</li>
 				
 					<li>
@@ -179,6 +187,16 @@ notification request was received for processing.</p>
 					</li>
 				
 					<li>
+						<h2 class="classname"><a href="symbols/TemplateCache.html">TemplateCache</a></h2>
+						<p>A TemplateCache records in-memory templates fetched from an Azure table store.</p>
+					</li>
+				
+					<li>
+						<h2 class="classname"><a href="symbols/TemplateCache.Entry.html">TemplateCache.Entry</a></h2>
+						<p>Represents entries in the cache.</p>
+					</li>
+				
+					<li>
 						<h2 class="classname"><a href="symbols/TemplateManager.html">TemplateManager</a></h2>
 						<p>A TemplateManager stores and retrieves notification template definitions.</p>
 					</li>
@@ -186,17 +204,6 @@ notification request was received for processing.</p>
 					<li>
 						<h2 class="classname"><a href="symbols/TemplateStore.html">TemplateStore</a></h2>
 						<p>TemplateStore</p>
-					</li>
-				
-					<li>
-						<h2 class="classname"><a href="symbols/UserDeviceTracker.html">UserDeviceTracker</a></h2>
-						<p>A UserDeviceTracker instance maintains a LIFO size-limited queue that contains Node instances that define a
-relationship between a user ID and an APNs device token.</p>
-					</li>
-				
-					<li>
-						<h2 class="classname"><a href="symbols/UserDeviceTracker.Node.html">UserDeviceTracker.Node</a></h2>
-						<p>A UserDeviceTracker.Node instance contains a user ID and a device token.</p>
 					</li>
 				
 					<li>

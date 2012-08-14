@@ -4,7 +4,7 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
-		<title>LoggerUtils | JsDoc Reference</title>
+		<title>TemplateCache | JsDoc Reference</title>
 
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 		<meta name="mobileoptimized" content="0" />
@@ -100,12 +100,12 @@
 			<header>
 				<h1 class="classTitle">
 					
-					Class <span>LoggerUtils</span>
+					Class <span>TemplateCache</span>
 				</h1>
 				
 				<div class="intro">
 					<p class="description summary">
-						Definition of helper methods that make working with Logger objects a little easier.
+						A TemplateCache records in-memory templates fetched from an Azure table store.
 					</p>
 						
 					
@@ -113,7 +113,7 @@
 							
 							
 							
-								<li>Defined in: <a href="../symbols/src/loggerUtils.js.html">loggerUtils.js</a></li>
+								<li>Defined in: <a href="../symbols/src/templateCache.js.html">templateCache.js</a></li>
 							
 							
 						</ul>
@@ -124,7 +124,7 @@
 			
 				<section>
 					<div class="props">
-						<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class LoggerUtils.">
+						<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class TemplateCache.">
 							<caption class="sectionTitle">Class Summary</caption>
 							<thead>
 								<tr>
@@ -137,9 +137,9 @@
 									<td class="attributes">&nbsp;</td>
 									<td class="nameDescription" >
 										<div class="fixedFont">
-											<b><a href="../symbols/LoggerUtils.html#constructor">LoggerUtils</a></b>()
+											<b><a href="../symbols/TemplateCache.html#constructor">TemplateCache</a></b>()
 										</div>
-										<div class="description"><p>LoggerUtils constructor.</div>
+										<div class="description"><p>TemplateCache constructor.</div>
 									</td>
 								</tr>
 							</tbody>
@@ -161,7 +161,7 @@
 						
 						
 							<nav>
-								<table class="summaryTable" id="MethodsList" cellspacing="0" summary="A summary of the methods documented in the class LoggerUtils.">
+								<table class="summaryTable" id="MethodsList" cellspacing="0" summary="A summary of the methods documented in the class TemplateCache.">
 									<thead>
 										<tr>
 											<th scope="col">Method Attributes</th>
@@ -177,9 +177,9 @@
 											>
 												<td class="attributes">&nbsp;</td>
 												<td class="nameDescription">
-													<div class="fixedFont"><b><a href="../symbols/LoggerUtils.html#BEGIN">BEGIN</a></b>()
+													<div class="fixedFont"><b><a href="../symbols/TemplateCache.html#get">get</a></b>(eventId, registrations)
 													</div>
-													<div class="description"><p>Sugar method for the beginning of a block (eg.</div>
+													<div class="description"><p>Fetch the templates from the cache that match the given eventId and user registration settings.</div>
 												</td>
 											</tr>
 										
@@ -188,9 +188,9 @@
 											>
 												<td class="attributes">&nbsp;</td>
 												<td class="nameDescription">
-													<div class="fixedFont"><b><a href="../symbols/LoggerUtils.html#child">child</a></b>(name)
+													<div class="fixedFont"><b><a href="../symbols/TemplateCache.html#makeBaseLanguageKey">makeBaseLanguageKey</a></b>(routeName, templateVersion, templateLanguage, service)
 													</div>
-													<div class="description"><p>Create a new child logger whose name is derived from this one.</div>
+													<div class="description"><p>Make a base-language template key</p></div>
 												</td>
 											</tr>
 										
@@ -199,9 +199,31 @@
 											>
 												<td class="attributes">&nbsp;</td>
 												<td class="nameDescription">
-													<div class="fixedFont"><b><a href="../symbols/LoggerUtils.html#END">END</a></b>()
+													<div class="fixedFont"><b><a href="../symbols/TemplateCache.html#makeDefaultLanguageKey">makeDefaultLanguageKey</a></b>(routeName, templateVersion, templateLanguage, service)
 													</div>
-													<div class="description"><p>Sugar method for the end of a code block (eg.</div>
+													<div class="description"><p>Make a default-language template key</p></div>
+												</td>
+											</tr>
+										
+											<tr
+												 class='item3'
+											>
+												<td class="attributes">&nbsp;</td>
+												<td class="nameDescription">
+													<div class="fixedFont"><b><a href="../symbols/TemplateCache.html#makeKey">makeKey</a></b>(routeName, templateVersion, templateLanguage, service)
+													</div>
+													<div class="description"><p>Make a template key</p></div>
+												</td>
+											</tr>
+										
+											<tr
+												 class='item4'
+											>
+												<td class="attributes">&nbsp;</td>
+												<td class="nameDescription">
+													<div class="fixedFont"><b><a href="../symbols/TemplateCache.html#set">set</a></b>(eventId, templates)
+													</div>
+													<div class="description"><p>Add a template entity to the cache.</div>
 												</td>
 											</tr>
 										
@@ -231,11 +253,11 @@
 							</h2>
 							
 							<div class="fixedFont">
-								<b>LoggerUtils</b>()
+								<b>TemplateCache</b>()
 							</div>
 							
 							<div class="description">
-								<p>LoggerUtils constructor.</p>
+								<p>TemplateCache constructor.</p>
 								
 							</div>
 							
@@ -269,49 +291,18 @@
 									<li 
 										 class='item0'
 									>
-										<div class="fixedFont heading" id="BEGIN">
+										<div class="fixedFont heading" id="get">
 											<span class='lighter'>
 											
 											</span>
 											
 											
 											
-											<b>BEGIN</b>()
+											<b>get</b>(eventId, registrations)
 										</div>
 										
 										<div class="description">
-											<p>Sugar method for the beginning of a block (eg. method). Emits log messages that start with the tag 'BEG'</p>
-											
-											
-											
-											
-										</div>
-										
-										
-										
-										
-										
-										
-										<div class="hr"></div>
-									</li>
-								
-									<li 
-										 class='item1'
-									>
-										<div class="fixedFont heading" id="child">
-											<span class='lighter'>
-											
-											</span>
-											
-											<span class="light">{Logger}</span>
-											
-											<b>child</b>(name)
-										</div>
-										
-										<div class="description">
-											<p>Create a new child logger whose name is derived from this one. Names are separated by '.' For instance, calling
-this method on Logger object whose name is 'foo.bar' with the argument 'beep' will return a new or cached Logger
-instance whose name is 'foo.bar.beep'.</p>
+											<p>Fetch the templates from the cache that match the given eventId and user registration settings.</p>
 											
 											
 											
@@ -325,35 +316,78 @@ instance whose name is 'foo.bar.beep'.</p>
 												<dt class="heading">Parameters:</dt>
 												
 													<dt>
-														<span class="light fixedFont">{String}</span> <b>name</b>
+														<b>eventId</b>
 														
 													</dt>
-													<dd>The name of the child</dd>
+													<dd></dd>
+												
+													<dt>
+														<b>registrations</b>
+														
+													</dt>
+													<dd></dd>
 												
 											</dl>
 										
 										
 										
-											<dl class="detailList nomargin">
+										<div class="hr"></div>
+									</li>
+								
+									<li 
+										 class='item1'
+									>
+										<div class="fixedFont heading" id="makeBaseLanguageKey">
+											<span class='lighter'>
 											
-												
-												
-												
-												
-												
-												
-												
-													<dt class="heading">Returns:</dt>
-													
-														<dd><span class="light fixedFont">{Logger}</span> new or cached Logger instance with the given name</dd>
-													
-												
-												
-												
-												
-												
+											</span>
 											
+											
+											
+											<b>makeBaseLanguageKey</b>(routeName, templateVersion, templateLanguage, service)
+										</div>
+										
+										<div class="description">
+											<p>Make a base-language template key</p>
+											
+											
+											
+											
+										</div>
+										
+										
+										
+										
+											<dl class="detailList params">
+												<dt class="heading">Parameters:</dt>
+												
+													<dt>
+														<b>routeName</b>
+														
+													</dt>
+													<dd></dd>
+												
+													<dt>
+														<b>templateVersion</b>
+														
+													</dt>
+													<dd></dd>
+												
+													<dt>
+														<b>templateLanguage</b>
+														
+													</dt>
+													<dd></dd>
+												
+													<dt>
+														<b>service</b>
+														
+													</dt>
+													<dd></dd>
+												
 											</dl>
+										
+										
 										
 										<div class="hr"></div>
 									</li>
@@ -361,18 +395,18 @@ instance whose name is 'foo.bar.beep'.</p>
 									<li 
 										 class='item2'
 									>
-										<div class="fixedFont heading" id="END">
+										<div class="fixedFont heading" id="makeDefaultLanguageKey">
 											<span class='lighter'>
 											
 											</span>
 											
 											
 											
-											<b>END</b>()
+											<b>makeDefaultLanguageKey</b>(routeName, templateVersion, templateLanguage, service)
 										</div>
 										
 										<div class="description">
-											<p>Sugar method for the end of a code block (eg. method). Emits log messages that start with the tag 'END'</p>
+											<p>Make a default-language template key</p>
 											
 											
 											
@@ -381,6 +415,139 @@ instance whose name is 'foo.bar.beep'.</p>
 										
 										
 										
+										
+											<dl class="detailList params">
+												<dt class="heading">Parameters:</dt>
+												
+													<dt>
+														<b>routeName</b>
+														
+													</dt>
+													<dd></dd>
+												
+													<dt>
+														<b>templateVersion</b>
+														
+													</dt>
+													<dd></dd>
+												
+													<dt>
+														<b>templateLanguage</b>
+														
+													</dt>
+													<dd></dd>
+												
+													<dt>
+														<b>service</b>
+														
+													</dt>
+													<dd></dd>
+												
+											</dl>
+										
+										
+										
+										<div class="hr"></div>
+									</li>
+								
+									<li 
+										 class='item3'
+									>
+										<div class="fixedFont heading" id="makeKey">
+											<span class='lighter'>
+											
+											</span>
+											
+											
+											
+											<b>makeKey</b>(routeName, templateVersion, templateLanguage, service)
+										</div>
+										
+										<div class="description">
+											<p>Make a template key</p>
+											
+											
+											
+											
+										</div>
+										
+										
+										
+										
+											<dl class="detailList params">
+												<dt class="heading">Parameters:</dt>
+												
+													<dt>
+														<b>routeName</b>
+														
+													</dt>
+													<dd></dd>
+												
+													<dt>
+														<b>templateVersion</b>
+														
+													</dt>
+													<dd></dd>
+												
+													<dt>
+														<b>templateLanguage</b>
+														
+													</dt>
+													<dd></dd>
+												
+													<dt>
+														<b>service</b>
+														
+													</dt>
+													<dd></dd>
+												
+											</dl>
+										
+										
+										
+										<div class="hr"></div>
+									</li>
+								
+									<li 
+										 class='item4'
+									>
+										<div class="fixedFont heading" id="set">
+											<span class='lighter'>
+											
+											</span>
+											
+											
+											
+											<b>set</b>(eventId, templates)
+										</div>
+										
+										<div class="description">
+											<p>Add a template entity to the cache.</p>
+											
+											
+											
+											
+										</div>
+										
+										
+										
+										
+											<dl class="detailList params">
+												<dt class="heading">Parameters:</dt>
+												
+													<dt>
+														<b>eventId</b>
+														
+													</dt>
+													<dd></dd>
+												
+													<dt>
+														<b>templates</b>
+														
+													</dt>
+													<dd></dd>
+												
+											</dl>
 										
 										
 										

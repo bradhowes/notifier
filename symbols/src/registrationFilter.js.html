@@ -15,14 +15,14 @@
 <span class='line'>  8</span> </span><span class="COMM">/**
 <span class='line'>  9</span>  * Filter constructor.
 <span class='line'> 10</span>  *
-<span class='line'> 11</span>  * @param {Object} init defines the attributes to filter against
+<span class='line'> 11</span>  * @class
 <span class='line'> 12</span>  *
-<span class='line'> 13</span>  * @class
-<span class='line'> 14</span>  *
-<span class='line'> 15</span>  * A RegistrationFilter object determines which device registrations will be be used for notifications. A filter
-<span class='line'> 16</span>  * contains one or more attributes names that correspond to attribute names found in a registration or registration
-<span class='line'> 17</span>  * route. Each attribute name is associated with an array of allowed values. If a registration/route pair given to the
-<span class='line'> 18</span>  * passed method does not have the required values, the registration/route will fail to pass the filter.
+<span class='line'> 13</span>  * A RegistrationFilter object determines which device registrations will be be used for notifications. A filter
+<span class='line'> 14</span>  * contains one or more attributes names that correspond to attribute names found in a registration or registration
+<span class='line'> 15</span>  * route. Each attribute name is associated with an array of allowed values. If a registration/route pair given to the
+<span class='line'> 16</span>  * passed method does not have the required values, the registration/route will fail to pass the filter.
+<span class='line'> 17</span>  *
+<span class='line'> 18</span>  * @param {Object} init defines the attributes to filter against
 <span class='line'> 19</span>  */</span><span class="WHIT">
 <span class='line'> 20</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">RegistrationFilter</span><span class="PUNC">(</span><span class="NAME">init</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'> 21</span> </span><span class="WHIT">    </span><span class="NAME">this.log</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">require</span><span class="PUNC">(</span><span class="STRN">'./config'</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">log</span><span class="PUNC">(</span><span class="STRN">'Filter'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
