@@ -1,15 +1,34 @@
 'use strict';
 
+/**
+ * @fileOverview Defines the Filters prototype and its methods.
+ */
 module.exports = Filters;
 
 var XRegExp = require('xregexp').XRegExp;
 var config = require('./config');
 
+/**
+ * Filters constructor.
+ *
+ * @class
+ *
+ * A Filter instance contains methods that provide for filtering of template placeholder data before it is used to fill
+ * in the placeholder.
+ */
 function Filters() {
     this.log = config.log('Filters');
 
+    /**
+     * Regular expression for matching JSON characters that must be escaped before being introduced inside of a JSON
+     * value.
+     */
     this.escapeJSON_RE = /(^")|([^\\])"/g; // Don't match an already-escaped double-quote
 
+    /**
+     * Mapping of XML characters that must be translated into XML entities before being introduced inside of an XML
+     * value.
+     */
     this.escapeXMLMap = {
         "<": "&lt;",
         ">": "&gt;",
@@ -18,14 +37,23 @@ function Filters() {
         '"': "&quot;"
     };
 
-    // Match keys in above escapeXMLMap, but do not match '&' that is already part of an entity
+    /**
+     * Regular expression that matches characters which must be converted into XML entities before being introduced
+     * inside of an XML value. Specail care taken to not match an '&' already part of an XML entity.
+     */
     this.escapeXML_RE = /([<>'"])|(&(?![a-z0-9]+;))/g;
 
-    // Match: any XML entities (eg &amp;)
-    // this.enforceMaxByteSize_RE = XRegExp('(\\(u[0-9A-F]{4})|.)|(&[^;]+;)|(\\.)');
+    /**
+     * Regular expression that matches a squence of characters that must not be broken by a shortening due to the
+     * enforceMaxByteSize method. If a cut point occurs within such a sequence, the cut point will move before it.
+     */
     this.enforceMaxByteSize_RE = /(&[^;]+;)|(\\u[0-9A-F]{4})|(\\.)/g;
 
-    // Available filters
+    /**
+     * Mapping of available filters and their names as they appear in a placeholder filter chain.
+     *
+     * Example: @@FOO|default("bar")|escJSON|maxSize(8)@@
+     */
     this.filters = {
         "default": this.defaultValue,
         "escJSON": this.escapeJSON,
@@ -34,19 +62,41 @@ function Filters() {
     };
 }
 
+/**
+ * Filters prototype. Defines the methods availble to a Filters instance.
+ */
 Filters.prototype = {
 
+    /**
+     * Supply a default value when the given one is undefined or empty.
+     *
+     * @param {String} value the value to work with
+     * @param {String} defaultValue the default value to supply if necessary
+     * @return {String} the new value
+     */
     defaultValue: function (value, defaultValue) {
         if (typeof defaultValue === 'undefined') defaultValue = '';
         if (typeof value === 'undefined' || value === null || value.length === 0) return defaultValue;
         return value;
     },
 
+    /**
+     * Escape certain characters within the given value so that the result may safely be added inside a JSON payload.
+     *
+     * @param {String} value the value to work with
+     * @return {String} the new value
+     */
     escapeJSON: function (value) {
         if (typeof value === 'undefined') return '';
         return value.replace(this.escapeJSON_RE, "$2\\\"");
     },
 
+    /**
+     * Escape certain characters within the given value so that the result may safely be added inside an XML payload.
+     *
+     * @param {String} value the value to work with
+     * @return {String} the new value
+     */
     escapeXML: function (value) {
         if (typeof value === 'undefined') return '';
         var re = this.escapeXML_RE;
@@ -57,6 +107,16 @@ Filters.prototype = {
         return value;
     },
 
+    /**
+     * Make sure the resulting value is no more than maxByteSize in length, when measured in bytes. If shortening is
+     * necessary, do so in such a way that certain, important character runs are not broken, and add a tail to the
+     * result to indicate that shortening took place.
+     *
+     * @param {String} value the value to work with
+     * @param {Integer} maxByteSize the maximum number of bytes to return
+     * @param {String} tail the value to append to the result to indicate a truncated value
+     * @return {String} the new value
+     */
     enforceMaxByteSize: function (value, maxByteSize, tail) {
 
         if (typeof value === 'undefined') return '';
@@ -90,9 +150,11 @@ Filters.prototype = {
         while (true) {
             var test = new Buffer(value).slice(0, maxByteSize);
             if (value.indexOf(test) === 0) {
-                return test + tail; // Found it
+                break;          // Found it
             }
             maxByteSize -= 1;   // Move back until we've stopped chopping at a multibyte sequence
         }
+
+        return test + tail;
     }
 };

@@ -10,13 +10,12 @@ module.exports = NotificationRequest;
  *
  * @class
  *
- * A NotificationRequest represents a notification request.
+ * A NotificationRequest represents a notification request from an extenal entity.
  *
- * @param {String} userId user to notify
- * @param {Object} payload the notification payload to send to the device. The 'content' attribute holds the actual
- *  payload to deliver.
- * @param {Number} secondsToLive how long this notification is valid
- * @param {Function} removeRegistrationProc function to call to remove a token from further notifications
+ * @param {String} registrationId the registration of a user that was used to select a payload
+ * @param {String} service the OS-specific service being used for notification delivery
+ * @param {String} token the OS-specifc identifier used for notification delivery to a specific device
+ * @param {Object} template defines the notification payload to generate.
  */
 function NotificationRequest(registrationId, service, token, template) {
     this.registrationId = registrationId;
@@ -28,6 +27,17 @@ function NotificationRequest(registrationId, service, token, template) {
 
 NotificationRequest.prototype = {
 
+    /**
+     * Prepare a notification payload using the given values. Updates the content attribute with the payload text.
+     *
+     * @param {Object} substitutions mapping of placeholder names and the values to use when substituting placeholder
+     * tags within a notification template.
+     *
+     * @param {String} userId the ID of the user being notified
+     * @param {RegistrationStore} registrationStore the storage used for registrations. Used if the OS-specific service
+     * flags a token as invalid
+     * @param {Integer} secondsToLive number of seconds this request is valid
+     */
     prepare: function(substitutions, userId, registrationStore, secondsToLive) {
         this.userId = userId;
         this.registrationStore = registrationStore;
@@ -36,6 +46,9 @@ NotificationRequest.prototype = {
         this.content = this.template.content(substitutions);
     },
 
+    /**
+     * Remove the route used to deliver the last notification as it was deemed invalid by the OS-specific service.
+     */
     forgetRoute: function () {
         this.registrationStore.delRoute(this.userId, this.registrationId, this.token);
     }

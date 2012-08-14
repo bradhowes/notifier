@@ -12,7 +12,6 @@ var https = require('https');
 var APNs = require('./APNs');
 var GCM = require('./GCM');
 var Notifier = require('./notifier');
-var PayloadGenerator = require('./payloadGenerator');
 var Registrar = require('./registrar');
 var RegistrationStore = require('./registrationStore');
 var TemplateManager = require('./templateManager');
@@ -70,8 +69,7 @@ App.prototype = {
             if (awaiting === 0) {
                 clog.info('creating notifier');
                 var senders = {'wns': new WNS(), 'apns': new APNs(), 'gcm': new GCM()};
-                var generator = new PayloadGenerator();
-                var service = new Notifier(templateStore, registrationStore, generator, senders);
+                var service = new Notifier(templateStore, registrationStore, senders);
                 service.route(app);
                 callback(app, errors);
                 clog.END();

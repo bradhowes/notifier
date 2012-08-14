@@ -8,26 +8,32 @@ var TemplateParser = require('./templateParser');
 var NotificationRequest = require('./notificationRequest');
 
 /**
- * Initializes a new TemplateCache object. A TemplateCache records in-memory templates fetched from an Azure table
- * store.
+ * TemplateCache constructor.
  *
- * @class TemplateCache
+ * @class
+ *
+ * A TemplateCache records in-memory templates fetched from an Azure table store.
  */
 function TemplateCache() {
     var log = this.log = config.log('TemplateCache');
     log.BEGIN();
-
     this.cache = {};
-
     this.findKeyGenerators = [
         this.makeKey.bind(this),
         this.makeBaseLanguageKey.bind(this),
         this.makeDefaultLanguageKey.bind(this)
     ];
-
     log.END();
 }
 
+/**
+ * TemplateCache.Entry constructor.
+ *
+ * @class
+ *
+ * Represents entries in the cache. Each one has a parsed template function to be used to generate notification
+ * payloads.
+ */
 TemplateCache.Entry = function(entity) {
     var log = config.log('TemplateCache.Entry');
     log.BEGIN(entity);
@@ -79,7 +85,7 @@ TemplateCache.prototype = {
     },
 
     /**
-     * Make a base-language template key
+     * Make a default-language template key
      */
     makeDefaultLanguageKey: function(routeName, templateVersion, templateLanguage, service) {
         if (templateLanguage.substr(0, 2) !== 'en'){

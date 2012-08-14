@@ -62,13 +62,8 @@ RegistrationStore.prototype = {
     /**
      * Obtain all registration entities for a given user.
      *
-     * @param {string} userId
-     *   The user to look for.
-     *
-     * @param {function} callback
-     *   Method to invoke when the query is done
-     *   - err: if not null, definition of the error that took place
-     *   - found: array of found registration entities for the user
+     * @param {String} partitionKey the partition where the registrations reside
+     * @param {function(error, found)} callback method to invoke when the query is done
      *
      * @private
      */
@@ -85,15 +80,11 @@ RegistrationStore.prototype = {
     /**
      * Delete a specific registration for a given user.
      *
-     * @param userId
-     *   The user to look for.
+     * @param {String} partitionKey the partition where the registration resides
      *
-     * @param registrationId
-     *   The registration to delete.
+     * @param {String} registrationId the row key of the registration to delete
      *
-     * @param callback
-     *   Method to invoke when the deletion is done.
-     *   - err: if not null, definition of the error that took place
+     * @param {function(err)} callback the function to call when done
      *
      * @private
      */
@@ -110,6 +101,13 @@ RegistrationStore.prototype = {
         });
     },
 
+    /**
+     * Create a JSON object from a registration table store entity.
+     *
+     * @param {Object} registrationEntity the entity to convert
+     * @param {function(reg)} filter a filter o invoke on each registration object to see if it is wanted in the results
+     * @return {Object} registration object or null.
+     */
     _registrationFromEntity: function (registrationEntity, filter) {
         var log = this.log.child('_registrationFromEntity');
         log.BEGIN(registrationEntity);
@@ -170,13 +168,19 @@ RegistrationStore.prototype = {
         return registration;
     },
 
+    /**
+     * Obtain the registrations for a given user, subject to them passing the given filter.
+     *
+     * @param {String} userId the user to query
+     * @param {Object} filter attributes to use to pass only certain registrations
+     * @param {function(err, registrations)} callback methoed to invoke when the fetching is done
+     */
     get: function (userId, filter, callback) {
         var self = this;
         var log = self.log.child('get');
         log.BEGIN(userId, filter);
 
         var partitionKey = this.makePartitionKey(userId);
-
         this._getEntities(partitionKey, function (err, regs) {
             if (err !== null) {
                 log.error('_getEntities error:', err);
@@ -220,28 +224,8 @@ RegistrationStore.prototype = {
     /**
      * Update a specific registration for a given user.
      *
-     * @param userId
-     *   The user to update.
-     *
-     * @param registrationId
-     *   The registration to add or update.
-     *
-     * @param templateVersion
-     *   The template version that this registration expects.
-     *
-     * @param templateLanguage
-     *   The text language that this registration expects.
-     *
-     * @param context
-     *   The service that will handle final notification delivery.
-     *
-     * @param routes
-     *   Array of one or more notification routes for this registration.
-     *
-     * @param callback
-     *   Method to invoke when the query is done
-     *   - err: if not null, definition of the error that took place
-     *   - found: if no error, the existing registration entity
+     * @param {Object} registration the registration settings to use or update
+     * @param {Function} callback nethod to invoke when the query is done
      */
     set: function (registration, callback) {
         var self = this;

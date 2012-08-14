@@ -19,7 +19,6 @@ suite.addBatch({
             store = new TemplateStore('templateStoreTest', this.callback);
         },
         'succeeds without error': function (err, created, response) {
-            console.log('*** 1 *** ');
             assert.equal(err, null);
         }
     }
@@ -44,7 +43,6 @@ suite.addBatch({
                 this.callback);
         },
         'succeeds without error': function (err, entity) {
-            console.log('*** 2 *** ');
             assert.isNull(err);
         },
         'and returns the template entity': function (err, entity) {
@@ -176,7 +174,6 @@ suite.addBatch({
                     this.callback);
             },
             'fails with error': function (err, entity) {
-                console.log(err, entity);
                 assert.isNotNull(err);
                 assert.equal(err.code, "ResourceNotFound");
             }

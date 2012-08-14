@@ -110,9 +110,15 @@ function APNs() {
  */
 APNs.prototype = {
 
+    /** Function invoked by the APNs feedback service when APNs detects a device is no longer valid for notifications.
+     * Attempt to locate the original NotificationRequest object associated with the invalid device and ask it to
+     * forget the registration associated with the device.
+     *
+     * @param {Time} timestamp the timestamp of the notice
+     * @param {Device} device the unique identifier for the iOS device to expunge
+     */
     feedbackCallback: function (timestamp, device) {
         var log = this.log.child('feedbackCallback');
-        var self = this;
         log.BEGIN(timestamp, device);
         var request = this.notificationRequestTracker.find(device.toString('base64'));
         if (request) {

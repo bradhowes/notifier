@@ -36,15 +36,22 @@ NotificationRequestTracker.prototype = {
 
         var node = this.mapping[request.token];
         if (typeof node !== 'undefined') {
-            node.extricate();   // Unlink from the active queue
+
+            // Node already exist for this token. Reuse by removing from the queue.
+            node.extricate();
+            node.data = request;
         }
         else {
             if (this.active.size() === this.maxSize) {
+
+                // Queue is full of past requests. Reuse the oldest one.
                 node = this.active.popBack();
                 delete this.mapping[node.data.token];
                 node.data = request;
             }
             else {
+
+                // Space availabe in queue. Allocate new node.
                 node = new Deque.Node(request);
             }
             this.mapping[request.token] = node;
@@ -55,9 +62,10 @@ NotificationRequestTracker.prototype = {
     },
 
     /**
-     * Attempt to locate the user ID that belongs to a given iOS device token.
+     * Attempt to locate the NoificationRequest that belongs to a given iOS device token.
      *
-     * @param {String} device the iOS device token to look for
+     * @param {String} token the route token to look for
+     * @return {NotificationRequest} related request or null.
      */
     find: function(token) {
         var log = this.log.child('find');

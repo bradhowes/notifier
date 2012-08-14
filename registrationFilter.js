@@ -8,14 +8,14 @@ module.exports = RegistrationFilter;
 /**
  * Filter constructor.
  *
- * @param {Object} init defines the attributes to filter against
- *
  * @class
  *
  * A RegistrationFilter object determines which device registrations will be be used for notifications. A filter
  * contains one or more attributes names that correspond to attribute names found in a registration or registration
  * route. Each attribute name is associated with an array of allowed values. If a registration/route pair given to the
  * passed method does not have the required values, the registration/route will fail to pass the filter.
+ *
+ * @param {Object} init defines the attributes to filter against
  */
 function RegistrationFilter(init) {
     this.log = require('./config').log('Filter');

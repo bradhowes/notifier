@@ -20,8 +20,6 @@ function LoggerUtils() {
 
 /**
  * LoggerUtils prototype.
- *
- * Blah blah blah
  */
 LoggerUtils.prototype = {
 

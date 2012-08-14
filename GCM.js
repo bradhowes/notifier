@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * @fileOverview Defines the Google Cloud Messaging (GCM) interface prototype and its methods.
  */
@@ -37,6 +39,7 @@ GCM.prototype = {
 
         var content = null;
         try {
+            // Convert the notification payload into a Javascript object.
             content = JSON.parse(req.content);
         }
         catch (err) {
@@ -45,6 +48,7 @@ GCM.prototype = {
             return;
         }
 
+        // Add the device-specific address to the payload before sending.
         content.registration_ids = [req.token];
         log.debug(content);
 

@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * @fileOverview Defines the WNS prototype and its methods.
  */
@@ -128,7 +130,7 @@ WNS.prototype = {
                     self.accessToken = null;
                     return self.sendNotification(req);
 
-                case 410: // Gone
+                case 410: // Gone - ask the NotificationRequest to forget this route.
                     log.warn('user registration is no longer valid');
                     req.forgetRoute();
                     break;
@@ -142,7 +144,7 @@ WNS.prototype = {
 
         // Post the notification now that we have a valid access token
         HTTPRequest({
-            'secondsToLive': 30,
+            'secondsToLive': req.secondsToLive,
             'retryTimeout': 500,
             'uri': req.token,
             'method': 'POST',

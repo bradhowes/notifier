@@ -19,16 +19,13 @@ var PostTracker = require('./postTracker');
  *
  * @param {TemplateStore} templateStore the repository of notification templates to rely on
  * @param {RegistrationStore} registrationStore the repository of user registrations to rely on
- * @param {PayloadGenerator} generator the notification generator to use for template processing
  * @param {Hash} senders a mapping of notification service tags to objects that provide a sendNotification method
  */
-function Notifier(templateStore, registrationStore, generator, senders) {
+function Notifier(templateStore, registrationStore, senders) {
     this.log = require('./config').log('Notifier');
     this.templateStore = templateStore;
     this.registrationStore = registrationStore;
-    this.generator = generator;
     this.senders = senders;
-
     this.sequenceId = 1;
     this.postTracker = new PostTracker(100);
 

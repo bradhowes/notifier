@@ -22,7 +22,7 @@ function Deque() {
 }
 
 /**
- * Deque Node constructor.
+ * Deque.Node constructor.
  *
  * @class
  *
@@ -36,6 +36,9 @@ Deque.Node = function(data) {
 
 Deque.Node.prototype = {
 
+    /**
+     * Remove this node from the queue.
+     */
     extricate: function () {
         this._prev._next = this._next;
         this._next._prev = this._prev;
@@ -67,6 +70,11 @@ Deque.prototype = {
         return this._size;
     },
 
+    /**
+     * Remove a node from the queue.
+     *
+     * @param {Node} node the node to remove
+     */
     remove: function(node) {
         node.extricate();
         --this._size;

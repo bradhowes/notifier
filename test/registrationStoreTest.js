@@ -54,8 +54,6 @@ suite.addBatch({
         },
         'match contains myregistration': function (err, found) {
             var registration = found[0];
-            console.log(found);
-            assert.equal(registration.registrationId, 'myregistration');
             assert.equal(registration.templateVersion, '1.0');
             assert.equal(registration.templateLanguage, 'en-us');
             assert.equal(registration.service, 'wns');
@@ -86,7 +84,6 @@ suite.addBatch({
             assert.isNull(err);
         },
         'found 0 matches': function (err, found) {
-            console.log('@@@', found);
             assert.equal(found.length, 0);
         }
     }
