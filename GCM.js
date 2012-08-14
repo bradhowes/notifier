@@ -31,12 +31,21 @@ GCM.prototype = {
      *
      * @param {NotificationRequest} request the request to send out
      */
-    sendNotification: function(request) {
+    sendNotification: function(req) {
         var log = this.log.child('sendNotification');
-        log.BEGIN(request);
+        log.BEGIN(req);
 
-        var content = request.content.content;
-        content.registration_ids = [token];
+        var content = null;
+        try {
+            content = JSON.parse(req.content);
+        }
+        catch (err) {
+            log.error('failed to parse GCM payload:', req.content);
+            log.END();
+            return;
+        }
+
+        content.registration_ids = [req.token];
         log.debug(content);
 
         var headers = {

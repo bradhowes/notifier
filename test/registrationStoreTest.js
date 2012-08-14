@@ -26,11 +26,11 @@ suite.addBatch({
 suite.addBatch({
     'add registration': {
         topic: function () {
-            store.updateRegistration({userId:'br.howes', registrationId:'myregistration', templateVersion:'1.0',
-                                      templateLanguage:'en-us', service:'wns',
-                                      routes:[{'name':'*',
-                                               'token':'123',
-                                               'secondsToLive':86400}]}, this.callback);
+            store.set({userId:'br.howes', registrationId:'myregistration', templateVersion:'1.0',
+                       templateLanguage:'en-us', service:'wns',
+                       routes:[{'name':'*',
+                                'token':'123',
+                                'secondsToLive':86400}]}, this.callback);
         },
         'succeeds without error': function (err, entity) {
             assert.isNull(err);
@@ -44,7 +44,7 @@ suite.addBatch({
 suite.addBatch({
     'fetch registrations': {
         topic: function () {
-            store.getRegistrations('br.howes', null, this.callback);
+            store.get('br.howes', null, this.callback);
         },
         'succeeds without error': function (err, found) {
             assert.isNull(err);
@@ -54,6 +54,7 @@ suite.addBatch({
         },
         'match contains myregistration': function (err, found) {
             var registration = found[0];
+            console.log(found);
             assert.equal(registration.registrationId, 'myregistration');
             assert.equal(registration.templateVersion, '1.0');
             assert.equal(registration.templateLanguage, 'en-us');
@@ -68,7 +69,7 @@ suite.addBatch({
 suite.addBatch({
     'delete registration': {
         topic: function () {
-            store.deleteRegistration('br.howes', 'myregistration', this.callback);
+            store.del('br.howes', 'myregistration', this.callback);
         },
         'succeeds without error': function (err, found) {
             assert.isNull(err);
@@ -79,7 +80,7 @@ suite.addBatch({
 suite.addBatch({
     'then fetch non-existant registration': {
         topic: function () {
-            store.getRegistrations('br.howes', null, this.callback);
+            store.get('br.howes', null, this.callback);
         },
         'succeeds without error': function (err, found) {
             assert.isNull(err);

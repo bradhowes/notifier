@@ -9,7 +9,6 @@ var express = require('express');
 var HTTPStatus = require('http-status');
 var Model = require('model.js');
 var PostTracker = require('./postTracker');
-var NotificationRequest = require('./notificationRequest');
 
 /**
  * Notifier constructor
@@ -148,9 +147,9 @@ Notifier.prototype = {
         this.postTracker.add(sequenceId, start);
 
         // Fetch the registrations for the given user
-        this.registrationStore.getRegistrations(params.userId, params.filter, function (err, registrations) {
+        this.registrationStore.get(params.userId, params.filter, function (err, registrations) {
             if (err !== null) {
-                log.error('RegistrationStore.getRegistrations error:', err);
+                log.error('RegistrationStore.get error:', err);
                 res.send(HTTPStatus.INTERNAL_SERVER_ERROR);
                 return;
             }
@@ -164,10 +163,10 @@ Notifier.prototype = {
             }
 
             // Find the templates that apply for the given registrations
-            self.templateStore.findTemplates(params.eventId, registrations, function (err, matches) {
+            self.templateStore.find(params.eventId, registrations, function (err, matches) {
                 var token = null;
                 if (err !== null) {
-                    log.error('TemplateStore.findTemplates error:', err);
+                    log.error('TemplateStore.find error:', err);
                     res.send(HTTPStatus.INTERNAL_SERVER_ERROR);
                     duration = Date.now() - start;
                     log.END(duration, 'msecs');
@@ -175,27 +174,17 @@ Notifier.prototype = {
                 }
 
                 if (matches.length === 0) {
-                    log.info('TemplateStore.findTemplates returned no matches');
+                    log.info('TemplateStore.find returned no matches');
                 }
 
                 result.count = matches.length;
                 res.json(HTTPStatus.ACCEPTED, result);
 
-                var removeRegistrationProc = function () {
-                    log.debug('callback:', params.userId, token, result);
-                    self.registrationStore.deleteRegistrationEntity(params.userId, token, function (err) {
-                        log.error('removeCallback:', err);
-                    });
-                };
-
                 // For each template, generate a notification payload and send it on its way.
                 for (var index in matches) {
-                    var match = matches[index];
-                    var template = match.template;
-                    template.content = self.generator.transform(template.content, params.substitutions);
-                    token = match.token;
-                    self.deliver(match.service, new NotificationRequest(params.userId, token, template, 30,
-                                                                        removeRegistrationProc));
+                    var request = matches[index];
+                    request.prepare(substitutions, params.userId, self.registrationStore, 30);
+                    self.deliver(request);
                 }
 
                 duration = Date.now() - start;
@@ -242,7 +231,7 @@ Notifier.prototype = {
      *
      * @param {NotificationRequest} request description of the request to send
      */
-    deliver: function (service, request) {
-        this.senders[service].sendNotification(request);
+    deliver: function (request) {
+        this.senders[request.service].sendNotification(request);
     }
 };

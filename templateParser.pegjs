@@ -17,10 +17,11 @@ TEMPLATE
     = text:TEXT suffix:(PLACEHOLDER TEXT)* {
         return function (subs) {
             // Iterate over all of the found placeholders and supply them values from the given 'subs' map
+            var value = text;
             for (var i in suffix) {
-                text = text + suffix[i][0](subs) + suffix[i][1];
+                value = value + suffix[i][0](subs) + suffix[i][1];
             }
-            return text;
+            return value;
         };
     }
 

@@ -144,6 +144,7 @@ if (process.argv[1].indexOf('server.js') !== -1) {
                     server = http.createServer(app);
                 }
                 log.info('starting server on port', port);
+
                 server.listen(port);
             }
         }

@@ -67,6 +67,11 @@ Deque.prototype = {
         return this._size;
     },
 
+    remove: function(node) {
+        node.extricate();
+        --this._size;
+    },
+
     /**
      * Add an existing Node instance to the back of the queue.
      *

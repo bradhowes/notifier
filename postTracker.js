@@ -50,10 +50,18 @@ PostTracker.prototype = {
     add: function (sequenceId, when) {
         var log = this.log.child('add');
         log.BEGIN(sequenceId, when);
+
+        var node;
         if (this.active.size() === this.maxSize) {
-            delete this.mapping[this.active.popBack().data.sequence];
+            node = this.active.popBack();
+            delete this.mapping[node.data.sequence];
+            node.data = {sequenceId: sequenceId, when: when};
         }
-        this.mapping[sequenceId] = this.active.pushFront(new PostTracker.Node(sequenceId, when));
+        else {
+            node = new Deque.Node({sequenceId: sequenceId, when: when});
+        }
+
+        this.mapping[sequenceId] = this.active.pushFrontNode(node);
         log.END();
     },
 
@@ -67,12 +75,14 @@ PostTracker.prototype = {
     track: function(sequenceId, when) {
         var log = this.log.child('track');
         log.BEGIN(sequenceId, when);
+
         var node = this.mapping[sequenceId];
         if (node) {
             var duration = when - node.data.when;
             log.debug('when.getTime:', when);
             log.info(sequenceId, ' receipt - duration:', duration, 'msecs');
         }
+
         log.END();
     }
 };

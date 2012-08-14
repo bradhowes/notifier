@@ -130,7 +130,7 @@ WNS.prototype = {
 
                 case 410: // Gone
                     log.warn('user registration is no longer valid');
-                    req.removeRegistrationProc();
+                    req.forgetRoute();
                     break;
 
                 default:
@@ -146,11 +146,11 @@ WNS.prototype = {
             'retryTimeout': 500,
             'uri': req.token,
             'method': 'POST',
-            'body': req.content.content,
+            'body': req.content,
             'forever': true, // enable long-lived connections
             'headers': {
                 'Content-Type': 'text/xml',
-                'X-WNS-Type': req.content.kind,
+                'X-WNS-Type': req.template.kind,
                 'X-WNS-RequestForStatus': 'true',
                 'Authorization': 'Bearer ' + this.accessToken,
                 'Host': 'cloud.notify.windows.com'

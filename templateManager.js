@@ -155,10 +155,10 @@ TemplateManager.prototype = {
         };
 
         var start = Date.now();
-        this.templateStore.findTemplates(params.eventId, [reg], function (err, templates) {
+        this.templateStore.find(params.eventId, [reg], function (err, templates) {
             var duration = Date.now() - start;
             if (err) {
-                log.error('TemplateStore.findTemplates error:', err);
+                log.error('TemplateStore.find error:', err);
                 res.send(HTTPStatus.INTERNAL_SERVER_ERROR);
             }
             else if (templates.length === 0) {
@@ -225,11 +225,11 @@ TemplateManager.prototype = {
         }
 
         var start = Date.now();
-        this.templateStore.addTemplate(params, function (err, templateEntity)
+        this.templateStore.add(params, function (err, templateEntity)
         {
             var duration = Date.now() - start;
             if (err) {
-                log.error('TemplateStore.addTemplate error:', err);
+                log.error('TemplateStore.add error:', err);
                 res.send(HTTPStatus.INTERNAL_SERVER_ERROR);
             }
             else {
@@ -287,7 +287,7 @@ TemplateManager.prototype = {
         }
 
         var start = Date.now();
-        this.templateStore.removeTemplate(params, function (err, templateEntity) {
+        this.templateStore.del(params, function (err, templateEntity) {
             var duration = Date.now() - start;
             if (err !== null) {
                 log.error('TemplateStore.removeTemplate error:', err);

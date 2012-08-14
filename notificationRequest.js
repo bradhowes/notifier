@@ -13,17 +13,30 @@ module.exports = NotificationRequest;
  * A NotificationRequest represents a notification request.
  *
  * @param {String} userId user to notify
- * @param {String} token the value used to reach a specific device
- * @param {Object} content the notification payload to send to the device. The 'content' attribute holds the actual
- *  payload to deliver. Additional attributes may exist depending on the os-specific notification service being used
- *  for delivery.
+ * @param {Object} payload the notification payload to send to the device. The 'content' attribute holds the actual
+ *  payload to deliver.
  * @param {Number} secondsToLive how long this notification is valid
  * @param {Function} removeRegistrationProc function to call to remove a token from further notifications
  */
-function NotificationRequest(userId, token, content, secondsToLive, removeRegistrationProc) {
-    this.userId = userId;
+function NotificationRequest(registrationId, service, token, template) {
+    this.registrationId = registrationId;
+    this.service = service;
     this.token = token;
-    this.content = content;
-    this.secondsToLive = secondsToLive;
-    this.removeRegistrationProc = removeRegistrationProc;
+    this.template = template;
+    this.content = null;
 }
+
+NotificationRequest.prototype = {
+
+    prepare: function(substitutions, userId, registrationStore, secondsToLive) {
+        this.userId = userId;
+        this.registrationStore = registrationStore;
+        this.secondsToLive = secondsToLive;
+        // Generate the notification payload from the parsed template and the given substitution values.
+        this.content = this.template.content(substitutions);
+    },
+
+    forgetRoute: function () {
+        this.registrationStore.delRoute(this.userId, this.registrationId, this.token);
+    }
+};

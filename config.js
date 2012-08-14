@@ -37,12 +37,7 @@ function Config () {
                     "type": "console",
                     "layout": { "type": "basic" }
                 }
-            ],
-
-            // Define the levels to accept for messages from a logger.
-            "levels": {
-                "[default]":  "ERROR"
-            }
+            ]
         }
     );
 

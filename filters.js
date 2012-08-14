@@ -8,7 +8,7 @@ var config = require('./config');
 function Filters() {
     this.log = config.log('Filters');
 
-    this.escapeJSON_RE = XRegExp('(^")|([^\\\\])"'); // Don't match an already-escaped double-quote
+    this.escapeJSON_RE = /(^")|([^\\])"/g; // Don't match an already-escaped double-quote
 
     this.escapeXMLMap = {
         "<": "&lt;",
@@ -19,11 +19,11 @@ function Filters() {
     };
 
     // Match keys in above escapeXMLMap, but do not match '&' that is already part of an entity
-    this.escapeXML_RE = XRegExp('([<>\'"])|(&(?![a-z0-9]+;))');
+    this.escapeXML_RE = /([<>'"])|(&(?![a-z0-9]+;))/g;
 
     // Match: any XML entities (eg &amp;)
     // this.enforceMaxByteSize_RE = XRegExp('(\\(u[0-9A-F]{4})|.)|(&[^;]+;)|(\\.)');
-    this.enforceMaxByteSize_RE = XRegExp('(&[^;]+;)|(\\\\u[0-9A-F]{4})|(\\.)');
+    this.enforceMaxByteSize_RE = /(&[^;]+;)|(\\u[0-9A-F]{4})|(\\.)/g;
 
     // Available filters
     this.filters = {

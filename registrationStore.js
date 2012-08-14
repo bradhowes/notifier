@@ -72,8 +72,8 @@ RegistrationStore.prototype = {
      *
      * @private
      */
-    _getAllRegistrationEntities: function (partitionKey, callback) {
-        var log = this.log.child('getAllRegistrationEntities');
+    _getEntities: function (partitionKey, callback) {
+        var log = this.log.child('_getEntities');
         log.BEGIN(partitionKey);
         var query = azure.TableQuery.select()
                                     .from(this.tableName)
@@ -97,8 +97,8 @@ RegistrationStore.prototype = {
      *
      * @private
      */
-    _deleteRegistrationEntity: function (partitionKey, rowKey, callback) {
-        var log = this.log.child('_deleteRegistrationEntity');
+    _delEntity: function (partitionKey, rowKey, callback) {
+        var log = this.log.child('_delEntity');
         log.BEGIN('partitionKey:', partitionKey, 'rowKey:', rowKey);
         var entity = {
             PartitionKey: partitionKey,
@@ -110,9 +110,9 @@ RegistrationStore.prototype = {
         });
     },
 
-    _getRegistration: function (registrationEntity, filter) {
-        var log = this.log.child('_getRegistration');
-        log.BEGIN(filter, typeof filter);
+    _registrationFromEntity: function (registrationEntity, filter) {
+        var log = this.log.child('_registrationFromEntity');
+        log.BEGIN(registrationEntity);
 
         var registration = {
             registrationId: new Buffer(registrationEntity.RowKey, 'base64').toString('ascii'),
@@ -139,20 +139,22 @@ RegistrationStore.prototype = {
         var valid = [];
         for (var each in routes) {
             var route = routes[each];
+            log.debug('route:', route);
             if (route.Expiration > now) {
-                route = {
+                var blah = {
                     "name": route.Name,
                     "token": route.Token,
                     "expiration": route.Expiration
                 };
 
-                if (filter.passed(registration, route)) {
-                    log.debug('using route', route.Name, 'token:', route.Token);
-                    valid.push(route);
+                log.debug('blah:', blah);
+                if (filter.passed(registration, blah)) {
+                    log.debug('using route', blah);
+                    valid.push(blah);
                 }
             }
             else {
-                log.info('route', route.Name, 'is no longer active');
+                log.info('route is no longer active:', blah);
             }
         }
 
@@ -168,16 +170,16 @@ RegistrationStore.prototype = {
         return registration;
     },
 
-    getRegistrations: function (userId, filter, callback) {
+    get: function (userId, filter, callback) {
         var self = this;
-        var log = self.log.child('getRegistrations');
+        var log = self.log.child('get');
         log.BEGIN(userId, filter);
 
         var partitionKey = this.makePartitionKey(userId);
 
-        this._getAllRegistrationEntities(partitionKey, function (err, regs) {
+        this._getEntities(partitionKey, function (err, regs) {
             if (err !== null) {
-                log.error('_getAllRegistrationEntities error:', err);
+                log.error('_getEntities error:', err);
                 callback(err, null);
                 return;
             }
@@ -195,18 +197,18 @@ RegistrationStore.prototype = {
             var now = new Date();
             now = now.toISOString();
 
-            function deleteRegistrationCallback (err) {
-                if (err) log.error('_deleteRegistrationEntity error:', err);
+            function delEntityCallback (err) {
+                if (err) log.error('_delEntity error:', err);
             }
 
             for (var index in regs) {
                 var registrationEntity = regs[index];
                 if (registrationEntity.Expiration <= now) {
                     log.info('registration has expired:', registrationEntity.RowKey);
-                    self._deleteRegistrationEntity(partitionKey, registrationEntity.RowKey, deleteRegistrationCallback);
+                    self._delEntity(partitionKey, registrationEntity.RowKey, delEntityCallback);
                 }
                 else {
-                    var r = self._getRegistration(registrationEntity, filter);
+                    var r = self._registrationFromEntity(registrationEntity, filter);
                     if (r) registrations.push(r);
                 }
             }
@@ -241,9 +243,9 @@ RegistrationStore.prototype = {
      *   - err: if not null, definition of the error that took place
      *   - found: if no error, the existing registration entity
      */
-    updateRegistration: function (registration, callback) {
+    set: function (registration, callback) {
         var self = this;
-        var log = self.log.child('updateRegistration');
+        var log = self.log.child('set');
         log.BEGIN(registration);
 
         var partitionKey = this.makePartitionKey(registration.userId);
@@ -313,13 +315,76 @@ RegistrationStore.prototype = {
      *
      * @private
      */
-    deleteRegistration: function (userId, registrationId, callback) {
-        var log = this.log.child('deleteRegistration');
+    del: function (userId, registrationId, callback) {
+        var log = this.log.child('del');
         log.BEGIN(userId, registrationId);
-        this._deleteRegistrationEntity(this.makePartitionKey(userId), this.makeRowKey(registrationId), function (err) {
+        this._delEntity(this.makePartitionKey(userId), this.makeRowKey(registrationId), function (err) {
             callback(err);
             log.END(err);
         });
+    },
+
+    /**
+     * Delete a specific registration for a given user.
+     *
+     * @param userId
+     *   The user to look for.
+     *
+     * @param registrationId
+     *   The registration to delete.
+     *
+     * @param callback
+     *   Method to invoke when the deletion is done.
+     *   - err: if not null, definition of the error that took place
+     *
+     * @private
+     */
+    delRoute: function (userId, registrationId, routeNameOrToken) {
+        var log = this.log.child('delRoute');
+        log.BEGIN(userId, registrationId, routeToken);
+
+        var partitionKey = this.makePartitionKey(userId);
+        log.debug('partitionKey:', partitionKey);
+
+        var rowKey = this.makeRowKey(registrationId);
+        log.debug('rowKey:', rowKey);
+
+        self.store.queryEntity(self.tableName, partitionKey, rowKey, function (err, entity) {
+            log.info('queryEntity results:', err, entity);
+
+            var routes = JSON.parse(entity.Routes);
+            var oldest = Date.now();
+            var newRoutes = [];
+            for (var index in routes) {
+                var route = routes[index];
+                if (route.Name !== routeNameOrToken && route.Token !== routeNameOrToken) {
+                    if (oldest < route.Expiration) {
+                        oldest = route.Expiration;
+                    }
+                    newRoutes.push(route);
+                }
+            }
+
+            if (newRoutes.length === 0) {
+                self.del(userId, registrationId, function (err) {
+                    log.END(err);
+                });
+            }
+            else {
+                var registrationEntity = {
+                    'PartitionKey': partitionKey,
+                    'RowKey': rowKey,
+                    'TemplateLanguage': entity.TemplateLanguage,
+                    'TemplateVersion': entity.TemplateVersion,
+                    'Service': entity.Service,
+                    'Expiration': (new Date(oldest)).toISOString(),
+                    'Routes': JSON.stringify(newRoutes)
+                };
+                self.store.updateEntity(self.tableName, registrationEntity, function (err) {
+                    log.END(err);
+                });
+            }
+	});
     },
 
     /**
@@ -332,16 +397,16 @@ RegistrationStore.prototype = {
      *   Method to invoke when the deletion is done.
      *   - err: if not null, definition of the error that took place
      */
-    deleteAllRegistrations: function (userId, callback) {
+    delAll: function (userId, callback) {
         var self = this;
-        var log = self.log.child('deleteAllRegistrations');
+        var log = self.log.child('deleteAll');
         var errors = null;
         var partitionKey = this.makePartitionKey(userId);
 
         function mapper(entity, entityCallback) {
             var rowKey = entity.RowKey;
             log.debug('deleting registration', rowKey);
-            self._deleteRegistrationEntity(
+            self._delEntity(
                 partitionKey, rowKey, function (err) {
                     if (err) {
                         if (errors === null) {
@@ -360,7 +425,7 @@ RegistrationStore.prototype = {
 
         log.BEGIN(userId);
 
-        self._getAllRegistrationEntities(
+        self._getEntities(
             partitionKey, function (err, registrationEntities) {
                 if (err || registrationEntities === null || registrationEntities.length === 0) {
                     callback(err);

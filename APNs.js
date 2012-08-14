@@ -7,7 +7,7 @@ module.exports = APNs;
 
 var config = require('./config');
 var apn = require('apn');
-var UserDeviceTracker = require('./userDeviceTracker');
+var NotificationRequestTracker = require('./notificationRequestTracker');
 
 /**
  * APNs constructor.
@@ -16,15 +16,13 @@ var UserDeviceTracker = require('./userDeviceTracker');
  *
  * An APNs object sends JSON payloads to an APNs server for delivery to a specific iOS device.
  */
-function APNs(registrationStore) {
+function APNs() {
     this.log = config.log('APNs');
-
-    this.registrationStore = registrationStore;
 
     /**
      * Cache of the N most recently seen userId / device token pairs.
      */
-    this.userDeviceTracker = new UserDeviceTracker(config.apns_device_cache_size);
+    this.notificationRequestTracker = new NotificationRequestTracker(config.apns_device_cache_size);
 
     // Terrible attempt to support a callback when notification gets sent out.
     this.lastSentNotification = null;
@@ -116,14 +114,10 @@ APNs.prototype = {
         var log = this.log.child('feedbackCallback');
         var self = this;
         log.BEGIN(timestamp, device);
-        var userId = this.userDeviceTracker.find(device.toString());
-        if (this.registrationStore && userId) {
-            log.info('removing registration for user ', userId, ' and device token ', device);
-            this.registrationStore.deleteRegistration(userId, device, function (err) {
-                if (err) {
-                    log.error('failed to delete registration:', err);
-                }
-            });
+        var request = this.notificationRequestTracker.find(device.toString('base64'));
+        if (request) {
+            log.info('removing registration for user ', request.userId, ' and token ', request.token);
+            request.forgetRoute();
         }
         log.END();
     },
@@ -139,20 +133,20 @@ APNs.prototype = {
         var notification = new apn.Notification();
         notification.callback = function (state) {
             if (state.invalidToken) {
-                req.removeRegistrationProc();
+                req.forgetPath();
             }
         };
 
         notification.device = new apn.Device(new Buffer(req.token, 'base64'));
-        this.userDeviceTracker.add(req.userId, notification.device.toString());
+        this.notificationRequestTracker.add(req, req.token);
 
         try {
-            notification.payload = JSON.parse(req.content.content);
-            log.debug('payload:', req.content.content);
+            notification.payload = JSON.parse(req.content);
+            log.debug('payload:', notification.payload);
             this.connection.sendNotification(notification);
         }
         catch (err) {
-            log.error('failed to parse APN payload:', req.content.content);
+            log.error('failed to parse APN payload:', req.content);
         }
         log.END();
     }

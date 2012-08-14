@@ -21,6 +21,8 @@ var HTTPStatus = require('http-status');
  */
 function Registrar(registrationStore) {
     this.log = require('./config').log('Registrar');
+    this.log.BEGIN(registrationStore);
+
     this.registrationStore = registrationStore;
 
     /**
@@ -98,6 +100,8 @@ function Registrar(registrationStore) {
         {
             registrationId: {type:'string', minlength:1, maxlength:128}
         });
+
+    this.log.END();
 }
 
 /**
@@ -151,7 +155,7 @@ Registrar.prototype = {
         }
 
         var start = Date.now();
-        this.registrationStore.getRegistrations(params.userId, null, function (err, regs) {
+        this.registrationStore.get(params.userId, null, function (err, regs) {
             var duration = Date.now() - start;
             if (err !== null || typeof(regs) === 'undefined' || regs.length === 0) {
                 if (err) log.error('error:', err);
@@ -195,7 +199,7 @@ Registrar.prototype = {
     set: function (req, res) {
         var self = this;
         var log = this.log.child('set');
-        log.BEGIN('req:', req.body);
+        log.BEGIN();
 
         var params = req.body;
         params.userId = req.param('userId');
@@ -209,10 +213,10 @@ Registrar.prototype = {
         }
 
         var start = Date.now();
-        this.registrationStore.updateRegistration(params, function (err, registrationEntity) {
+        this.registrationStore.set(params, function (err, registrationEntity) {
             var duration = Date.now() - start;
             if (err) {
-                log.error('RegistrationStore.updateRegistration error:', err);
+                log.error('RegistrationStore.set error:', err);
                 res.send(HTTPStatus.BAD_REQUEST);
             }
             else {
@@ -270,7 +274,7 @@ Registrar.prototype = {
         function callback(err) {
             var duration = Date.now() - start;
             if (err) {
-                log.error('RegistrationStore.deleteRegistrations error:', err);
+                log.error('RegistrationStore.del error:', err);
                 res.send(HTTPStatus.NOT_FOUND);
             }
             else {
@@ -280,10 +284,10 @@ Registrar.prototype = {
         }
 
         if (params.registrationId === undefined) {
-            this.registrationStore.deleteAllRegistrations(params.userId, callback);
+            this.registrationStore.delAll(params.userId, callback);
         }
         else {
-            this.registrationStore.deleteRegistration(params.userId, params.registrationId, callback);
+            this.registrationStore.del(params.userId, params.registrationId, callback);
         }
     }
 };
