@@ -87,7 +87,7 @@
 			Documentation generator: <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0<br />
 			Template: <a href="http://www.thebrightlines.com/2010/05/06/new-template-for-jsdoctoolkit-codeview/" target="_blank">Codeview</a> 1.2<br />
 			Generated on:
-			<time datetime='2012-7-15' pubdate>2012-7-15 0:56</time>
+			<time datetime='2012-7-15' pubdate>2012-7-15 17:20</time>
 		</footer>
 	</div>
 </div>
@@ -105,7 +105,10 @@
 				
 				<div class="intro">
 					<p class="description summary">
-						A TemplateCache records in-memory templates fetched from an Azure table store.
+						A TemplateCache records in-memory templates fetched from an Azure table store. It consists of a top-level hash, with
+keys made up of Azure table store partition keys that are derived from notification event ID values. Each entry in
+this hash is itself a hash, where the keys are made up of various template attributes, and the value is an array
+(there can be more than one template associated with a notification event ID).
 					</p>
 						
 					
@@ -149,6 +152,42 @@
 			
 			
 			
+				
+				<section>
+					
+						<nav>
+							<div class="props">
+								<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class TemplateCache.">
+									<caption class="sectionTitle">Field Summary</caption>
+									
+									<thead>
+										<tr>
+											<th scope="col">Field Attributes</th>
+											<th scope="col">Field Name and Description</th>
+										</tr>
+									</thead>
+									
+									<tbody>
+										
+											<tr>
+												<td class="attributes">&nbsp;</td>
+												<td class="nameDescription">
+													<div class="fixedFont">
+													<b><a href="../symbols/TemplateCache.html#findKeyGenerators">findKeyGenerators</a></b>
+													</div>
+													<div class="description"><p>Holds the functions to invoke to generate search keys.</div>
+												</td>
+											</tr>
+										
+									</tbody>
+								</table>
+							</div>
+						</nav>
+					
+					
+					
+				</section>
+			
 	<!--
 	#### METHODS SUMMARY
 	-->
@@ -177,9 +216,9 @@
 											>
 												<td class="attributes">&nbsp;</td>
 												<td class="nameDescription">
-													<div class="fixedFont"><b><a href="../symbols/TemplateCache.html#get">get</a></b>(eventId, registrations)
+													<div class="fixedFont"><b><a href="../symbols/TemplateCache.html#add">add</a></b>(entity)
 													</div>
-													<div class="description"><p>Fetch the templates from the cache that match the given eventId and user registration settings.</div>
+													<div class="description"><p>Add or replace one template entity in the cache.</div>
 												</td>
 											</tr>
 										
@@ -188,9 +227,9 @@
 											>
 												<td class="attributes">&nbsp;</td>
 												<td class="nameDescription">
-													<div class="fixedFont"><b><a href="../symbols/TemplateCache.html#makeBaseLanguageKey">makeBaseLanguageKey</a></b>(routeName, templateVersion, templateLanguage, service)
+													<div class="fixedFont"><b><a href="../symbols/TemplateCache.html#del">del</a></b>(entity)
 													</div>
-													<div class="description"><p>Make a base-language template key</p></div>
+													<div class="description"><p>Remove a template entity from the cache.</div>
 												</td>
 											</tr>
 										
@@ -199,9 +238,9 @@
 											>
 												<td class="attributes">&nbsp;</td>
 												<td class="nameDescription">
-													<div class="fixedFont"><b><a href="../symbols/TemplateCache.html#makeDefaultLanguageKey">makeDefaultLanguageKey</a></b>(routeName, templateVersion, templateLanguage, service)
+													<div class="fixedFont"><b><a href="../symbols/TemplateCache.html#get">get</a></b>(partitionKey, registrations)
 													</div>
-													<div class="description"><p>Make a default-language template key</p></div>
+													<div class="description"><p>Fetch templates generators from the cache that match the given partitionKey and user registration settings.</div>
 												</td>
 											</tr>
 										
@@ -210,20 +249,9 @@
 											>
 												<td class="attributes">&nbsp;</td>
 												<td class="nameDescription">
-													<div class="fixedFont"><b><a href="../symbols/TemplateCache.html#makeKey">makeKey</a></b>(routeName, templateVersion, templateLanguage, service)
+													<div class="fixedFont"><b><a href="../symbols/TemplateCache.html#set">set</a></b>(partitionKey, entities)
 													</div>
-													<div class="description"><p>Make a template key</p></div>
-												</td>
-											</tr>
-										
-											<tr
-												 class='item4'
-											>
-												<td class="attributes">&nbsp;</td>
-												<td class="nameDescription">
-													<div class="fixedFont"><b><a href="../symbols/TemplateCache.html#set">set</a></b>(eventId, templates)
-													</div>
-													<div class="description"><p>Add a template entity to the cache.</div>
+													<div class="description"><p>Replace any existing cache entries with the ones given.</div>
 												</td>
 											</tr>
 										
@@ -274,6 +302,50 @@
 	#### FIELD DETAILS
 	-->
 			
+				<section>
+					<div class="details props">
+						<div class="innerProps">
+							<h2 class="sectionTitle">
+								Field Detail
+							</h2>
+							
+							
+								<div class="fixedFont heading" id="findKeyGenerators">
+									<span class='lighter'>
+									
+									</span>
+									
+									<span class="light">{function array}</span>
+									
+									<b>findKeyGenerators</b>							
+								</div>
+								
+								<div class="description">
+									<p>Holds the functions to invoke to generate search keys. For a registration with a templateLanguage value of
+"de-AU" (Austrian German), there are three queries that can be made:</p>
+
+<ul>
+<li>de-AU - original language value</li>
+<li>de - base language value</li>
+<li>en - default language value</li>
+</ul>
+
+<p>These functions are invoked in sequence, and if they return a non-null value, then the key they generated will
+be used to search for a template.</p>
+									
+									
+									
+								</div>
+								
+								
+									
+								
+								
+							
+						</div>
+					</div>
+				</section>
+			
 	<!--
 	#### METHOD DETAILS
 	-->		
@@ -291,18 +363,18 @@
 									<li 
 										 class='item0'
 									>
-										<div class="fixedFont heading" id="get">
+										<div class="fixedFont heading" id="add">
 											<span class='lighter'>
 											
 											</span>
 											
 											
 											
-											<b>get</b>(eventId, registrations)
+											<b>add</b>(entity)
 										</div>
 										
 										<div class="description">
-											<p>Fetch the templates from the cache that match the given eventId and user registration settings.</p>
+											<p>Add or replace one template entity in the cache.</p>
 											
 											
 											
@@ -316,16 +388,10 @@
 												<dt class="heading">Parameters:</dt>
 												
 													<dt>
-														<b>eventId</b>
+														<span class="light fixedFont">{Object}</span> <b>entity</b>
 														
 													</dt>
-													<dd></dd>
-												
-													<dt>
-														<b>registrations</b>
-														
-													</dt>
-													<dd></dd>
+													<dd><p>the Azure table store entity to remember</p></dd>
 												
 											</dl>
 										
@@ -337,18 +403,18 @@
 									<li 
 										 class='item1'
 									>
-										<div class="fixedFont heading" id="makeBaseLanguageKey">
+										<div class="fixedFont heading" id="del">
 											<span class='lighter'>
 											
 											</span>
 											
 											
 											
-											<b>makeBaseLanguageKey</b>(routeName, templateVersion, templateLanguage, service)
+											<b>del</b>(entity)
 										</div>
 										
 										<div class="description">
-											<p>Make a base-language template key</p>
+											<p>Remove a template entity from the cache.</p>
 											
 											
 											
@@ -362,28 +428,10 @@
 												<dt class="heading">Parameters:</dt>
 												
 													<dt>
-														<b>routeName</b>
+														<span class="light fixedFont">{Object}</span> <b>entity</b>
 														
 													</dt>
-													<dd></dd>
-												
-													<dt>
-														<b>templateVersion</b>
-														
-													</dt>
-													<dd></dd>
-												
-													<dt>
-														<b>templateLanguage</b>
-														
-													</dt>
-													<dd></dd>
-												
-													<dt>
-														<b>service</b>
-														
-													</dt>
-													<dd></dd>
+													<dd><p>the Azure table store entity to forget</p></dd>
 												
 											</dl>
 										
@@ -395,18 +443,20 @@
 									<li 
 										 class='item2'
 									>
-										<div class="fixedFont heading" id="makeDefaultLanguageKey">
+										<div class="fixedFont heading" id="get">
 											<span class='lighter'>
 											
 											</span>
 											
 											
 											
-											<b>makeDefaultLanguageKey</b>(routeName, templateVersion, templateLanguage, service)
+											<b>get</b>(partitionKey, registrations)
 										</div>
 										
 										<div class="description">
-											<p>Make a default-language template key</p>
+											<p>Fetch templates generators from the cache that match the given partitionKey and user registration settings.
+Generates a key template key for each registration route in each registration, and looks for it within the
+cache. If found, it creates a new NotificationRequest object based on the cache entry.</p>
 											
 											
 											
@@ -420,96 +470,47 @@
 												<dt class="heading">Parameters:</dt>
 												
 													<dt>
-														<b>routeName</b>
+														<span class="light fixedFont">{String}</span> <b>partitionKey</b>
 														
 													</dt>
-													<dd></dd>
+													<dd><p>the key associated with the notification event to use for fetching</p></dd>
 												
 													<dt>
-														<b>templateVersion</b>
+														<span class="light fixedFont">{Array}</span> <b>registrations</b>
 														
 													</dt>
-													<dd></dd>
-												
-													<dt>
-														<b>templateLanguage</b>
-														
-													</dt>
-													<dd></dd>
-												
-													<dt>
-														<b>service</b>
-														
-													</dt>
-													<dd></dd>
+													<dd><p>the set of user registrations to use for matching</p></dd>
 												
 											</dl>
 										
 										
+										
+											<dl class="detailList nomargin">
+											
+												
+												
+												
+												
+												
+												
+												
+													<dt class="heading">Returns:</dt>
+													
+														<dd><p>array of <a href="../symbols/NotificationRequest.html">NotificationRequest</a> instances appropriate for the registrations</p></dd>
+													
+												
+												
+												
+												
+												
+											
+											</dl>
 										
 										<div class="hr"></div>
 									</li>
 								
 									<li 
 										 class='item3'
-									>
-										<div class="fixedFont heading" id="makeKey">
-											<span class='lighter'>
-											
-											</span>
-											
-											
-											
-											<b>makeKey</b>(routeName, templateVersion, templateLanguage, service)
-										</div>
-										
-										<div class="description">
-											<p>Make a template key</p>
-											
-											
-											
-											
-										</div>
-										
-										
-										
-										
-											<dl class="detailList params">
-												<dt class="heading">Parameters:</dt>
-												
-													<dt>
-														<b>routeName</b>
-														
-													</dt>
-													<dd></dd>
-												
-													<dt>
-														<b>templateVersion</b>
-														
-													</dt>
-													<dd></dd>
-												
-													<dt>
-														<b>templateLanguage</b>
-														
-													</dt>
-													<dd></dd>
-												
-													<dt>
-														<b>service</b>
-														
-													</dt>
-													<dd></dd>
-												
-											</dl>
-										
-										
-										
-										<div class="hr"></div>
-									</li>
-								
-									<li 
-										 class='item4'
 									>
 										<div class="fixedFont heading" id="set">
 											<span class='lighter'>
@@ -518,11 +519,11 @@
 											
 											
 											
-											<b>set</b>(eventId, templates)
+											<b>set</b>(partitionKey, entities)
 										</div>
 										
 										<div class="description">
-											<p>Add a template entity to the cache.</p>
+											<p>Replace any existing cache entries with the ones given.</p>
 											
 											
 											
@@ -536,16 +537,16 @@
 												<dt class="heading">Parameters:</dt>
 												
 													<dt>
-														<b>eventId</b>
+														<span class="light fixedFont">{String}</span> <b>partitionKey</b>
 														
 													</dt>
-													<dd></dd>
+													<dd><p>the key associated with the notification event to use for fetching</p></dd>
 												
 													<dt>
-														<b>templates</b>
+														<span class="light fixedFont">{Array}</span> <b>entities</b>
 														
 													</dt>
-													<dd></dd>
+													<dd><p>the set of template entities to store in the cache</p></dd>
 												
 											</dl>
 										

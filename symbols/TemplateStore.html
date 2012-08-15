@@ -87,7 +87,7 @@
 			Documentation generator: <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0<br />
 			Template: <a href="http://www.thebrightlines.com/2010/05/06/new-template-for-jsdoctoolkit-codeview/" target="_blank">Codeview</a> 1.2<br />
 			Generated on:
-			<time datetime='2012-7-15' pubdate>2012-7-15 0:56</time>
+			<time datetime='2012-7-15' pubdate>2012-7-15 17:20</time>
 		</footer>
 	</div>
 </div>
@@ -221,9 +221,9 @@
 											>
 												<td class="attributes">&nbsp;</td>
 												<td class="nameDescription">
-													<div class="fixedFont"><b><a href="../symbols/TemplateStore.html#makeBaseLanguageKey">makeBaseLanguageKey</a></b>(routeName, templateVersion, templateLanguage, service)
+													<div class="fixedFont"><b><a href="../symbols/TemplateStore.html#makePartitionKey">makePartitionKey</a></b>(value)
 													</div>
-													<div class="description"><p>Make a base-language template key</p></div>
+													<div class="description"><p>Make a table store partition key.</div>
 												</td>
 											</tr>
 										
@@ -232,42 +232,9 @@
 											>
 												<td class="attributes">&nbsp;</td>
 												<td class="nameDescription">
-													<div class="fixedFont"><b><a href="../symbols/TemplateStore.html#makeDefaultLanguageKey">makeDefaultLanguageKey</a></b>(routeName, templateVersion, templateLanguage, service)
-													</div>
-													<div class="description"><p>Make a base-language template key</p></div>
-												</td>
-											</tr>
-										
-											<tr
-												 class='item6'
-											>
-												<td class="attributes">&nbsp;</td>
-												<td class="nameDescription">
-													<div class="fixedFont"><b><a href="../symbols/TemplateStore.html#makeKey">makeKey</a></b>(routeName, templateVersion, templateLanguage, service)
-													</div>
-													<div class="description"><p>Make a template key</p></div>
-												</td>
-											</tr>
-										
-											<tr
-												 class='item7'
-											>
-												<td class="attributes">&nbsp;</td>
-												<td class="nameDescription">
-													<div class="fixedFont"><b><a href="../symbols/TemplateStore.html#makePartitionKey">makePartitionKey</a></b>(value)
-													</div>
-													<div class="description"><p>Make a table store partition key.</div>
-												</td>
-											</tr>
-										
-											<tr
-												 class='item8'
-											>
-												<td class="attributes">&nbsp;</td>
-												<td class="nameDescription">
 													<div class="fixedFont"><b><a href="../symbols/TemplateStore.html#makeRowKey">makeRowKey</a></b>(notificationId, routeName, templateVersion, templateLanguage, service)
 													</div>
-													<div class="description"><p>Make a table store row key</p></div>
+													<div class="description"><p>Make a table store row key.</div>
 												</td>
 											</tr>
 										
@@ -315,13 +282,13 @@
 											<span class="light fixedFont">{String}</span>  <b>name</b>
 											
 										</dt>
-										<dd>the name of the table store to use/create</dd>
+										<dd><p>the name of the table store to use/create</p></dd>
 									
 										<dt>
 											<span class="light fixedFont">{Function}</span>  <b>callback</b>
 											
 										</dt>
-										<dd>the function to invoke when the table store exits</dd>
+										<dd><p>the function to invoke when the table store exits</p></dd>
 									
 								</dl>
 							
@@ -423,16 +390,16 @@
 												<dt class="heading">Parameters:</dt>
 												
 													<dt>
-														<b>params</b>
+														<span class="light fixedFont">{Object}</span> <b>params</b>
 														
 													</dt>
-													<dd></dd>
+													<dd><p>specification of the template to remove</p></dd>
 												
 													<dt>
-														<b>callback</b>
+														<span class="light fixedFont">{function(err|entity)}</span> <b>callback</b>
 														
 													</dt>
-													<dd></dd>
+													<dd><p>function to invoke upon completion of the deletion</p></dd>
 												
 											</dl>
 										
@@ -524,13 +491,13 @@
 														<span class="light fixedFont">{Integer}</span> <b>eventId</b>
 														
 													</dt>
-													<dd>the eventId to look for</dd>
+													<dd><p>the eventId to look for</p></dd>
 												
 													<dt>
 														<span class="light fixedFont">{Function}</span> <b>callback</b>
 														
 													</dt>
-													<dd>the function to invoke when the query is done</dd>
+													<dd><p>the function to invoke when the query is done</p></dd>
 												
 											</dl>
 										
@@ -547,7 +514,7 @@
 												
 													<dt class="heading">Returns:</dt>
 													
-														<dd><span class="light fixedFont">{Object}</span> results of the query, with templates grouped by their notificationId values</dd>
+														<dd><span class="light fixedFont">{Object}</span> <p>results of the query, with templates grouped by their notificationId values</p></dd>
 													
 												
 												
@@ -563,18 +530,19 @@
 									<li 
 										 class='item4'
 									>
-										<div class="fixedFont heading" id="makeBaseLanguageKey">
+										<div class="fixedFont heading" id="makePartitionKey">
 											<span class='lighter'>
 											
 											</span>
 											
+											<span class="light">{String}</span>
 											
-											
-											<b>makeBaseLanguageKey</b>(routeName, templateVersion, templateLanguage, service)
+											<b>makePartitionKey</b>(value)
 										</div>
 										
 										<div class="description">
-											<p>Make a base-language template key</p>
+											<p>Make a table store partition key. For templates, the partition key is the notification event ID. However, we
+encode in base64 just to be safe against values harmful to Azure table store.</p>
 											
 											
 											
@@ -588,32 +556,35 @@
 												<dt class="heading">Parameters:</dt>
 												
 													<dt>
-														<b>routeName</b>
+														<span class="light fixedFont">{String|Number}</span> <b>value</b>
 														
 													</dt>
-													<dd></dd>
-												
-													<dt>
-														<b>templateVersion</b>
-														
-													</dt>
-													<dd></dd>
-												
-													<dt>
-														<b>templateLanguage</b>
-														
-													</dt>
-													<dd></dd>
-												
-													<dt>
-														<b>service</b>
-														
-													</dt>
-													<dd></dd>
+													<dd><p>the value to use for the key</p></dd>
 												
 											</dl>
 										
 										
+										
+											<dl class="detailList nomargin">
+											
+												
+												
+												
+												
+												
+												
+												
+													<dt class="heading">Returns:</dt>
+													
+														<dd><span class="light fixedFont">{String}</span> <p>value safe to use in Azure table store for the partition key.</p></dd>
+													
+												
+												
+												
+												
+												
+											
+											</dl>
 										
 										<div class="hr"></div>
 									</li>
@@ -621,174 +592,20 @@
 									<li 
 										 class='item5'
 									>
-										<div class="fixedFont heading" id="makeDefaultLanguageKey">
-											<span class='lighter'>
-											
-											</span>
-											
-											
-											
-											<b>makeDefaultLanguageKey</b>(routeName, templateVersion, templateLanguage, service)
-										</div>
-										
-										<div class="description">
-											<p>Make a base-language template key</p>
-											
-											
-											
-											
-										</div>
-										
-										
-										
-										
-											<dl class="detailList params">
-												<dt class="heading">Parameters:</dt>
-												
-													<dt>
-														<b>routeName</b>
-														
-													</dt>
-													<dd></dd>
-												
-													<dt>
-														<b>templateVersion</b>
-														
-													</dt>
-													<dd></dd>
-												
-													<dt>
-														<b>templateLanguage</b>
-														
-													</dt>
-													<dd></dd>
-												
-													<dt>
-														<b>service</b>
-														
-													</dt>
-													<dd></dd>
-												
-											</dl>
-										
-										
-										
-										<div class="hr"></div>
-									</li>
-								
-									<li 
-										 class='item6'
-									>
-										<div class="fixedFont heading" id="makeKey">
-											<span class='lighter'>
-											
-											</span>
-											
-											
-											
-											<b>makeKey</b>(routeName, templateVersion, templateLanguage, service)
-										</div>
-										
-										<div class="description">
-											<p>Make a template key</p>
-											
-											
-											
-											
-										</div>
-										
-										
-										
-										
-											<dl class="detailList params">
-												<dt class="heading">Parameters:</dt>
-												
-													<dt>
-														<b>routeName</b>
-														
-													</dt>
-													<dd></dd>
-												
-													<dt>
-														<b>templateVersion</b>
-														
-													</dt>
-													<dd></dd>
-												
-													<dt>
-														<b>templateLanguage</b>
-														
-													</dt>
-													<dd></dd>
-												
-													<dt>
-														<b>service</b>
-														
-													</dt>
-													<dd></dd>
-												
-											</dl>
-										
-										
-										
-										<div class="hr"></div>
-									</li>
-								
-									<li 
-										 class='item7'
-									>
-										<div class="fixedFont heading" id="makePartitionKey">
-											<span class='lighter'>
-											
-											</span>
-											
-											
-											
-											<b>makePartitionKey</b>(value)
-										</div>
-										
-										<div class="description">
-											<p>Make a table store partition key.</p>
-											
-											
-											
-											
-										</div>
-										
-										
-										
-										
-											<dl class="detailList params">
-												<dt class="heading">Parameters:</dt>
-												
-													<dt>
-														<b>value</b>
-														
-													</dt>
-													<dd></dd>
-												
-											</dl>
-										
-										
-										
-										<div class="hr"></div>
-									</li>
-								
-									<li 
-										 class='item8'
-									>
 										<div class="fixedFont heading" id="makeRowKey">
 											<span class='lighter'>
 											
 											</span>
 											
-											
+											<span class="light">{String}</span>
 											
 											<b>makeRowKey</b>(notificationId, routeName, templateVersion, templateLanguage, service)
 										</div>
 										
 										<div class="description">
-											<p>Make a table store row key</p>
+											<p>Make a table store row key. This will point to a specific template payload definition. As such, it must be
+uniquely specified in 5 dimensions: notification ID, route name, template version, template language, and
+notification delivery service.</p>
 											
 											
 											
@@ -802,38 +619,59 @@
 												<dt class="heading">Parameters:</dt>
 												
 													<dt>
-														<b>notificationId</b>
+														<span class="light fixedFont">{String|Integer}</span> <b>notificationId</b>
 														
 													</dt>
-													<dd></dd>
+													<dd><p>the notification ID associated with the template</p></dd>
 												
 													<dt>
-														<b>routeName</b>
+														<span class="light fixedFont">{String}</span> <b>routeName</b>
 														
 													</dt>
-													<dd></dd>
+													<dd><p>the route name associated with the template</p></dd>
 												
 													<dt>
-														<b>templateVersion</b>
+														<span class="light fixedFont">{String}</span> <b>templateVersion</b>
 														
 													</dt>
-													<dd></dd>
+													<dd><p>the version of the template being keyed</p></dd>
 												
 													<dt>
-														<b>templateLanguage</b>
+														<span class="light fixedFont">{String}</span> <b>templateLanguage</b>
 														
 													</dt>
-													<dd></dd>
+													<dd><p>the language of the template being keyed</p></dd>
 												
 													<dt>
-														<b>service</b>
+														<span class="light fixedFont">{String}</span> <b>service</b>
 														
 													</dt>
-													<dd></dd>
+													<dd><p>the notification delivery service to use</p></dd>
 												
 											</dl>
 										
 										
+										
+											<dl class="detailList nomargin">
+											
+												
+												
+												
+												
+												
+												
+												
+													<dt class="heading">Returns:</dt>
+													
+														<dd><span class="light fixedFont">{String}</span> <p>concatenated value of the above encoded in base64 for Azure table store safety</p></dd>
+													
+												
+												
+												
+												
+												
+											
+											</dl>
 										
 										
 									</li>

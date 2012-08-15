@@ -87,7 +87,7 @@
 			Documentation generator: <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0<br />
 			Template: <a href="http://www.thebrightlines.com/2010/05/06/new-template-for-jsdoctoolkit-codeview/" target="_blank">Codeview</a> 1.2<br />
 			Generated on:
-			<time datetime='2012-7-15' pubdate>2012-7-15 0:56</time>
+			<time datetime='2012-7-15' pubdate>2012-7-15 17:20</time>
 		</footer>
 	</div>
 </div>
@@ -105,7 +105,11 @@
 				
 				<div class="intro">
 					<p class="description summary">
-						A registrar allows for querying, updating, and deleting of registrations for a given user ID.
+						A registrar allows for querying, updating, and deleting of registrations for a given user ID. A registration defines
+how to reach a user's device via notifications and in what form the notification payloads should be in (language,
+version, etc). A registration also contains one or more routes, which are named pathways for notification delivery.
+If a notification is to be sent to devices along a certain route, only registrations containing a route with the
+matching name will be notified.
 					</p>
 						
 					
@@ -326,8 +330,8 @@
 											<span class="light fixedFont">{<a href="../symbols/RegistrationStore.html">RegistrationStore</a>}</span>  <b>registrationStore</b>
 											
 										</dt>
-										<dd>the RegistrationStore instance to rely on for persistent data
-operations.</dd>
+										<dd><p>the <a href="../symbols/RegistrationStore.html">RegistrationStore</a> instance to rely on for persistent data
+operations.</p></dd>
 									
 								</dl>
 							
@@ -387,7 +391,10 @@ operations.</dd>
 								</div>
 								
 								<div class="description">
-									<p>JSON schema for registration definitions. Attributes:</p>
+									<p>JSON schema for registration definitions. A registration consists of one or more routes
+(see <a href="../symbols/Registrar.html#RouteModel">Registrar#RouteModel</a>) that define the specific ways a device may be reached via notifications.
+A registration details the version of the notification templates to be used when generating notification
+payloads, the language of the notifications to generate, and the delivery service to use for the notification.</p>
 
 <ul>
 <li>registrationId: the unique identifier associated with the device being registered. This must be unique across
@@ -419,7 +426,9 @@ all devices, but it should be constant for the same device.</li>
 								</div>
 								
 								<div class="description">
-									<p>JSON schema for route definitions. Attributes:</p>
+									<p>JSON schema for route definitions. A route is a means by which one can reach a device via notifications. Each
+device has a unique token value that is valid for secondsToLive seconds into the future. Whether or not the
+route is used for a notification depends on if the route name associates with a notification template.</p>
 
 <ul>
 <li>name: the name of the route. Only receives notifications from templates with a matching name value.</li>
@@ -494,23 +503,9 @@ all devices, but it should be constant for the same device.</li>
 										</div>
 										
 										<div class="description">
-											<p>Delete a registration or all registrations for a given user. If a JSON
-payload exits with a registrationId attribute, only delete the one entity
-matching the registrationId value. Otherwise, delete all registrations for the
-user.</p>
-
-<ul>
-<li>userId: the user to look for (found in the URL)</li>
-<li>registrationId (optional): the registration to delete</li>
-</ul>
-
-<p>HTTP Responses:</p>
-
-<ul>
-<li>400 BAD REQUEST: missing or invalid template attribute(s)</li>
-<li>404 NOT FOUND: unable to locate any registration to delete</li>
-<li>204 NO CONTENT: found and delete the registration(s)</li>
-</ul>
+											<p>Delete a registration or all registrations for a given user. If a JSON payload exits with a registrationId
+attribute, only delete the one entity matching the registrationId value. Otherwise, delete all registrations for
+the user.</p>
 											
 											
 											
@@ -518,22 +513,35 @@ user.</p>
 										</div>
 										
 										
+											
+												<pre class="code"><code>{}</code></pre>
+											
+												<pre class="code"><code>{registrationId: "1234-56-7890"}</code></pre>
+											
+										
 										
 										
 											<dl class="detailList params">
 												<dt class="heading">Parameters:</dt>
 												
 													<dt>
-														<b>req</b>
+														<span class="light fixedFont">{Express.Request}</span> <b>req</b>
 														
 													</dt>
-													<dd>Contents of the incoming request.</dd>
+													<dd><p>Describes the incoming HTTP request. Message body must be JSON that follows the
+<a href="../symbols/Registrar.html#DeleteKeyModel">Registrar#DeleteKeyModel</a> model.</p></dd>
 												
 													<dt>
-														<b>res</b>
+														<span class="light fixedFont">{Express.Response}</span> <b>res</b>
 														
 													</dt>
-													<dd>Response generator for the request.</dd>
+													<dd><p>HTTP response generator for the request. Outputs JSON if no error.</p>
+
+<ul>
+<li>204 NO CONTENT: found and deleted the registration(s)</li>
+<li>400 BAD REQUEST: missing or invalid attribute(s)</li>
+<li>404 NOT FOUND: unable to locate any registration to delete</li>
+</ul></dd>
 												
 											</dl>
 										
@@ -556,19 +564,7 @@ user.</p>
 										</div>
 										
 										<div class="description">
-											<p>Obtain the current registrations for a given user. Parameters:</p>
-
-<ul>
-<li>userId: the user to look for (found in the URL)</li>
-</ul>
-
-<p>HTTP Responses:</p>
-
-<ul>
-<li>400 BAD REQUEST: missing or invalid query attribute(s)</li>
-<li>404 NOT FOUND: no templates were found for the given key attributes</li>
-<li>200 OK: one or more registrations were found</li>
-</ul>
+											<p>Obtain the current registrations for a given user.</p>
 											
 											
 											
@@ -576,22 +572,39 @@ user.</p>
 										</div>
 										
 										
+											
+												<pre class="code">HTTP GET /john.doe</pre>
+											
+												<pre class="code"><code>{registrationId: "1234-56-7890", templateVersion: "3", templateLanguage: "en-US",
+ service: "apns",
+ routes:[{name: "main", token: "unique main token", expiration: 86400},
+         {name: "alt", token: "unique alt token", expiration: 86400}]}
+</code></pre>
+											
+										
 										
 										
 											<dl class="detailList params">
 												<dt class="heading">Parameters:</dt>
 												
 													<dt>
-														<b>req</b>
+														<span class="light fixedFont">{Express.Request}</span> <b>req</b>
 														
 													</dt>
-													<dd>Contents of the incoming request.</dd>
+													<dd><p>Describes the incoming HTTP request. Message body is ignored; the URL must contain
+the user ID to use, and it must adhere to the <a href="../symbols/Registrar.html#UserIdModel">Registrar#UserIdModel</a> model.</p></dd>
 												
 													<dt>
-														<b>res</b>
+														<span class="light fixedFont">{Express.Response}</span> <b>res</b>
 														
 													</dt>
-													<dd>Response generator for the request. Generates JSON output if there are registrations</dd>
+													<dd><p>HTTP response generator for the request. Outputs JSON if no error.</p>
+
+<ul>
+<li>200 OK if one or more registrations were found</li>
+<li>400 BAD REQUEST if missing or invalid query attribute(s)</li>
+<li>404 NOT FOUND if no templates were found for the given key attributes</li>
+</ul></dd>
 												
 											</dl>
 										
@@ -631,7 +644,7 @@ user.</p>
 														<span class="light fixedFont">{Express.App}</span> <b>app</b>
 														
 													</dt>
-													<dd>the application to route</dd>
+													<dd><p>The application to route HTTP request.</p></dd>
 												
 											</dl>
 										
@@ -654,26 +667,7 @@ user.</p>
 										</div>
 										
 										<div class="description">
-											<p>Add or update a registration for a given user. Parameters:</p>
-
-<ul>
-<li>userId: the user to look for (found in the URL)</li>
-<li>registrationId: the registration to add/update.</li>
-<li>templateVersion: the template version for this registration.</li>
-<li>templateLanguage: the template language for this registration.</li>
-<li>service: the notification service for this registration.</li>
-<li>routes: array of one or more route dicts with keys:
-<ul><li>name: the unique name of the route for this registration.</li>
-<li>token: service-specific way to reach the user for notifications.</li>
-<li>secondsToLive: the number of seconds into the future the token is valid.</li></ul></li>
-</ul>
-
-<p>HTTP Responses:</p>
-
-<ul>
-<li>400 BAD REQUEST: missing or invalid template attribute(s)</li>
-<li>200 OK: one or moret templates were found</li>
-</ul>
+											<p>Add or update a registration for a given user.</p>
 											
 											
 											
@@ -681,22 +675,36 @@ user.</p>
 										</div>
 										
 										
+											
+												<pre class="code"><code>{registrationId: "1234-56-7890", templateVersion: "3", templateLanguage: "en-US",
+ service: "apns",
+ routes:[{name: "main", token: "unique main token", secondsToLive: 86400},
+         {name: "alt", token: "unique alt token", secondsToLive: 86400}]}
+</code></pre>
+											
+										
 										
 										
 											<dl class="detailList params">
 												<dt class="heading">Parameters:</dt>
 												
 													<dt>
-														<b>req</b>
+														<span class="light fixedFont">{Express.Request}</span> <b>req</b>
 														
 													</dt>
-													<dd>Contents of the incoming request.</dd>
+													<dd><p>Describes the incoming HTTP request. Message body must be JSON that follows the
+<a href="../symbols/Registrar.html#RegistrationModel">Registrar#RegistrationModel</a> model.</p></dd>
 												
 													<dt>
-														<b>res</b>
+														<span class="light fixedFont">{Express.Response}</span> <b>res</b>
 														
 													</dt>
-													<dd>Response generator for the request.</dd>
+													<dd><p>HTTP response generator for the request. Outputs JSON if no error.</p>
+
+<ul>
+<li>200 OK: successfully processed request</li>
+<li>400 BAD REQUEST: missing or invalid attribute(s)</li>
+</ul></dd>
 												
 											</dl>
 										

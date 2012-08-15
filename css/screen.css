@@ -71,7 +71,7 @@ div.index input.classFilter {
 }
 
 div.index ul.classList a {
-	line-height: 1.3em;
+	line-height: 1.0em;
 }
 
 div.index ul.classList a + a {
@@ -108,7 +108,7 @@ div.innerContent {
 
 div.content ul,
 div.content ol {
-	margin-bottom: 3em;
+	margin-bottom: 1em;
 }
 
 div.content ul.methodDetail {
@@ -163,7 +163,7 @@ div.content div.props {
 
 div.content div.hr {
 	margin: 0 10px 0 0;
-	height: 4em;
+	height: 2em;
 }
 
 

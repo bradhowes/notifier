@@ -13,8 +13,7 @@
  * BEGIN BROWSER RESET
  */
 
-/* body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,p,pre,form,fieldset,input,textarea,p,blockquote,th,td { */
-body,div,dl,dt,dd,h1,h2,h3,h4,h5,h6,p,pre,form,fieldset,input,textarea,p,blockquote,th,td {
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,p,pre,form,fieldset,input,textarea,p,blockquote,th,td {
 	margin:0;
 	padding:0
 }
@@ -23,7 +22,7 @@ html {
 	overflow:-moz-scrollbars-vertical;
 	overflow-x:auto
 }
-table 
+table {
 	border:0;
 	border-collapse:collapse;
 	border-spacing:0
@@ -41,11 +40,9 @@ em,cite {
 strong {
 	font-weight:bold
 }
-/*
 ol,ul {
 	list-style:none
 }
-*/
 caption,th {
 	text-align:left
 }
@@ -133,7 +130,7 @@ a:focus {
 }
 
 p {
-	margin: 0 0 1.5em 0;
+	margin: 0 0 1em 0;
 }
 
 /*
@@ -218,8 +215,7 @@ div.index div.fineprint a {
 
 
 /* Start content */
-/* div.content ul { */
-div.content {
+div.content ul {
 	padding-left: 0;
 }
 
@@ -266,7 +262,23 @@ div.content div.props {
 	box-shadow: 0px 0px 5px #bbb;
 }
 
+div.description ul {
+    margin: -10px 0px 0px 40px;
+    list-style-type: disc;
+}
 
+dl dd p {
+    margin-top: 0.5em;
+}
+
+dd ul {
+    margin: 0px 0px 0px 40px;
+    list-style-type: disc;
+}
+
+dd ul li {
+    margin: 0px 0px 0px 0px;
+}
 
 *.sectionTitle {
 	font-family: M1m, sans-serif;
@@ -320,6 +332,7 @@ dl.inheritsList dd {
 }
 
 .fixedFont.heading {
+    background-color: #ffffff;
 	font-size: 1.25em;
 	line-height: 1.1em
 }
