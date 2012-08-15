@@ -12,16 +12,34 @@ var NotificationRequest = require('./notificationRequest');
  *
  * @class
  *
- * A TemplateCache records in-memory templates fetched from an Azure table store.
+ * A TemplateCache records in-memory templates fetched from an Azure table store. It consists of a top-level hash, with
+ * keys made up of Azure table store partition keys that are derived from notification event ID values. Each entry in
+ * this hash is itself a hash, where the keys are made up of various template attributes, and the value is an array
+ * (there can be more than one template associated with a notification event ID).
  */
 function TemplateCache() {
     var log = this.log = config.log('TemplateCache');
     log.BEGIN();
+
     this.cache = {};
+
+    /**
+     * Holds the functions to invoke to generate search keys. For a registration with a templateLanguage value of
+     * "de-AU" (Austrian German), there are three queries that can be made:
+     *
+     * - de-AU - original language value
+     * - de - base language value
+     * - en - default language value
+     *
+     * These functions are invoked in sequence, and if they return a non-null value, then the key they generated will
+     * be used to search for a template.
+     *
+     * @type function array
+     */
     this.findKeyGenerators = [
-        this.makeKey.bind(this),
-        this.makeBaseLanguageKey.bind(this),
-        this.makeDefaultLanguageKey.bind(this)
+        this.makeKey,
+        this.makeBaseLanguageKey,
+        this.makeDefaultLanguageKey
     ];
     log.END();
 }
@@ -33,6 +51,9 @@ function TemplateCache() {
  *
  * Represents entries in the cache. Each one has a parsed template function to be used to generate notification
  * payloads.
+ *
+ * @param {Object} entity the Azure table store entity to remember. Records the entity.NotificationId and the
+ * entity.Content values. The latter is then parsed into a function that can be used to generate notification payloads.
  */
 TemplateCache.Entry = function(entity) {
     var log = config.log('TemplateCache.Entry');
@@ -67,14 +88,31 @@ TemplateCache.Entry = function(entity) {
 TemplateCache.prototype = {
 
     /**
-     * Make a template key
+     * Make a template key.
+     *
+     * @param {String} routeName the name of the route associated with the template.
+     * @param {String} templateVersion the version of the template
+     * @param {String} templateLanguage the language of the template
+     * @param {String} service the name of the OS-specific service used for notification delivery
+     * @return {String} key made up of the given values.
+     *
+     * @private
      */
     makeKey: function(routeName, templateVersion, templateLanguage, service) {
         return routeName + '_' + templateVersion + '_' + templateLanguage + '_' + service + '_';
     },
 
     /**
-     * Make a base-language template key
+     * Make a base-language template key, if one exists. Strips off any '-*' suffix from the templateLanguage value and
+     * returns the value from {makeKey} with that value.
+     *
+     * @param {String} routeName the name of the route associated with the template.
+     * @param {String} templateVersion the version of the template
+     * @param {String} templateLanguage the language of the template
+     * @param {String} service the name of the OS-specific service used for notification delivery
+     * @return {String} key made up of the given values, or null if there was no extension present
+     *
+     * @private
      */
     makeBaseLanguageKey: function(routeName, templateVersion, templateLanguage, service) {
         var pos = templateLanguage.indexOf('-');
@@ -85,7 +123,15 @@ TemplateCache.prototype = {
     },
 
     /**
-     * Make a default-language template key
+     * Make a default language template key if it would differ from the current templateLanguage base.
+     *
+     * @param {String} routeName the name of the route associated with the template.
+     * @param {String} templateVersion the version of the template
+     * @param {String} templateLanguage the language of the template
+     * @param {String} service the name of the OS-specific service used for notification delivery
+     * @return {String} key made up of the given values, or null if not relevant
+     *
+     * @private
      */
     makeDefaultLanguageKey: function(routeName, templateVersion, templateLanguage, service) {
         if (templateLanguage.substr(0, 2) !== 'en'){
@@ -95,14 +141,19 @@ TemplateCache.prototype = {
     },
 
     /**
-     * Fetch the templates from the cache that match the given eventId and user registration settings.
+     * Fetch templates generators from the cache that match the given partitionKey and user registration settings.
+     * Generates a key template key for each registration route in each registration, and looks for it within the
+     * cache. If found, it creates a new NotificationRequest object based on the cache entry.
+     *
+     * @param {String} partitionKey the key associated with the notification event to use for fetching
+     * @param {Array} registrations  the set of user registrations to use for matching
+     * @return array of {@link NotificationRequest} instances appropriate for the registrations
      */
-    get: function(eventId, registrations) {
+    get: function(partitionKey, registrations) {
         var log = this.log.child('get');
-        log.BEGIN(eventId, registrations);
+        log.BEGIN(partitionKey, registrations);
 
-        var key = eventId.toString();
-        var templates = this.cache[key];
+        var templates = this.cache[partitionKey];
         if (typeof templates === 'undefined') {
             log.END('no cached entry');
             return templates;
@@ -119,7 +170,8 @@ TemplateCache.prototype = {
                 var route = routes[routeIndex];
                 var routeName = route.name;
                 for (var keyIndex in this.findKeyGenerators) {
-                    key = this.findKeyGenerators[keyIndex](routeName, templateVersion, templateLanguage, service);
+                    key = this.findKeyGenerators[keyIndex].call(this, routeName, templateVersion, templateLanguage,
+                                                                service);
                     if (key === null) {
                         continue;
                     }
@@ -143,28 +195,35 @@ TemplateCache.prototype = {
     },
 
     /**
-     * Add a template entity to the cache.
+     * Replace any existing cache entries with the ones given.
+     *
+     * @param {String} partitionKey the key associated with the notification event to use for fetching
+     * @param {Array} entities  the set of template entities to store in the cache
      */
-    set: function(eventId, templates) {
+    set: function(partitionKey, entities) {
+        var self = this;
         var log = this.log.child('set');
-        log.BEGIN(eventId, templates);
+        log.BEGIN(partitionKey, entities);
 
-        var key = eventId.toString();
-        var templateMap = {};
-        this.cache[key] = templateMap;
+        // Clear the cache for this event ID
+        this.cache[partitionKey] = {};
 
-        for (var index in templates) {
-            this.add(eventId, templates[index]);
-        }
+        // Add all of the entities to the cache.
+        entities.forEach(function (item) {self.add(item);});
 
         log.END(this.cache);
     },
 
-    add: function(eventId, entity)  {
+    /**
+     * Add or replace one template entity in the cache.
+     *
+     * @param {Object} entity the Azure table store entity to remember
+     */
+    add: function(entity)  {
         var log = this.log.child('add');
-        log.BEGIN(eventId, entity);
+        log.BEGIN(entity);
 
-        var key = eventId.toString();
+        var key = entity.PartitionKey;
         var templateMap = this.cache[key];
         if (typeof templateMap === 'undefined') {
             log.END('no cached entry');
@@ -201,42 +260,42 @@ TemplateCache.prototype = {
         log.END(found);
     },
 
-    del: function(eventId, template) {
+    /**
+     * Remove a template entity from the cache.
+     *
+     * @param {Object} entity the Azure table store entity to forget
+     */
+    del: function(entity) {
         var log = this.log.child('del');
-        log.BEGIN(eventId, template);
+        log.BEGIN(entity);
 
-        var key = eventId.toString();
-        var templates = this.cache[key];
-        if (typeof templates === 'undefined') {
+        // Get the template hash in the top-level hash.
+        var key = entity.PartitionKey;
+        var entities = this.cache[key];
+        if (typeof entities === 'undefined') {
             log.END('no cached entry');
             return;
         }
 
-        key = this.makeKey(template.Route, template.TemplateVersion, template.TemplateLanguage, template.Service);
+        key = this.makeKey(entity.Route, entity.TemplateVersion, entity.TemplateLanguage, entity.Service);
         log.debug('key:', key);
 
-        var found = templates[key];
+        // Get the bucket from the template hash
+        var found = entities[key];
         if (typeof found  === 'undefined') {
             log.END('not found');
             return;
         }
 
+        // Now look for the matching notificationId within the bucket and remove if found
         for (var foundIndex in found) {
-            if (found[foundIndex].notificationId === template.NotificationId) {
+            if (found[foundIndex].notificationId === entity.NotificationId) {
                 log.debug('deleting index:', foundIndex);
                 found.splice(foundIndex, 1);
                 break;
             }
         }
 
-        log.END();
-    },
-
-    clear: function(eventId) {
-        var log = this.log.child('clear');
-        log.BEGIN(eventId);
-        var key = eventId.toString();
-        delete this.cache[key];
         log.END();
     }
 };

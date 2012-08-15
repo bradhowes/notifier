@@ -59,10 +59,10 @@ TemplateStore.prototype = {
         var log = self.log.child('find');
         log.BEGIN(eventId, registrations);
 
-        var found = this.cache.get(eventId, registrations);
+        var partitionKey = self.makePartitionKey(eventId);
+        var found = this.cache.get(partitionKey, registrations);
         if (typeof found === 'undefined') {
-            var key = eventId.toString();
-            var pending = this.pendingGet[key];
+            var pending = this.pendingGet[partitionKey];
             if (typeof pending !== 'undefined') {
                 pending.push([registrations, callback]);
                 return;
@@ -70,18 +70,18 @@ TemplateStore.prototype = {
 
             pending = [];
             pending.push([registrations, callback]);
-            this.pendingGet[key] = pending;
+            this.pendingGet[partitionKey] = pending;
 
             self.get(eventId, function (err, found) {
                 if (err) {
                     log.error('failed to fetch templates:', err);
                 }
                 else {
-                    self.cache.set(eventId, found);
+                    self.cache.set(partitionKey, found);
                 }
 
-                pending = self.pendingGet[key];
-                delete self.pendingGet[key];
+                pending = self.pendingGet[partitionKey];
+                delete self.pendingGet[partitionKey];
 
                 // Visit all of the outstanding requests for these templates and invoke their callback.
                 for (var index in pending) {
@@ -174,14 +174,14 @@ TemplateStore.prototype = {
                 self.store.insertEntity(self.tableName, entity, function (err, tmp) {
                     log.debug('insertEntity err: ', err, ' tmp: ', tmp);
                     if (err === null) {
-                        self.cache.add(params.eventId, entity);
+                        self.cache.add(entity);
                     }
                     callback(err, tmp);
                     log.END();
                 });
             }
             else {
-                self.cache.add(params.eventId, entity);
+                self.cache.add(entity);
                 callback(err, tmp);
                 log.END();
             }
@@ -190,6 +190,9 @@ TemplateStore.prototype = {
 
     /**
      * Remove a template from the table store.
+     *
+     * @param {Object} params specification of the template to remove
+     * @param {function(err,entity)} callback function to invoke upon completion of the deletion
      */
     del: function(params, callback) {
         var self = this;
@@ -215,7 +218,7 @@ TemplateStore.prototype = {
 
         log.debug(entity);
 
-        self.cache.del(params.eventId, entity);
+        self.cache.del(entity);
 
         self.store.deleteEntity(self.tableName, entity, function(err, tmp) {
             if (err) {
@@ -226,49 +229,30 @@ TemplateStore.prototype = {
     },
 
     /**
-     * Make a template key
-     */
-    makeKey: function(routeName, templateVersion, templateLanguage, service) {
-        return routeName + '_' + templateVersion + '_' + templateLanguage + '_' + service + '_';
-    },
-
-    /**
-     * Make a base-language template key
-     */
-    makeBaseLanguageKey: function(routeName, templateVersion, templateLanguage, service) {
-        var pos = templateLanguage.indexOf('-');
-        if (pos > 0) {
-            return this.makeKey(routeName, templateVersion, templateLanguage.substr(0, pos), service);
-        }
-        return null;
-    },
-
-    /**
-     * Make a base-language template key
-     */
-    makeDefaultLanguageKey: function(routeName, templateVersion, templateLanguage, service) {
-        if (templateLanguage.substr(0, 2) !== 'en'){
-            return this.makeKey(routeName, templateVersion, 'en', service);
-        }
-        return null;
-    },
-
-    /**
-     * Make a table store partition key.
+     * Make a table store partition key. For templates, the partition key is the notification event ID. However, we
+     * encode in base64 just to be safe against values harmful to Azure table store.
+     *
+     * @param {String|Number} value the value to use for the key
+     * @return {String} value safe to use in Azure table store for the partition key.
      */
     makePartitionKey: function(value) {
         return (new Buffer(value.toString())).toString('base64');
     },
 
-    makeEntityKey: function(notificationId, routeName, templateVersion, templateLanguage, service) {
-        return this.makeKey(routeName, templateVersion, templateLanguage, service) + notificationId.toString();
-    },
-
     /**
-     * Make a table store row key
+     * Make a table store row key. This will point to a specific template payload definition. As such, it must be
+     * uniquely specified in 5 dimensions: notification ID, route name, template version, template language, and
+     * notification delivery service.
+     *
+     * @param {String|Integer} notificationId the notification ID associated with the template
+     * @param {String} routeName the route name associated with the template
+     * @param {String} templateVersion the version of the template being keyed
+     * @param {String} templateLanguage the language of the template being keyed
+     * @param {String} service the notification delivery service to use
+     * @return {String} concatenated value of the above encoded in base64 for Azure table store safety
      */
     makeRowKey: function(notificationId, routeName, templateVersion, templateLanguage, service) {
-        return (new Buffer(this.makeEntityKey(notificationId, routeName, templateVersion, templateLanguage, service)))
-                              .toString('base64');
+        return (new Buffer(routeName + '_' + templateVersion + '_' + templateLanguage + '_' + service + '_' +
+                           notificationId)).toString('base64');
     }
 };

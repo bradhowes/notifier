@@ -14,9 +14,13 @@ var HTTPStatus = require('http-status');
  *
  * @class
  *
- * A registrar allows for querying, updating, and deleting of registrations for a given user ID.
+ * A registrar allows for querying, updating, and deleting of registrations for a given user ID. A registration defines
+ * how to reach a user's device via notifications and in what form the notification payloads should be in (language,
+ * version, etc). A registration also contains one or more routes, which are named pathways for notification delivery.
+ * If a notification is to be sent to devices along a certain route, only registrations containing a route with the
+ * matching name will be notified.
  *
- * @param {RegistrationStore} registrationStore the RegistrationStore instance to rely on for persistent data
+ * @param {RegistrationStore} registrationStore the {@link RegistrationStore} instance to rely on for persistent data
  * operations.
  */
 function Registrar(registrationStore) {
@@ -38,7 +42,9 @@ function Registrar(registrationStore) {
         });
 
     /**
-     * JSON schema for route definitions. Attributes:
+     * JSON schema for route definitions. A route is a means by which one can reach a device via notifications. Each
+     * device has a unique token value that is valid for secondsToLive seconds into the future. Whether or not the
+     * route is used for a notification depends on if the route name associates with a notification template.
      *
      * - name: the name of the route. Only receives notifications from templates with a matching name value.
      * - token: the OS-specific value associated with the device to notify
@@ -54,7 +60,10 @@ function Registrar(registrationStore) {
         });
 
     /**
-     * JSON schema for registration definitions. Attributes:
+     * JSON schema for registration definitions. A registration consists of one or more routes
+     * (see {@link Registrar#RouteModel}) that define the specific ways a device may be reached via notifications.
+     * A registration details the version of the notification templates to be used when generating notification
+     * payloads, the language of the notifications to generate, and the delivery service to use for the notification.
      *
      * - registrationId: the unique identifier associated with the device being registered. This must be unique across
      *   all devices, but it should be constant for the same device.
@@ -104,17 +113,12 @@ function Registrar(registrationStore) {
     this.log.END();
 }
 
-/**
- * Registrar prototype.
- *
- * Defines the methods available to a Registrar instance.
- */
 Registrar.prototype = {
 
     /**
      * Add Express routes for the Registrar API.
      *
-     * @param {Express.App} app the application to route
+     * @param {Express.App} app The application to route HTTP request.
      */
     route: function(app) {
         var log = this.log.child('route');
@@ -126,19 +130,24 @@ Registrar.prototype = {
     },
 
     /**
-     * Obtain the current registrations for a given user. Parameters:
+     * Obtain the current registrations for a given user.
      *
-     * - userId: the user to look for (found in the URL)
+     * @example HTTP GET /john.doe
      *
-     * HTTP Responses:
+     * @example <code>{registrationId: "1234-56-7890", templateVersion: "3", templateLanguage: "en-US",
+     *  service: "apns",
+     *  routes:[{name: "main", token: "unique main token", expiration: 86400},
+     *          {name: "alt", token: "unique alt token", expiration: 86400}]}
+     * </code>
      *
-     * - 400 BAD REQUEST: missing or invalid query attribute(s)
-     * - 404 NOT FOUND: no templates were found for the given key attributes
-     * - 200 OK: one or more registrations were found
+     * @param {Express.Request} req Describes the incoming HTTP request. Message body is ignored; the URL must contain
+     * the user ID to use, and it must adhere to the {@link Registrar#UserIdModel} model.
      *
-     * @param req Contents of the incoming request.
+     * @param {Express.Response} res HTTP response generator for the request. Outputs JSON if no error.
      *
-     * @param res Response generator for the request. Generates JSON output if there are registrations
+     * - 200 OK if one or more registrations were found
+     * - 400 BAD REQUEST if missing or invalid query attribute(s)
+     * - 404 NOT FOUND if no templates were found for the given key attributes
      */
     get: function (req, res) {
         var log = this.log.child('get');
@@ -175,26 +184,21 @@ Registrar.prototype = {
     },
 
     /**
-     * Add or update a registration for a given user. Parameters:
+     * Add or update a registration for a given user.
      *
-     * - userId: the user to look for (found in the URL)
-     * - registrationId: the registration to add/update.
-     * - templateVersion: the template version for this registration.
-     * - templateLanguage: the template language for this registration.
-     * - service: the notification service for this registration.
-     * - routes: array of one or more route dicts with keys:
-     *   - name: the unique name of the route for this registration.
-     *   - token: service-specific way to reach the user for notifications.
-     *   - secondsToLive: the number of seconds into the future the token is valid.
+     * @example <code>{registrationId: "1234-56-7890", templateVersion: "3", templateLanguage: "en-US",
+     *  service: "apns",
+     *  routes:[{name: "main", token: "unique main token", secondsToLive: 86400},
+     *          {name: "alt", token: "unique alt token", secondsToLive: 86400}]}
+     * </code>
      *
-     * HTTP Responses:
+     * @param {Express.Request} req Describes the incoming HTTP request. Message body must be JSON that follows the
+     * {@link Registrar#RegistrationModel} model.
      *
-     * - 400 BAD REQUEST: missing or invalid template attribute(s)
-     * - 200 OK: one or moret templates were found
+     * @param {Express.Response} res HTTP response generator for the request. Outputs JSON if no error.
      *
-     * @param req Contents of the incoming request.
-     *
-     * @param res Response generator for the request.
+     * - 200 OK: successfully processed request
+     * - 400 BAD REQUEST: missing or invalid attribute(s)
      */
     set: function (req, res) {
         var self = this;
@@ -231,23 +235,22 @@ Registrar.prototype = {
     },
 
     /**
-     * Delete a registration or all registrations for a given user. If a JSON
-     * payload exits with a registrationId attribute, only delete the one entity
-     * matching the registrationId value. Otherwise, delete all registrations for the
-     * user.
+     * Delete a registration or all registrations for a given user. If a JSON payload exits with a registrationId
+     * attribute, only delete the one entity matching the registrationId value. Otherwise, delete all registrations for
+     * the user.
      *
-     * - userId: the user to look for (found in the URL)
-     * - registrationId (optional): the registration to delete
+     * @example <code>{}</code>
      *
-     * HTTP Responses:
+     * @example <code>{registrationId: "1234-56-7890"}</code>
      *
-     * - 400 BAD REQUEST: missing or invalid template attribute(s)
+     * @param {Express.Request} req Describes the incoming HTTP request. Message body must be JSON that follows the
+     * {@link Registrar#DeleteKeyModel} model.
+     *
+     * @param {Express.Response} res HTTP response generator for the request. Outputs JSON if no error.
+     *
+     * - 204 NO CONTENT: found and deleted the registration(s)
+     * - 400 BAD REQUEST: missing or invalid attribute(s)
      * - 404 NOT FOUND: unable to locate any registration to delete
-     * - 204 NO CONTENT: found and delete the registration(s)
-     *
-     * @param req Contents of the incoming request.
-     *
-     * @param res Response generator for the request.
      */
     del: function (req, res) {
         var log = this.log.child('del');
