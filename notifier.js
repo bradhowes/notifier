@@ -15,7 +15,9 @@ var PostTracker = require('./postTracker');
  *
  * @class
  *
- * A Notifier pairs notification templates to user registrations and emits those that match.
+ * A Notifier pairs notification templates to user registrations and emits those that match. One notification event can
+ * spawn multiple actual notification deliveries depending on what registrations are present for the user and what
+ * templates map to a notification event ID.
  *
  * @param {TemplateStore} templateStore the repository of notification templates to rely on
  * @param {RegistrationStore} registrationStore the repository of user registrations to rely on
@@ -23,12 +25,60 @@ var PostTracker = require('./postTracker');
  */
 function Notifier(templateStore, registrationStore, senders) {
     this.log = require('./config').log('Notifier');
+
+    /**
+     * The backing store for templates. Notifier asks it for templates associated with a given event ID.
+     *
+     * @type TemplateStore
+     */
     this.templateStore = templateStore;
+
+    /**
+     * The backing store for registrations. Notifier asks it for registrations associated with a given user ID. Also,
+     * if a notification sender object encounters a registration that is no longer active, it will be used to remove
+     * the registration.
+     *
+     * @type RegistrationStore
+     */
     this.registrationStore = registrationStore;
+
+    /**
+     * Mapping of service tags ("wns", "apns", "gcm") to objects that can deliver a notification to a device.
+     *
+     * @type Hash
+     */
     this.senders = senders;
+
+    /**
+     * Sequence ID for tracking. This value is added to all substitution maps under the name "SEQUENCE_ID"
+     *
+     * @type Integer
+     */
     this.sequenceId = 1;
+
+    /**
+     * PostTracker instance that remembers notification requests by sequenceId value. Used by the logReceipt method to
+     * calculate notification round-trip times.
+     */
     this.postTracker = new PostTracker(100);
 
+    /**
+     * JSON schema for filter values. A filter allows one to limit which registrations will be used for notification
+     * delivery. The attribute names closely match those in {@link Registrar#RegistrationModel}, though route
+     * attributes appear with a 'route' prefix. Each attribute has as its value an array which contains one or values
+     * that determine which registration values are acceptable for use in a delivery.
+     *
+     * - registrationId: array of acceptable registrationId values
+     * - templateVersion: array of acceptable template version values
+     * - templateLanguage: array of acceptable template language values
+     * - service: array of acceptable notification deliver service values
+     * - routeName: array of acceptable route name values
+     * - routeToken: array of acceptable route token values
+     *
+     * All attributes are optional.
+     *
+     * @type Model
+     */
     this.FilterModel = Model.extend(
         {
             registrationId: {type: 'array'},
@@ -41,7 +91,17 @@ function Notifier(templateStore, registrationStore, senders) {
     );
 
     /**
-     * JSON schema for a notification posting.
+     * JSON schema for a notification posting request. A notification goes to a specific user. The request may contain
+     * a mapping of template placeholder names to runtime values. This mapping is used during notification payload
+     * generation, where a template placeholder gets substituted with a value from the substitutions mapping. Finally,
+     * there may be a filter definition (see {@link Notifier#FilterModel}) that will restrict notification delivery to
+     * a subset of the registrations for the user.
+     *
+     * - userId: the user to notify
+     * - eventId: the event ID to notify about
+     * - substitutions: the optional mapping used to perform template placeholder substitution
+     * - filter: an optional filter definition to restrict registration use
+     *
      * @type Model
      */
     this.PostModel = Model.extend(
@@ -72,6 +132,12 @@ function Notifier(templateStore, registrationStore, senders) {
         }
     );
 
+    /**
+     * JSON schema for a logReceipt call.
+     *
+     * - sequenceId: the sequence ID associated with the notification request
+     * - when: the timestamp when the notification arrived at a client
+     */
     this.LogReceiptModel = Model.extend(
         {
             sequenceId: {required:true, type:'integer'},
@@ -80,17 +146,12 @@ function Notifier(templateStore, registrationStore, senders) {
     );
 }
 
-/**
- * Notifier prototype.
- *
- * Defines the methods available to an Notifier instance.
- */
 Notifier.prototype = {
 
     /**
      * Add Express routes for the Notifier API.
      *
-     * @param {Express.App} app the application to route
+     * @param {Express.App} app the application to route HTTP requests.
      */
     route: function (app) {
         var log = this.log.child('route');
@@ -103,9 +164,14 @@ Notifier.prototype = {
     /**
      * Post a notification to a user.
      *
-     * @param {Request} req incoming HTTP request settings and values
+     * @param {Express.Request} req Describes the incoming HTTP request. Message body must be JSON that follows the
+     * {@link Notifier#PostModel} model.
      *
-     * @param {Response} res outgoing HTTP response values
+     * @param {Express.Response} res HTTP response generator for the request. Outputs JSON if no error.
+     *
+     * - 204 NO CONTENT: accepted request and queued notification delivery
+     * - 400 BAD REQUEST: missing or invalid attribute(s)
+     * - 500 INTERNAL SERVER ERROR: unable to obtain registrations and/or templates to work with
      */
     postNotification: function (req, res) {
         var self = this, duration;
@@ -181,7 +247,7 @@ Notifier.prototype = {
                 for (var index in matches) {
                     var request = matches[index];
                     request.prepare(substitutions, params.userId, self.registrationStore, 30);
-                    self.deliver(request);
+                    self.senders[request.service].sendNotification(request);
                 }
 
                 duration = Date.now() - start;
@@ -191,11 +257,15 @@ Notifier.prototype = {
     },
 
     /**
-     * Log the receipt of a notification from an external device.
+     * Log the receipt of a notification from an external client device.
      *
-     * @param {Request} req incoming HTTP request settings and values. Input must conform to the LogReceiptModel.
+     * @param {Express.Request} req Describes the incoming HTTP request. Message body must be JSON that follows the
+     * {@link Notifier#LogReceiptModel} model.
      *
-     * @param {Response} res outgoing HTTP response values
+     * @param {Express.Response} res HTTP response generator for the request.
+     *
+     * - 204 NO CONTENT: accepted request
+     * - 400 BAD REQUEST: missing or invalid attribute(s)
      */
     logReceipt: function (req, res) {
         var log = this.log.child('logReceipt');
@@ -219,16 +289,5 @@ Notifier.prototype = {
         res.send(HTTPStatus.NO_CONTENT); // OK but no content
 
         log.END();
-    },
-
-    /**
-     * Deliver a generated notification to a specific service.
-     *
-     * @param {String} service the notification service tag
-     *
-     * @param {NotificationRequest} request description of the request to send
-     */
-    deliver: function (request) {
-        this.senders[request.service].sendNotification(request);
     }
 };

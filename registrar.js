@@ -118,7 +118,7 @@ Registrar.prototype = {
     /**
      * Add Express routes for the Registrar API.
      *
-     * @param {Express.App} app The application to route HTTP request.
+     * @param {Express.App} app The application to route HTTP requests.
      */
     route: function(app) {
         var log = this.log.child('route');
