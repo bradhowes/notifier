@@ -96,12 +96,6 @@ function Config () {
     this.wns_client_secret = priv.wns_client_secret;
 
     /**
-     * The package name associated with the Windows application
-     * @type {String}
-     */
-    this.wns_package_name = priv.wns_package_name;
-
-    /**
      * The package SID associated with the Windows application
      * @type {String}
      */

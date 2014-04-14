@@ -62,6 +62,7 @@ function initiateRequest(req, lifetime, callback) {
     // Invoke request() method wrapping it in a Q promise.
     return Q.ncall(request, null, req)
             .then(function (args) {
+                log.error(args);
                 var resp = args[0];
                 var body = args[1];
                 // Success - but is it something we want?

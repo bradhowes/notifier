@@ -157,7 +157,6 @@ Notifier.prototype = {
         var log = this.log.child('route');
         log.BEGIN('adding bindings');
         app.post('/post/:userId', express.json(), this.postNotification.bind(this));
-        app.post('/logReceipt', express.json(), this.logReceipt.bind(this));
         log.END();
     },
 
@@ -219,7 +218,7 @@ Notifier.prototype = {
 
             if (registrations.length === 0) {
                 log.info('no registrations exist for user', params.userId);
-                res.send(HTTPStatus.NO_CONTENT);
+                res.json(HTTPStatus.ACCEPTED, result);
                 duration = Date.now() - start;
                 log.END(duration, 'msecs');
                 return;
@@ -240,54 +239,21 @@ Notifier.prototype = {
                     log.info('TemplateStore.find returned no matches');
                 }
 
-                result.count = matches.length;
-                res.json(HTTPStatus.ACCEPTED, result);
-
                 // For each template, generate a notification payload and send it on its way.
                 for (var index in matches) {
-                    var request = matches[index];
-                    request.prepare(substitutions, params.userId, self.registrationStore, 30);
-                    self.senders[request.service].sendNotification(request);
+                    var r = matches[index];
+                    log.info(r);
+                    r.prepare(substitutions, params.userId, self.registrationStore, 30);
+                    log.debug('*** service:', r.service);
+                    self.senders[r.service].sendNotification(r);
                 }
 
                 duration = Date.now() - start;
                 log.END(duration, 'msecs');
+                result.count = matches.length;
+                res.json(HTTPStatus.ACCEPTED, result);
+                return;
             });
         });
-    },
-
-    /**
-     * Log the receipt of a notification from an external client device.
-     *
-     * @param {Express.Request} req Describes the incoming HTTP request. Message body must be JSON that follows the
-     * {@link Notifier#LogReceiptModel} model.
-     *
-     * @param {Express.Response} res HTTP response generator for the request.
-     *
-     * - 204 NO CONTENT: accepted request
-     * - 400 BAD REQUEST: missing or invalid attribute(s)
-     */
-    logReceipt: function (req, res) {
-        var log = this.log.child('logReceipt');
-        log.BEGIN();
-
-        var params = {
-            sequenceId: req.param('sequenceId'),
-            when: req.param('when')
-        };
-
-        log.info('params:', params);
-
-        var errors = this.LogReceiptModel.validate(params);
-        if (errors !== null) {
-            log.error('invalid params:', errors);
-            res.send(HTTPStatus.BAD_REQUEST);
-            return;
-        }
-
-        this.postTracker.track(Number(params.sequenceId), new Date(params.when));
-        res.send(HTTPStatus.NO_CONTENT); // OK but no content
-
-        log.END();
     }
 };

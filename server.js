@@ -55,7 +55,7 @@ App.prototype = {
 
         var continuation = function(key, err) {
             var clog = log.child('continuation');
-            clog.BEGIN(key, err);
+            clog.BEGIN(awaiting, key, err);
 
             --awaiting;
             if (err !== null) {
@@ -68,7 +68,28 @@ App.prototype = {
 
             if (awaiting === 0) {
                 clog.info('creating notifier');
-                var senders = {'wns': new WNS(), 'apns': new APNs(), 'gcm': new GCM()};
+                var senders = {};
+                try {
+                    senders.wns = new WNS();
+                }
+                catch (x) {
+                    clog.error(x);
+                }
+
+                try {
+                    senders.apns = new APNs();
+                }
+                catch (x) {
+                    clog.error(x);
+                }
+
+                try {
+                    senders.gcm = new GCM();
+                }
+                catch (x) {
+                    clog.error(x);
+                }
+
                 var service = new Notifier(templateStore, registrationStore, senders);
                 service.route(app);
                 callback(app, errors);

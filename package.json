@@ -4,25 +4,25 @@
     "author": "Brad Howes <bhowes@microsoft.com>",
     "version": "1.0.0",
     "dependencies": {
-        "async": "0.1.x",
-        "apn": "1.2.x",
-        "azure": "0.5.x",
-        "express": "3.x.x",
-        "http-status": "0.1.x",
-        "log4js": "0.5.x",
-        "model.js": "0.0.1",
-        "pegjs": "0.7.0",
-        "q": "0.8.x",
-        "request": "2.9.x",
-        "xregexp": "2.0.x"
+        "async": "*",
+        "apn": "*",
+        "azure": "*",
+        "express": "*",
+        "http-status": "*",
+        "log4js": "*",
+        "model.js": "*",
+        "pegjs": "*",
+        "q": "*",
+        "request": "*",
+        "xregexp": "*",
+        "wns": "*"
     },
     "devDependencies": {
-        "debug": "0.7.x",
-        "vows": "0.6.x",
-        "pact": "0.1.x"
+        "debug": "*",
+        "pact": "*"
     },
     "engines": {
-        "node": ">= 0.6.12",
-        "npm": ">= 1.0.0"
+        "node": "*",
+        "npm": "*"
     }
 }

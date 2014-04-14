@@ -8,67 +8,31 @@ var http = require('http');
 var https = require('https');
 var log4js = require('log4js');
 var pact = require('pact');
-var Request = require('request');
+var request = require('request');
 var vows = require('vows');
 var App = require('../server');
 
-var host = '127.0.0.1';
+var host = 'localhost';
 var port = 4465;
-var key = fs.readFileSync("certs/client.key");
-var cert = fs.readFileSync('certs/client.cert');
-var agent = new https.Agent({key:key, cert:cert});
+
+var agent;
+if (config.ssl_authentication_enabled) {
+    var key = fs.readFileSync("certs/client.key");
+    var cert = fs.readFileSync('certs/client.cert');
+    var ca = [fs.readFileSync('certs/ca.cert')];
+    agent = new https.Agent({key:key, cert:cert, ca:ca});
+}
+
 var server = null;
-
-log4js.configure(
-    {
-        "appenders": [
-            {
-                "type": "file",
-                "filename": "notifier.log",
-                "layout": { "type": "basic" }
-             }
-        ]}
-);
-
-log4js.setGlobalLogLevel('DEBUG');
-
-function listen() {
-    return function() {
-        var vows = this;
-        server.listen(port, host, function (err) { vows.callback(err); });
-    };
-}
-
-function request(req) {
-    req.uri = 'https://' + host + ':' + port + req.uri;
-    req.headers = {'Content-Type': 'application/json'};
-    req.key = key;
-    req.cert = cert;
-    req.agent = agent;
-    return function() {
-        Request(req, this.callback);
-    };
-}
-
-function statusCheck(code) {
-    return function(err, resp, body) {
-        assert.strictEqual(resp.statusCode, code);
-    };
-}
-
-function makeQuery(obj) {
-    var args = [];
-    for(var p in obj)
-        args.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-    return args.join("&");
-}
 
 var validRegistration_WNS = {
     registrationId: 'myregistration_WNS',
     templateVersion: '3.0',
     templateLanguage: 'en-us',
     service: 'wns',
-    routes: [ { 'name': '*', 'token': 'http://www.iana.org/domains/example', 'secondsToLive': 60 } ]
+    routes: [ { 'name': '*',
+                'token': 'https://db3.notify.windows.com/?token=AgYAAAAeMSsYVg4AoTlZmb3zsib4Mv%2bUw30tgjgBkmIYh%2fc97tzD8LV1qnzjbEBtrcnnH0BkZxyFw2H%2bQzubrWElpu6tFC6GUaKm3fzvB0NWBoSudh08tTBW1O15%2fza80a4Bows%3d',
+                'secondsToLive': 60 } ]
 };
 
 var validRegistration_APNS = {
@@ -128,43 +92,72 @@ suite.addBatch(
             app.initialize(this.callback);
         },
         'successfully': function (app, errors) {
-              var opts = {
-                key: config.ssl_server_key,
-                cert: config.ssl_server_certificate,
-                ca: config.ssl_ca_certificate,
-                requestCert: config.ssl_authentication_enabled,
-                rejectUnauthorized: config.ssl_reject_unauthorized
-            };
-            server = https.createServer(opts, app);
             assert.isNull(errors);
+            if (config.ssl_authentication_enabled) {
+                var opts = {
+                    key: config.ssl_server_key,
+                    passphrase: config.ssl_server_key_passphrase,
+                    cert: config.ssl_server_certificate,
+                    ca: config.ssl_ca_certificate,
+                    requestCert: true,
+                    rejectUnauthorized: config.ssl_reject_unauthorized
+                };
+                server = https.createServer(opts, app);
+            }
+            else {
+                server = http.createServer(app);
+            };
+
             server.listen(port, host);
         }
     }
 });
 
+function makeRequest(options, cb) {
+    options.uri = (agent ? 'https://' : 'http://') + host + ':' + port + options.path;
+    options.headers = {'Content-Type': 'application/json'};
+    options.agent = agent;
+    return function() {
+        request(options, this.callback);
+    };
+}
+
+function statusCheck(code) {
+    return function(err, res, body) {
+        assert.strictEqual(res.statusCode, code);
+    };
+}
+
+function makeQuery(obj) {
+    var args = [];
+    for(var p in obj)
+        args.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+    return args.join("&");
+}
+
 // Make sure server has no entries
 suite.addBatch(
     {
         'for a registration query': {
-            topic: request(
+            topic: makeRequest(
                 {
-                    uri:'/registrations/br.howes2'
+                    path: '/registrations/br.howes2'
                 }
             ),
             'it should fail with NOT FOUND': statusCheck(HTTPStatus.NOT_FOUND)
         },
         'for a WNS template query': {
-            topic: request(
+            topic: makeRequest(
                 {
-                    uri:'/templates?' + makeQuery(validTemplate_WNS)
+                    path:'/templates?' + makeQuery(validTemplate_WNS)
                 }
             ),
             'it should fail with NOT FOUND': statusCheck(HTTPStatus.NOT_FOUND)
         },
         'for an APNs template query': {
-            topic: request(
+            topic: makeRequest(
                 {
-                    uri:'/templates?' + makeQuery(validTemplate_APNS)
+                    path:'/templates?' + makeQuery(validTemplate_APNS)
                 }
             ),
             'it should fail with NOT FOUND': statusCheck(HTTPStatus.NOT_FOUND)
@@ -176,9 +169,9 @@ suite.addBatch(
 suite.addBatch(
     {
         'new valid WNS registration': {
-            topic: request(
+            topic: makeRequest(
                 {
-                    uri:'/registrations/br.howes2',
+                    path:'/registrations/br.howes2',
                     method: 'POST',
                     json: validRegistration_WNS
                 }
@@ -186,9 +179,9 @@ suite.addBatch(
             'it should succeed with OK': statusCheck(HTTPStatus.OK)
         },
         'new valid APNs registration': {
-            topic: request(
+            topic: makeRequest(
                 {
-                    uri:'/registrations/br.howes2',
+                    path:'/registrations/br.howes2',
                     method: 'POST',
                     json: validRegistration_APNS
                 }
@@ -196,9 +189,9 @@ suite.addBatch(
             'it should succeed with OK': statusCheck(HTTPStatus.OK)
         },
         'invalid registration with missing registrationId': {
-            topic: request(
+            topic: makeRequest(
                 {
-                    uri:'/registrations/br.howes2',
+                    path:'/registrations/br.howes2',
                     method: 'POST',
                     json: {
                         templateVersion: '3.0',
@@ -210,9 +203,9 @@ suite.addBatch(
             'it should fail with BAD REQUEST': statusCheck(HTTPStatus.BAD_REQUEST)
         },
         'invalid registration with missing templateVersion': {
-            topic: request(
+            topic: makeRequest(
                 {
-                    uri:'/registrations/br.howes2',
+                    path:'/registrations/br.howes2',
                     method: 'POST',
                     json: {
                         registrationId: '123',
@@ -224,9 +217,9 @@ suite.addBatch(
             'it should fail with BAD REQUEST': statusCheck(HTTPStatus.BAD_REQUEST)
         },
         'invalid registration with missing templateLanguage': {
-            topic: request(
+            topic: makeRequest(
                 {
-                    uri:'/registrations/br.howes2',
+                    path:'/registrations/br.howes2',
                     method: 'POST',
                     json: {
                         registrationId: '123',
@@ -238,9 +231,9 @@ suite.addBatch(
             'it should fail with BAD REQUEST': statusCheck(HTTPStatus.BAD_REQUEST)
         },
         'invalid registration with missing service': {
-            topic: request(
+            topic: makeRequest(
                 {
-                    uri:'/registrations/br.howes2',
+                    path:'/registrations/br.howes2',
                     method: 'POST',
                     json: {
                         registrationId: '123',
@@ -252,9 +245,9 @@ suite.addBatch(
             'it should fail with BAD REQUEST': statusCheck(HTTPStatus.BAD_REQUEST)
         },
         'invalid registration with missing route': {
-            topic: request(
+            topic: makeRequest(
                 {
-                    uri:'/registrations/br.howes2',
+                    path:'/registrations/br.howes2',
                     method: 'POST',
                     json: {
                         registrationId: '123',
@@ -266,9 +259,9 @@ suite.addBatch(
             'it should fail with BAD REQUEST': statusCheck(HTTPStatus.BAD_REQUEST)
         },
         'invalid registration with empty route': {
-            topic: request(
+            topic: makeRequest(
                 {
-                    uri:'/registrations/br.howes2',
+                    path:'/registrations/br.howes2',
                     method: 'POST',
                     json: {
                         registrationId: '123',
@@ -281,9 +274,9 @@ suite.addBatch(
             'it should fail with BAD REQUEST': statusCheck(HTTPStatus.BAD_REQUEST)
         },
         'invalid registration with invalid route': {
-            topic: request(
+            topic: makeRequest(
                 {
-                    uri:'/registrations/br.howes2',
+                    path:'/registrations/br.howes2',
                     method: 'POST',
                     json: {
                         registrationId: '123',
@@ -296,9 +289,9 @@ suite.addBatch(
             'it should fail with BAD REQUEST': statusCheck(HTTPStatus.BAD_REQUEST)
         },
         'new valid WNS template': {
-            topic: request(
+            topic: makeRequest(
                 {
-                    uri:'/templates',
+                    path:'/templates',
                     method: 'POST',
                     json: validTemplate_WNS
                 }
@@ -306,9 +299,9 @@ suite.addBatch(
             'it should succeed with OK': statusCheck(HTTPStatus.OK)
         },
         'new valid APNs template': {
-            topic: request(
+            topic: makeRequest(
                 {
-                    uri:'/templates',
+                    path:'/templates',
                     method: 'POST',
                     json: validTemplate_APNS
                 }
@@ -322,25 +315,25 @@ suite.addBatch(
 suite.addBatch(
     {
         'for a registration query': {
-            topic: request(
+            topic: makeRequest(
                 {
-                    uri:'/registrations/br.howes2'
+                    path:'/registrations/br.howes2'
                 }
             ),
             'it should succeed with OK': statusCheck(HTTPStatus.OK)
         },
         'for a WNS template query': {
-            topic: request(
+            topic: makeRequest(
                 {
-                    uri:'/templates?' + makeQuery(validTemplate_WNS)
+                    path:'/templates?' + makeQuery(validTemplate_WNS)
                 }
             ),
             'it should succeed with OK': statusCheck(HTTPStatus.OK)
         },
         'for an APNs template query': {
-            topic: request(
+            topic: makeRequest(
                 {
-                    uri:'/templates?' + makeQuery(validTemplate_APNS)
+                    path:'/templates?' + makeQuery(validTemplate_APNS)
                 }
             ),
             'it should succeed with OK': statusCheck(HTTPStatus.OK)
@@ -352,69 +345,69 @@ suite.addBatch(
 suite.addBatch(
     {
         'a valid post request': {
-            topic: request(
+            topic: makeRequest(
                 {
-                    uri:'/post/br.howes2',
+                    path:'/post/br.howes2',
                     method: 'POST',
                     json: validPost()
                 }
             ),
             'it should succeed with ACCEPTED': statusCheck(HTTPStatus.ACCEPTED),
-            'it should return 2 matches': function (err, res) {
+            'it should return 2 matches': function(err, res, body) {
                 assert.isNull(err);
                 assert.isObject(res);
                 assert.equal(res.body.count, 2);
             }
         },
         'a valid filtered post request': {
-            topic: request(
+            topic: makeRequest(
                 {
-                    uri:'/post/br.howes2',
+                    path:'/post/br.howes2',
                     method: 'POST',
-                    json: validPost({"filter":{"service":["apns"]}})
+                    json: validPost({"filter":{"service":["wns"]}})
                 }
             ),
             'it should succeed with ACCEPTED': statusCheck(HTTPStatus.ACCEPTED),
-            'it should return 1 match': function (err, res) {
+            'it should return 1 match': function (err, res, body) {
                 assert.isNull(err);
                 assert.isObject(res);
                 assert.equal(res.body.count, 1);
             }
         },
         'a valid post request with empty substitutions': {
-            topic: request(
+            topic: makeRequest(
                 {
-                    uri:'/post/br.howes2',
+                    path:'/post/br.howes2',
                     method: 'POST',
                     json: validPost({"substitutions":{}})
                 }
             ),
             'it should succeed with ACCEPTED': statusCheck(HTTPStatus.ACCEPTED),
-            'it should return 2 match': function (err, res) {
+            'it should return 2 match': function (err, res, body) {
                 assert.isNull(err);
                 assert.isObject(res);
                 assert.equal(res.body.count, 2);
             }
         },
         'a valid post request with an empty filter': {
-            topic: request(
+            topic: makeRequest(
                 {
-                    uri:'/post/br.howes2',
+                    path:'/post/br.howes2',
                     method: 'POST',
                     json: validPost({"filter":{}})
                 }
             ),
             'it should succeed with ACCEPTED': statusCheck(HTTPStatus.ACCEPTED),
-            'it should return 2 match': function (err, res) {
+            'it should return 2 match': function (err, res, body) {
                 assert.isNull(err);
                 assert.isObject(res);
                 assert.equal(res.body.count, 2);
             }
         },
         'an invalid post request with missing eventId': {
-            topic: request(
+            topic: makeRequest(
                 {
-                    uri:'/post/br.howes2',
+                    path:'/post/br.howes2',
                     method: 'POST',
                     json: invalidPost()
                 }
@@ -428,9 +421,9 @@ suite.addBatch(
 suite.addBatch(
     {
         'deleting previous WNS registration': {
-            topic: request(
+            topic: makeRequest(
                 {
-                    uri:'/registrations/br.howes2',
+                    path:'/registrations/br.howes2',
                     method: 'DELETE',
                     json: {registrationId: "myregistration_WNS"}
                 }
@@ -438,9 +431,9 @@ suite.addBatch(
             'it should succeed with NO CONTENT': statusCheck(HTTPStatus.NO_CONTENT)
         },
         'deleting previous APNS registration': {
-            topic: request(
+            topic: makeRequest(
                 {
-                    uri:'/registrations/br.howes2',
+                    path:'/registrations/br.howes2',
                     method: 'DELETE',
                     json: {registrationId: "myregistration_APNS"}
                 }
@@ -448,9 +441,9 @@ suite.addBatch(
             'it should succeed with NO CONTENT': statusCheck(HTTPStatus.NO_CONTENT)
         },
         'deleting previous WNS template': {
-            topic: request(
+            topic: makeRequest(
                 {
-                    uri:'/templates',
+                    path:'/templates',
                     method: 'DELETE',
                     json: validTemplate_WNS
                 }
@@ -458,9 +451,9 @@ suite.addBatch(
             'it should succeed with NO CONTENT': statusCheck(HTTPStatus.NO_CONTENT)
         },
         'deleting previous APNs template': {
-            topic: request(
+            topic: makeRequest(
                 {
-                    uri:'/templates',
+                    path:'/templates',
                     method: 'DELETE',
                     json: validTemplate_APNS
                 }
@@ -474,25 +467,25 @@ suite.addBatch(
 suite.addBatch(
     {
         'for a registration query': {
-            topic: request(
+            topic: makeRequest(
                 {
-                    uri:'/registrations/br.howes2'
+                    path:'/registrations/br.howes2'
                 }
             ),
             'it should fail with NOT FOUND': statusCheck(HTTPStatus.NOT_FOUND)
         },
         'for a WNS template query': {
-            topic: request(
+            topic: makeRequest(
                 {
-                    uri:'/templates?' + makeQuery(validTemplate_WNS)
+                    path:'/templates?' + makeQuery(validTemplate_WNS)
                 }
             ),
             'it should fail with NOT FOUND': statusCheck(HTTPStatus.NOT_FOUND)
         },
         'for an APNs template query': {
-            topic: request(
+            topic: makeRequest(
                 {
-                    uri:'/templates?' + makeQuery(validTemplate_APNS)
+                    path:'/templates?' + makeQuery(validTemplate_APNS)
                 }
             ),
             'it should fail with NOT FOUND': statusCheck(HTTPStatus.NOT_FOUND)
@@ -500,4 +493,4 @@ suite.addBatch(
     }
 );
 
-suite.export(module);
+suite.export(module, {error: false});
