@@ -39,7 +39,7 @@ WNS.prototype = {
             log.BEGIN();
 
             log.info('req.token:', req.token);
-            log.info('req.content:', req.content);
+            log.info('req.content:', req.payload);
             log.info('req.template.kind:', req.template.kind);
 
             var options = {
@@ -57,7 +57,7 @@ WNS.prototype = {
 
             log.info('options:', options);
 
-            wns.send(req.token, req.content, req.template.kind, options, function(error, result) {
+            wns.send(req.token, req.payload, req.template.kind, options, function(error, result) {
                 try {
                     log.info('error:', error);
                     log.info('result:', result);

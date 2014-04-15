@@ -67,19 +67,19 @@ TemplateCache.Entry = function(entity) {
         log.debug('done:', this.template);
         try {
             log.debug('attempting to parse template.content:', this.template.content);
-            this.template.content = TemplateParser.parse(this.template.content);
+            this.template.generator = TemplateParser.parse(this.template.content);
             log.debug('done:', this.template.content);
         }
         catch(err) {
             log.error('failed to parse template:', this.template.content);
             log.error(err);
-            this.template.content = null;
+            this.template.generator = null;
         }
     }
     catch (err) {
         log.error('failed to parse entity.Content as JSON:', entity.Content);
         log.error(err);
-        this.content = null;
+        this.template = null;
     }
 
     log.END();

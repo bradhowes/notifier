@@ -40,10 +40,10 @@ GCM.prototype = {
         var content = null;
         try {
             // Convert the notification payload into a Javascript object.
-            content = JSON.parse(req.content);
+            content = JSON.parse(req.payload);
         }
         catch (err) {
-            log.error('failed to parse GCM payload:', req.content);
+            log.error('failed to parse GCM payload:', req.payload);
             log.END();
             return;
         }

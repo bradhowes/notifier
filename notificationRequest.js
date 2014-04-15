@@ -22,7 +22,6 @@ function NotificationRequest(registrationId, service, token, template) {
     this.service = service;
     this.token = token;
     this.template = template;
-    this.content = null;
 }
 
 NotificationRequest.prototype = {
@@ -43,7 +42,7 @@ NotificationRequest.prototype = {
         this.registrationStore = registrationStore;
         this.secondsToLive = secondsToLive;
         // Generate the notification payload from the parsed template and the given substitution values.
-        this.content = this.template.content(substitutions);
+        this.payload = this.template.generator(substitutions);
     },
 
     /**

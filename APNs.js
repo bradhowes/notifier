@@ -81,7 +81,7 @@ APNs.prototype = {
         this.notificationRequestTracker.add(req, req.token);
 
         try {
-            notification.payload = JSON.parse(req.content);
+            notification.payload = JSON.parse(req.payload);
             log.debug('payload:', notification.payload);
             this.connection.sendNotification(notification);
         }

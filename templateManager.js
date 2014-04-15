@@ -23,6 +23,12 @@ function TemplateManager(templateStore) {
     this.log = require('./config').log('TemplateManager');
     this.templateStore = templateStore;
 
+    this.GetKeyModel = Model.extend(
+        {
+            eventId: {required:true, type:'integer'}
+        }
+    );
+
     /**
      * JSON schema for query to locate a specific template. Attributes:
      *
@@ -32,9 +38,8 @@ function TemplateManager(templateStore) {
      * - templateLanguage: the language of the template to locate
      * - service: the OS-specific service that the template applies to
      */
-    this.FindKeyModel = Model.extend(
+    this.FindKeyModel = this.GetKeyModel.extend(
         {
-            eventId: {required:true, type:'integer'},
             route: {required:true, type:'string'},
             templateVersion: {required:true, type:'string', minlength:1, maxlength:10},
             templateLanguage: {required:true, type:'string', minlength:2, maxlength:10},
@@ -131,34 +136,20 @@ TemplateManager.prototype = {
         log.BEGIN(req.query);
 
         var params = {
-          eventId: req.param('eventId'),
-          route: req.param('route'),
-          templateVersion: req.param('templateVersion'),
-          templateLanguage: req.param('templateLanguage'),
-          service: req.param('service')
+            eventId: req.param('eventId'),
+            notificationId: req.param('notificationId'),
+            route: req.param('route'),
+            templateVersion: req.param('templateVersion'),
+            templateLanguage: req.param('templateLanguage'),
+            service: req.param('service')
         };
 
         log.info('params:', params);
 
-        var errors = this.FindKeyModel.validate(params);
-        if (errors !== null) {
-            log.error('invalid params:', JSON.stringify(errors));
-            res.send(HTTPStatus.BAD_REQUEST);
-            return;
-        }
-
-        var reg = {
-            'templateVersion': '' + params.templateVersion,
-            'templateLanguage': params.templateLanguage,
-            'service': params.service,
-            'routes': [ {'name':params.route, 'token':''} ]
-        };
-
-        var start = Date.now();
-        this.templateStore.find(params.eventId, [reg], function (err, templates) {
+        var cb = function (err, templates) {
             var duration = Date.now() - start;
             if (err) {
-                log.error('TemplateStore.find error:', err);
+                log.error('templateStore error:', err);
                 res.send(HTTPStatus.INTERNAL_SERVER_ERROR);
             }
             else if (templates.length === 0) {
@@ -174,7 +165,24 @@ TemplateManager.prototype = {
             }
 
             log.END(duration, 'msec');
-        });
+        };
+
+        var start = Date.now();
+        var errors = this.TemplateKeyModel.validate(params);
+        if (errors === null) {
+            this.templateStore.get(params, cb);
+        }
+        else {
+            errors = this.GetKeyModel.validate(params);
+            if (errors === null) {
+                this.templateStore.getTemplates(params, cb);
+            }
+            else {
+                log.error('invalid params:', JSON.stringify(errors));
+                res.send(HTTPStatus.BAD_REQUEST);
+                return;
+            }
+        }
     },
 
     /**
@@ -182,7 +190,7 @@ TemplateManager.prototype = {
      *
      * - eventId: the notification event identifier associated with the template
      * - notificationId: the unique identifier associated with the template
-     * - route: the of the route associated with the template.
+     * - route: the name of the route associated with the template.
      * - templateVersion: the version of the template to locate
      * - templateLanguage: the language of the template to locate
      * - service: the OS-specific service that the template applies to

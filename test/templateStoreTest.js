@@ -69,7 +69,7 @@ suite.addBatch({
             assert.equal(found.length, 1);
         },
         'generated text matches': function (err, found) {
-            var text = found[0].template.content({COUNT:3});
+            var text = found[0].template.generator({COUNT:3});
             assert.equal('<?xml version="1.0" encoding="utf-8"?><badge value="3"/>', text);
         }
     },

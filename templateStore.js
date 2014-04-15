@@ -24,10 +24,10 @@ function TemplateStore(tableName, callback) {
         tableName = config.registrations_table_name;
     }
 
-    this.tableName = tableName;
-    this.store = azure.createTableService();
-    this.cache = new TemplateCache();
-    this.pendingGet = {};
+    self.tableName = tableName;
+    self.store = azure.createTableService();
+    self.cache = new TemplateCache();
+    self.pendingGet = {};
 
     var checkCreateTableIfNotExists = function(err, b, c) {
         if (err) {
@@ -45,7 +45,7 @@ function TemplateStore(tableName, callback) {
         if (callback) callback(err);
     };
 
-    this.store.createTableIfNotExists(tableName, checkCreateTableIfNotExists);
+    self.store.createTableIfNotExists(tableName, checkCreateTableIfNotExists);
     log.END();
 }
 
@@ -60,9 +60,9 @@ TemplateStore.prototype = {
         log.BEGIN(eventId, registrations);
 
         var partitionKey = self.makePartitionKey(eventId);
-        var found = this.cache.get(partitionKey, registrations);
+        var found = self.cache.get(partitionKey, registrations);
         if (typeof found === 'undefined') {
-            var pending = this.pendingGet[partitionKey];
+            var pending = self.pendingGet[partitionKey];
             if (typeof pending !== 'undefined') {
                 pending.push([registrations, callback]);
                 return;
@@ -70,9 +70,9 @@ TemplateStore.prototype = {
 
             pending = [];
             pending.push([registrations, callback]);
-            this.pendingGet[partitionKey] = pending;
+            self.pendingGet[partitionKey] = pending;
 
-            self.get(eventId, function (err, found) {
+            self.getEntities(eventId, function (err, found) {
                 if (err) {
                     log.error('failed to fetch templates:', err);
                 }
@@ -109,33 +109,94 @@ TemplateStore.prototype = {
      *
      * @return {Object} results of the query, with templates grouped by their notificationId values
      */
-    get: function(eventId, callback) {
+    getEntities: function(eventId, callback) {
         var self = this;
-        var log = self.log.child('get');
+        var log = self.log.child('getEntities');
+
         log.BEGIN(eventId);
-        var partitionKey = this.makePartitionKey(eventId);
+        var partitionKey = self.makePartitionKey(eventId);
         var query = azure.TableQuery.select()
-                                    .from(this.tableName)
+                                    .from(self.tableName)
                                     .where('PartitionKey eq ?', partitionKey);
-        this.store.queryEntities(query, function(err, found) {
-            var entities, entity, key, keys, foundIndex, genIndex;
+        self.store.queryEntities(query, function(err, entities) {
+            var entity, entityIndex;
+            if (err) {
+                log.error('queryEntities error:', err);
+                callback(err, null);
+                return;
+            }
+            callback(null, entities);
+        });
+    },
+
+    getTemplates: function(params, callback) {
+        var self = this;
+        var log = self.log.child('getTemplates');
+
+        log.BEGIN(params);
+        var partitionKey = self.makePartitionKey(params.eventId);
+        log.debug('partitionKey:', partitionKey);
+
+        var query = azure.TableQuery.select()
+                                    .from(self.tableName)
+                                    .where('PartitionKey eq ?', partitionKey);
+        self.store.queryEntities(query, function(err, entities) {
+            var found, entity, entityIndex;
             if (err) {
                 log.error('queryEntities error:', err);
                 callback(err, null);
                 return;
             }
 
-            for (foundIndex in found) {
-                log.debug('found:', found);
-                entity = found[foundIndex];
-                var notificationId = entity.NotificationId;
-                if (typeof notificationId === 'undefined') {
-                    notificationId = Buffer(entity.RowKey, 'base64').toString().split('_').pop();
-                    entity.NotificationId = notificationId;
-                }
+            callback(null, self.entitiesToJson(params.eventId, entities));
+        });
+    },
+
+    entitiesToJson: function(eventId, entities) {
+        var converted = [];
+        var entity, entityIndex;
+        for (entityIndex in entities) {
+            entity = entities[entityIndex];
+            converted.push(
+                {
+                    eventId: parseInt(eventId),
+                    notificationId: parseInt(entity.NotificationId),
+                    route: entity.Route,
+                    templateVersion: entity.TemplateVersion,
+                    templateLanguage: entity.TemplateLanguage,
+                    service: entity.Service,
+                    template: JSON.parse(entity.Content)
+                });
+        }
+        return converted;
+    },
+
+    /**
+     * Get a template from the table store.
+     */
+    get: function(params, callback) {
+        var self = this;
+        var log = self.log.child('get');
+        log.BEGIN(params);
+
+        var partitionKey = self.makePartitionKey(params.eventId);
+        log.debug('partitionKey:', partitionKey);
+
+        var rowKey = self.makeRowKey(params.notificationId, params.route, params.templateVersion,
+                                     params.templateLanguage, params.service);
+        log.debug('rowKey:', rowKey);
+
+        var query = azure.TableQuery.select()
+                                    .from(self.tableName)
+                                    .where('PartitionKey eq ? and RowKey eq ?', partitionKey, rowKey);
+        self.store.queryEntities(query, function(err, entities) {
+            if (err) {
+                log.error('queryEntities error:', err);
+                callback(err, null);
+                return;
             }
 
-            callback(null, found);
+            callback(null, self.entitiesToJson(params.eventId, entities));
         });
     },
 

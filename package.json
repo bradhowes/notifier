@@ -1,13 +1,13 @@
 {
     "name": "notifier",
-    "description": "Notification service for WNS",
+    "description": "Notification service for GCM, APNs, and WNS",
     "author": "Brad Howes <bhowes@microsoft.com>",
     "version": "1.0.0",
     "dependencies": {
         "async": "*",
         "apn": "*",
         "azure": "*",
-        "express": "*",
+        "express": "3.*",
         "http-status": "*",
         "log4js": "*",
         "model.js": "*",
@@ -19,7 +19,7 @@
     },
     "devDependencies": {
         "debug": "*",
-        "pact": "*"
+        "vows": "0.7.*"
     },
     "engines": {
         "node": "*",
