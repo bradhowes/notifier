@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -x
+# set -x
 
 SERVER="${NOTIFIER:-localhost:4465}"
 
