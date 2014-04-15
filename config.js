@@ -153,13 +153,13 @@ function Config () {
      * The file holding the private key certificate used to authenticate to the remote server.
      * @type {String}
      */
-    this.apns_client_private_key_file = 'private/NotificationHubTestDevPush_pkey.pem';
+    this.apns_client_private_key_file = 'private/apn-nhtest-dev.pem';
 
     /**
      * The file holding the credentials used to authenticate to the remote server for application notifications.
      * @type {String}
      */
-    this.apns_client_certificate_file = 'private/NotificationHubTestDevPush_cred.pem';
+    this.apns_client_certificate_file = 'private/apn-nhtest-dev.pem';
 
     /**
      * The Azure storage account to use for table stores.

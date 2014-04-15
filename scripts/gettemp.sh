@@ -1,7 +1,7 @@
 #!/bin/bash
 set -x 
-SERVER="localhost:4465"
-#SERVER="notifier.bradhowes.c9.io"
+
+SERVER="${NOTIFIER:-localhost:4465}"
 
 function usage
 {

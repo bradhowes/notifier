@@ -18,6 +18,7 @@ module.exports = NotificationRequest;
  * @param {Object} template defines the notification payload to generate.
  */
 function NotificationRequest(registrationId, service, token, template) {
+    this.log = require('./config').log('NotificationRequest');
     this.registrationId = registrationId;
     this.service = service;
     this.token = token;
@@ -38,17 +39,25 @@ NotificationRequest.prototype = {
      * @param {Integer} secondsToLive number of seconds this request is valid
      */
     prepare: function(substitutions, userId, registrationStore, secondsToLive) {
+        var log = this.log.child('prepare');
+        log.BEGIN('substitutions:', substitutions);
+        log.BEGIN('userId:', userId);
+        log.BEGIN('secondsToLive:', secondsToLive);
         this.userId = userId;
         this.registrationStore = registrationStore;
         this.secondsToLive = secondsToLive;
         // Generate the notification payload from the parsed template and the given substitution values.
         this.payload = this.template.generator(substitutions);
+        log.debug('payload:', this.payload);
+        log.END()
     },
 
     /**
      * Remove the route used to deliver the last notification as it was deemed invalid by the OS-specific service.
      */
     forgetRoute: function () {
+        log.BEGIN();
         this.registrationStore.delRoute(this.userId, this.registrationId, this.token);
+        log.END();
     }
 };

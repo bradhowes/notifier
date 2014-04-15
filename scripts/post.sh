@@ -58,7 +58,7 @@ set -x
 curl -w "\nTime: %{time_total}s Response: %{http_code} Content-Type: %{content_type}" \
      -X POST \
      -H 'Content-Type: application/json' \
-     -d "${JSON}" --key ../certs/client.key --cert ../certs/client.cert --cacert ../certs/ca.cert \
-     -L --post301 --post302 https://${SERVER}/post/${USERID}
+     -d "${JSON}" \
+     http://${SERVER}/post/${USERID}
 
 echo

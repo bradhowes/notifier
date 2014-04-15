@@ -68,7 +68,8 @@ APNs.prototype = {
      */
     sendNotification: function(req) {
         var log = this.log.child('sendNotification');
-        log.BEGIN(req);
+        log.BEGIN('token:', req.token);
+        log.BEGIN('payload:', req.payload);
 
         var notification = new apn.Notification();
         notification.callback = function (state) {
@@ -77,7 +78,15 @@ APNs.prototype = {
             }
         };
 
-        notification.device = new apn.Device(new Buffer(req.token, 'base64'));
+        if (req.token[0] === '<') {
+            log.debug('string');
+            notification.device = new apn.Device(req.token);
+        }
+        else {
+            log.debug('base64');
+            notification.device = new apn.Device(new Buffer(req.token, 'base64'));
+        }
+
         this.notificationRequestTracker.add(req, req.token);
 
         try {
@@ -86,7 +95,7 @@ APNs.prototype = {
             this.connection.sendNotification(notification);
         }
         catch (err) {
-            log.error('failed to parse APN payload:', req.content);
+            log.error('failed to parse APN payload:', req.payload);
         }
         log.END();
     },
