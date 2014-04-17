@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Monitor</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <ul class="pages">
+    <li class="registration">
+      <div class="form">
+        <input class="userIdInput" type="text" placeholder="User ID" maxlength="30" autofocus/>&nbsp;&nbsp;
+        <input class="startStop" type="submit" value="Start" disabled/>
+      </div>
+    </li>
+    <li class="log">
+      <div class="logArea">
+        <ul class="messages"></ul>
+      </div>
+    </li>
+  </ul>
+
+  <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+* {
+    box-sizing: border-box;
+}
+
+html {
+    font-family:
+    "HelveticaNeue-Light",
+    "Helvetica Neue Light",
+    "Helvetica Neue",
+    Helvetica,
+    Arial,
+    "Lucida Grande",
+    sans-serif;
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
+}
+
+body {
+    margin: 5px;
+    padding: 5px;
+}
+
+ul {
+    list-style: none;
+}
+
+.pages {
+    margin: 0;
+    padding: 0;
+}
+
+.userIdInput {
+    font-size: 200%;
+    border: 2px solid #CCCCCC;
+    outline: none;
+    width: 400px;
+    padding: 6px 6px 6px 6px;
+}
+
+.messages {
+    font-size: 120%;
+    margin: 0;
+    padding: 10px 0px 10px 0px;
+}
+
+.entry {
+
+}
+
+.time {
+    color: gray;
+}
+
+.userId {
+    color: red;
+}
+
+.body {
+    color: black;
+}
+
+.startStop {
+    -moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
+    -webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
+    box-shadow:inset 0px 1px 0px 0px #ffffff;
+    background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ededed), color-stop(1, #dfdfdf) );
+    background:-moz-linear-gradient( center top, #ededed 5%, #dfdfdf 100% );
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#dfdfdf');
+    background-color:#ededed;
+    -webkit-border-top-left-radius:0px;
+    -moz-border-radius-topleft:0px;
+    border-top-left-radius:0px;
+    -webkit-border-top-right-radius:0px;
+    -moz-border-radius-topright:0px;
+    border-top-right-radius:0px;
+    -webkit-border-bottom-right-radius:0px;
+    -moz-border-radius-bottomright:0px;
+    border-bottom-right-radius:0px;
+    -webkit-border-bottom-left-radius:0px;
+    -moz-border-radius-bottomleft:0px;
+    border-bottom-left-radius:0px;
+    text-indent:0;
+    border:1px solid #dcdcdc;
+    display:inline-block;
+    color:#404040;
+    font-size: 200%;
+/*    height:40px;
+    line-height:40px;
+*/
+    width:100px;
+    text-decoration:none;
+    text-align:center;
+    text-shadow:1px 1px 0px #ffffff;
+}
+
+.startStop:disabled {
+    color:#888888;
+}
+
+.startStop:active:enabled {
+    position:relative;
+    top:2px;
+}
+
+/* This button was generated using CSSButtonGenerator.com */
