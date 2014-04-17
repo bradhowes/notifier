@@ -40,7 +40,7 @@ PostTracker.prototype = {
 
         var node;
         if (this.active.size() === this.maxSize) {
-            node = this.active.popBack();
+            node = this.active.popBackNode();
             delete this.mapping[node.data.sequence];
             node.data = {sequenceId: sequenceId, when: when};
         }

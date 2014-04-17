@@ -16,8 +16,9 @@ var NotificationRequestTracker = require('./notificationRequestTracker');
  *
  * An APNs object sends JSON payloads to an APNs server for delivery to a specific iOS device.
  */
-function APNs() {
+function APNs(monitorManager) {
     this.log = config.log('APNs');
+    this.monitorManager = monitorManager;
 
     /**
      * Cache of the N most recently seen userId / device token pairs.
@@ -38,6 +39,8 @@ function APNs() {
             "cacheLength": 100
         }
     );
+
+    this.connection.on('transmitted', this.transmitted.bind(this));
 
     if (typeof config.apns_feedback_interval !== 'undefined' && config.apns_feedback_interval > 0) {
         this.log.info('starting feedback service');
@@ -61,20 +64,66 @@ function APNs() {
  */
 APNs.prototype = {
 
+    transmitted: function(notification, recipient) {
+        this.monitorManager.post(notification.userId, 'sent to APN without error');
+    },
+
     /**
      * Send a notification payload to an APNs server.
      *
      * @param {NotificationRequest} req attributes of the notification to send
      */
     sendNotification: function(req) {
+        var self = this;
         var log = this.log.child('sendNotification');
         log.BEGIN('token:', req.token);
         log.BEGIN('payload:', req.payload);
 
         var notification = new apn.Notification();
-        notification.callback = function (state) {
-            if (state.invalidToken) {
-                req.forgetPath();
+        notification.userId = req.userId;
+        notification.errorCallback = function (errorCode, recipient) {
+            switch (errorCode) {
+            case 0:             // noErrorsEncountered
+            case 255:
+                self.monitorManager.post(req.userId, 'sent to APN');
+                break;
+
+            case 1:
+                self.monitorManager.post(req.userId, 'rejected due to processing error');
+                break;
+
+            case 2:
+                self.monitorManager.post(req.userId, 'rejected due to missing device token');
+                break;
+
+            case 3:
+                self.monitorManager.post(req.userId, 'rejected due to missing topic');
+                break;
+
+            case 4:
+                self.monitorManager.post(req.userId, 'rejected due to missing payload');
+                break;
+
+            case 5:
+                self.monitorManager.post(req.userId, 'rejected due to invalid token size');
+                break;
+
+            case 6:
+                self.monitorManager.post(req.userId, 'rejected due to invalid topic size');
+                break;
+
+            case 7:
+                self.monitorManager.post(req.userId, 'rejected due to size of payload');
+                break;
+
+            case 8:             // invalidToken
+                self.monitorManager.post(req.userId, 'rejected due to invalid APN token');
+                req.forgetRoute();
+                break;
+
+            default:
+                self.monitorManager.post(req.userId, 'failed to send to APN: ' + errorCode);
+                break;
             }
         };
 
@@ -91,12 +140,16 @@ APNs.prototype = {
 
         try {
             notification.payload = JSON.parse(req.payload);
-            log.debug('payload:', notification.payload);
-            this.connection.sendNotification(notification);
         }
         catch (err) {
             log.error('failed to parse APN payload:', req.payload);
+            self.monitorManager.post(req.userId, 'invalid payload: ' + req.payload);
         }
+
+        log.debug('payload:', notification.payload);
+        self.monitorManager.post(req.userId, 'sending payload via APNs');
+        this.connection.sendNotification(notification);
+
         log.END();
     },
 

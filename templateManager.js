@@ -21,6 +21,7 @@ var Model = require('model.js');
  */
 function TemplateManager(templateStore) {
     this.log = require('./config').log('TemplateManager');
+    this.log.BEGIN(templateStore);
     this.templateStore = templateStore;
 
     this.GetKeyModel = Model.extend(

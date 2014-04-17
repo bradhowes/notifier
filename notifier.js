@@ -23,8 +23,9 @@ var PostTracker = require('./postTracker');
  * @param {RegistrationStore} registrationStore the repository of user registrations to rely on
  * @param {Hash} senders a mapping of notification service tags to objects that provide a sendNotification method
  */
-function Notifier(templateStore, registrationStore, senders) {
+function Notifier(templateStore, registrationStore, senders, monitorManager) {
     this.log = require('./config').log('Notifier');
+    this.log.BEGIN()
 
     /**
      * The backing store for templates. Notifier asks it for templates associated with a given event ID.
@@ -48,6 +49,8 @@ function Notifier(templateStore, registrationStore, senders) {
      * @type Hash
      */
     this.senders = senders;
+
+    this.monitorManager = monitorManager;
 
     /**
      * Sequence ID for tracking. This value is added to all substitution maps under the name "SEQUENCE_ID"
@@ -204,6 +207,8 @@ Notifier.prototype = {
         var start = Date.now();
         log.debug('start:', start);
 
+        self.monitorManager.post(params.userId, 'posting notification to user');
+
         var sequenceId = ++this.sequenceId;
         substitutions.SEQUENCE_ID = sequenceId;
         this.postTracker.add(sequenceId, start);
@@ -212,12 +217,14 @@ Notifier.prototype = {
         this.registrationStore.get(params.userId, params.filter, function (err, registrations) {
             if (err !== null) {
                 log.error('RegistrationStore.get error:', err);
+                self.monitorManager.post(params.userId, 'failed to get registrations for user');
                 res.send(HTTPStatus.INTERNAL_SERVER_ERROR);
                 return;
             }
 
             if (registrations.length === 0) {
                 log.info('no registrations exist for user', params.userId);
+                self.monitorManager.post(params.userId, 'no registrations found for user');
                 res.json(HTTPStatus.ACCEPTED, result);
                 duration = Date.now() - start;
                 log.END(duration, 'msecs');
@@ -229,6 +236,7 @@ Notifier.prototype = {
                 var token = null;
                 if (err !== null) {
                     log.error('TemplateStore.find error:', err);
+                    self.monitorManager.post(params.userId, 'failed to get templates');
                     res.send(HTTPStatus.INTERNAL_SERVER_ERROR);
                     duration = Date.now() - start;
                     log.END(duration, 'msecs');
@@ -237,15 +245,18 @@ Notifier.prototype = {
 
                 if (matches.length === 0) {
                     log.info('TemplateStore.find returned no matches');
+                    self.monitorManager.post(params.userId, 'no templates matching registrations');
                 }
+
+                self.monitorManager.post(params.userId, 'sending ' + matches.length + ' notifications');
 
                 // For each template, generate a notification payload and send it on its way.
                 for (var index in matches) {
-                    var r = matches[index];
-                    log.info(r);
-                    r.prepare(substitutions, params.userId, self.registrationStore, 30);
-                    log.debug('*** service:', r.service);
-                    self.senders[r.service].sendNotification(r);
+                    var notificationRequest = matches[index];
+                    log.info(notificationRequest);
+                    notificationRequest.prepare(substitutions, params.userId, self.registrationStore, 30);
+                    log.debug('*** service:', notificationRequest.service);
+                    self.senders[notificationRequest.service].sendNotification(notificationRequest);
                 }
 
                 duration = Date.now() - start;

@@ -15,8 +15,9 @@ var wns = require('wns');
  *
  * A WNS object sends XML payloads to a WNS server for delivery to a specific Windows 8 device.
  */
-function WNS() {
+function WNS(monitorManager) {
     this.log = config.log('WNS');
+    this.monitorManager = monitorManager;
 }
 
 /**

@@ -7,6 +7,7 @@ module.exports = App;
 
 var config = require('./config');
 var express = require('express');
+var io = require('socket.io');
 var http = require('http');
 var https = require('https');
 var APNs = require('./APNs');
@@ -16,6 +17,7 @@ var Registrar = require('./registrar');
 var RegistrationStore = require('./registrationStore');
 var TemplateManager = require('./templateManager');
 var TemplateStore = require('./templateStore');
+var MonitorManager = require('./monitor');
 var WNS = require('./WNS');
 
 /**
@@ -30,6 +32,7 @@ function App()
     this.log = config.log('App');
     this.registrationStoreName = config.registrations_table_name;
     this.templateStoreName = config.templates_table_name;
+    this.monitorTopicName = config.monitor_topic_name;
 }
 
 /**
@@ -47,11 +50,14 @@ App.prototype = {
     initialize: function(callback) {
         var log = this.log.child('initialize');
         var self = this;
-        var awaiting = 2;
+        var awaiting = 3;
         var errors = null;
         var app = express();
         var registrationStore;
+        var registrar;
         var templateStore;
+        var templateManager;
+        var monitorManager;
 
         var continuation = function(key, err) {
             var clog = log.child('continuation');
@@ -70,28 +76,32 @@ App.prototype = {
                 clog.info('creating notifier');
                 var senders = {};
                 try {
-                    senders.wns = new WNS();
+                    senders.wns = new WNS(monitorManager);
                 }
                 catch (x) {
                     clog.error(x);
                 }
 
                 try {
-                    senders.apns = new APNs();
+                    senders.apns = new APNs(monitorManager);
                 }
                 catch (x) {
                     clog.error(x);
                 }
 
                 try {
-                    senders.gcm = new GCM();
+                    senders.gcm = new GCM(monitorManager);
                 }
                 catch (x) {
                     clog.error(x);
                 }
 
-                var service = new Notifier(templateStore, registrationStore, senders);
-                service.route(app);
+                app.monitorManager = monitorManager;
+                registrar.setMonitorManager(monitorManager);
+
+                var notifier = new Notifier(templateStore, registrationStore, senders, monitorManager);
+                notifier.route(app);
+
                 callback(app, errors);
                 clog.END();
                 return;
@@ -103,6 +113,7 @@ App.prototype = {
         log.BEGIN();
 
         app.use(app.router);
+        app.use(express.static(__dirname + '/public'));
 
         app.configure('development', function () {
             app.use(express.errorHandler({dumpExceptions: true, showStack: true}));
@@ -117,16 +128,20 @@ App.prototype = {
 
         registrationStore = new RegistrationStore(this.registrationStoreName, function(err) {
             log.info('creating registrar');
-            var service = new Registrar(registrationStore);
-            service.route(app);
+            registrar = new Registrar(registrationStore);
+            registrar.route(app);
             continuation('registrationStore', err);
         });
 
         templateStore = new TemplateStore(this.templateStoreName, function(err) {
             log.info('creating template manager');
-            var service = new TemplateManager(templateStore);
-            service.route(app);
+            templateManager = new TemplateManager(templateStore);
+            templateManager.route(app);
             continuation('templateStore', err);
+        });
+
+        monitorManager = new MonitorManager(this.monitorTopicName, true, function(err) {
+            continuation('monitorManager', err);
         });
 
         log.END();
@@ -134,6 +149,7 @@ App.prototype = {
 };
 
 // Run if we are the main script
+//
 if (process.argv[1].indexOf('server.js') !== -1) {
     var log = config.log('main');
     var app = new App();
@@ -165,6 +181,27 @@ if (process.argv[1].indexOf('server.js') !== -1) {
                 log.info('starting server on port', port);
 
                 server.listen(port);
+
+                io.configure(function () {
+                    io.set('transports', ['websocket']);
+                    io.set('log level', 5);
+                });
+
+                io.listen(server).on('connection', function(socket) {
+                    // New client connection. Listen for a 'start' message to begin logging.
+                    //
+                    socket.on('start', function (userId) {
+                        app.monitorManager.addSocket(userId, socket);
+                        if (socket.bound === undefined) {
+                            // Listen for a 'stop' message to stop logging.
+                            //
+                            socket.on('stop', function () {
+                                app.monitorManager.removeSocket(userId, socket);
+                            });
+                        }
+                        socket.bound = true;
+                    });
+                });
             }
         }
     );

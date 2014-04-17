@@ -45,7 +45,7 @@ NotificationRequestTracker.prototype = {
             if (this.active.size() === this.maxSize) {
 
                 // Queue is full of past requests. Reuse the oldest one.
-                node = this.active.popBack();
+                node = this.active.popBackNode();
                 delete this.mapping[node.data.token];
                 node.data = request;
             }

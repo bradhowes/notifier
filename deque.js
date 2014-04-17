@@ -70,12 +70,34 @@ Deque.prototype = {
         return this._size;
     },
 
+    backNode: function () {
+        if (this.empty()) {
+            throw new Error("backNode called on empty deque");
+        }
+        return this._tail._prev;
+    },
+
+    back: function () {
+        return this.backNode().data;
+    },
+
+    frontNode: function () {
+        if (this.empty()) {
+            throw new Error("frontNode called on empty deque");
+        }
+        return this._head._next;
+    },
+
+    front: function () {
+        return this.frontNode().data;
+    },
+
     /**
      * Remove a node from the queue.
      *
      * @param {Node} node the node to remove
      */
-    remove: function(node) {
+    removeNode: function(node) {
         node.extricate();
         --this._size;
     },
@@ -114,7 +136,7 @@ Deque.prototype = {
      *
      * @returns {Node} last Node in the queue
      */
-    popBack: function () {
+    popBackNode: function () {
         if (this.empty()) {
             throw new Error("popBack called on empty deque");
         }
@@ -123,6 +145,10 @@ Deque.prototype = {
         this._tail._prev = node._prev;
         node._prev._next = this._tail;
         return node;
+    },
+
+    popBack: function() {
+        return this.popBackNode().data;
     },
 
     /**
@@ -159,7 +185,7 @@ Deque.prototype = {
      *
      * @returns {Object} first Node in the queue
      */
-    popFront: function () {
+    popFrontNode: function () {
         if (this.empty()) {
             throw new Error("popFront called on empty deque");
         }
@@ -168,5 +194,9 @@ Deque.prototype = {
         this._head._next = node._next;
         node._next._prev = this._head;
         return node;
+    },
+
+    popFront: function() {
+        return this.popFrontNode().data;
     }
 };

@@ -173,9 +173,23 @@ function Config () {
      */
     this.azure_storage_access_key = priv.azure_storage_access_key;
 
+    /**
+     * The Azure ServiceBus namespace to use.
+     * @type {String}
+     */
+    this.azure_servicebus_namespace = priv.azure_servicebus_namespace;
+
+    /**
+     * The access key for the above Azure ServiceBus namespace.
+     * @type {String}
+     */
+    this.azure_servicebus_access_key = priv.azure_servicebus_access_key;
+
     // Make sure our environment reflects these Azure settings.
     process.env.AZURE_STORAGE_ACCOUNT = this.azure_storage_account;
     process.env.AZURE_STORAGE_ACCESS_KEY = this.azure_storage_access_key;
+    process.env.AZURE_SERVICEBUS_NAMESPACE = this.azure_servicebus_namespace;
+    process.env.AZURE_SERVICEBUS_ACCESS_KEY = this.azure_servicebus_access_key;
 
     /**
      * The authorization key from Google for sending GCM messages
@@ -213,6 +227,11 @@ function Config () {
      * @type {String}
      */
     this.templates_placeholder_re = '@@([A-Za-z0-9_]+)(=([^@]*))?@@';
+
+    /**
+     * The name of the ServiceBus topic to create and use for monitoring.
+     */
+    this.monitor_topic_name = 'monitor';
 }
 
 module.exports = new Config();

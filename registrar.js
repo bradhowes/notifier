@@ -26,8 +26,8 @@ var HTTPStatus = require('http-status');
 function Registrar(registrationStore) {
     this.log = require('./config').log('Registrar');
     this.log.BEGIN(registrationStore);
-
     this.registrationStore = registrationStore;
+    this.monitorManager = {post: function(skypeId, message) {}};
 
     /**
      * JSON schema for userId values. Contains just one value:
@@ -129,6 +129,10 @@ Registrar.prototype = {
         log.END();
     },
 
+    setMonitorManager: function (monitorManager) {
+        this.monitorManager = monitorManager;
+    },
+
     /**
      * Obtain the current registrations for a given user.
      *
@@ -151,10 +155,8 @@ Registrar.prototype = {
      */
     get: function (req, res) {
         var log = this.log.child('get');
-        log.BEGIN();
-
         var params = {userId: req.param('userId')};
-        log.info('params:', params);
+        log.BEGIN(params);
 
         var errors = this.UserIdModel.validate(params);
         if (errors !== null) {
@@ -202,14 +204,14 @@ Registrar.prototype = {
      */
     set: function (req, res) {
         var self = this;
-        var log = this.log.child('set');
+        var log = self.log.child('set');
         log.BEGIN();
 
         var params = req.body;
         params.userId = req.param('userId');
         log.info('params:', params);
 
-        var errors = this.RegistrationModel.validate(params);
+        var errors = self.RegistrationModel.validate(params);
         if (errors !== null) {
             log.error('invalid params:', JSON.stringify(params));
             res.send(HTTPStatus.BAD_REQUEST);
@@ -217,7 +219,7 @@ Registrar.prototype = {
         }
 
         var start = Date.now();
-        this.registrationStore.set(params, function (err, registrationEntity) {
+        self.registrationStore.set(params, function (err, registrationEntity) {
             var duration = Date.now() - start;
             if (err) {
                 log.error('RegistrationStore.set error:', err);
@@ -228,6 +230,7 @@ Registrar.prototype = {
                     'tableStoreDuration': duration
                 };
                 log.info(tmp);
+                self.monitorManager.post(params.userId, 'added or updated registration');
                 res.json(HTTPStatus.OK, tmp);
             }
             log.END(params.userId, duration, 'msec');
@@ -281,6 +284,7 @@ Registrar.prototype = {
                 res.send(HTTPStatus.NOT_FOUND);
             }
             else {
+                self.monitorManager.post(params.userId, 'removed registration(s)');
                 res.send(HTTPStatus.NO_CONTENT);
             }
             log.END(params.userId, registrationId, duration, 'msec');
