@@ -3,6 +3,7 @@
     "description": "Notification service for GCM, APNs, and WNS",
     "author": "Brad Howes <bhowes@microsoft.com>",
     "version": "1.0.0",
+    "repository": "https://github.com/bradhowes/notifier",
     "dependencies": {
         "async": "*",
         "apn": "*",
@@ -23,7 +24,7 @@
         "vows": "0.7.*"
     },
     "engines": {
-        "node": "*",
+        "node": "0.10.26",
         "npm": "*"
     }
 }
