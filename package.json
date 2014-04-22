@@ -5,22 +5,22 @@
     "version": "1.0.0",
     "repository": "https://github.com/bradhowes/notifier",
     "dependencies": {
-        "async": "*",
-        "apn": "*",
-        "azure": "*",
-        "express": "3.*",
-        "http-status": "*",
-        "log4js": "*",
-        "model.js": "*",
-        "pegjs": "*",
-        "q": "*",
-        "request": "*",
-        "socket.io": "*",
-        "xregexp": "*",
-        "wns": "*"
+        "apn": "1.4.4",
+        "async": "0.7.0",
+        "azure": "0.9.3",
+        "express": "3.5.1",
+        "http-status": "0.1.6",
+        "log4js": "0.6.13",
+        "model.js": "0.0.1",
+        "pegjs": "0.8.0",
+        "q": "1.0.1",
+        "request": "2.34.0",
+        "socket.io": "0.9.16",
+        "xregexp": "2.0.0",
+        "wns": "0.5.3"
     },
     "devDependencies": {
-        "debug": "*",
+        "debug": "0.8.0",
         "vows": "0.7.*"
     },
     "engines": {
