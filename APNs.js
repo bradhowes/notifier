@@ -137,6 +137,7 @@ APNs.prototype = {
         }
 
         this.notificationRequestTracker.add(req, req.token);
+        self.monitorManager.post(req.userId, 'payload: ' + req.payload);
 
         try {
             notification.payload = JSON.parse(req.payload);

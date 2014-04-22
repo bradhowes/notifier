@@ -208,6 +208,7 @@ Notifier.prototype = {
         log.debug('start:', start);
 
         self.monitorManager.post(params.userId, 'posting notification to user');
+        self.monitorManager.post(params.userId, 'params: ' + JSON.stringify(params));
 
         var sequenceId = ++this.sequenceId;
         substitutions.SEQUENCE_ID = sequenceId;

@@ -113,6 +113,7 @@ App.prototype = {
         log.BEGIN();
 
         app.use(app.router);
+        app.use('/play', express.static(__dirname + '/play'));
         app.use(express.static(__dirname + '/public'));
 
         app.configure('development', function () {
@@ -181,11 +182,6 @@ if (process.argv[1].indexOf('server.js') !== -1) {
                 log.info('starting server on port', port);
 
                 server.listen(port);
-
-                io.configure(function () {
-                    io.set('transports', ['websocket']);
-                    io.set('log level', 5);
-                });
 
                 io.listen(server).on('connection', function(socket) {
                     // New client connection. Listen for a 'start' message to begin logging.

@@ -214,6 +214,7 @@ Registrar.prototype = {
         var errors = self.RegistrationModel.validate(params);
         if (errors !== null) {
             log.error('invalid params:', JSON.stringify(params));
+            self.monitorManager.post(params.userId, 'invalid registration: ' + JSON.stringify(params));
             res.send(HTTPStatus.BAD_REQUEST);
             return;
         }
@@ -223,6 +224,7 @@ Registrar.prototype = {
             var duration = Date.now() - start;
             if (err) {
                 log.error('RegistrationStore.set error:', err);
+                self.monitorManager.post(params.userId, 'failed to store registration');
                 res.send(HTTPStatus.BAD_REQUEST);
             }
             else {
@@ -230,7 +232,7 @@ Registrar.prototype = {
                     'tableStoreDuration': duration
                 };
                 log.info(tmp);
-                self.monitorManager.post(params.userId, 'added or updated registration');
+                self.monitorManager.post(params.userId, 'registration: ' + JSON.stringify(params));
                 res.json(HTTPStatus.OK, tmp);
             }
             log.END(params.userId, duration, 'msec');

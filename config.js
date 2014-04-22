@@ -230,8 +230,28 @@ function Config () {
 
     /**
      * The name of the ServiceBus topic to create and use for monitoring.
+     * @type {String}
      */
     this.monitor_topic_name = 'monitor';
+
+    /**
+     * The number of minutes that a monitoring request will be valid.
+     * @type {Number}
+     */
+    this.monitor_duration_minutes = 30;
+
+    /**
+     * The interval in minutes between invocation of MonitorManager.cleanup function, which culls stale topic
+     * subscriptions in Azure ServiceBus.
+     * @type {Number}
+     */
+    this.monitor_cleanup_interval_minutes = 10;
+
+    /**
+     * The name of the command channel to use to advertise and listen for monitor changes. This should *not* match a
+     * valid user ID.
+     */
+    this.monitor_command_channel_name = '*';
 }
 
 module.exports = new Config();

@@ -3,7 +3,7 @@ $(function() {
     var $userIdInput = $('.userIdInput');
     var $startStop = $('.startStop');
     var $messages = $('.messages');
-    var socket = new io.connect('http://localhost:4465');
+    var socket = new io.connect($(location).attr('href'));
 
     function monitor() {
         var userId = $userIdInput.val().trim();
@@ -14,6 +14,14 @@ $(function() {
             $startStop.val('Stop');
             $userIdInput.attr('disabled', 'disabled');
         }
+    }
+
+    function addLine(line) {
+        var el = '<li class="entry">' +
+                '<span class="time">' + line.brokerProperties.EnqueuedTimeUtc + '&nbsp;</span>' +
+                '<span class="userId">' + line.customProperties.userid + '&nbsp;</span>' +
+                '<span class="body">' + line.body + '</span></li>';
+        $messages.append($(el));
     }
 
     $startStop.attr('disabled', 'disabled');
@@ -51,15 +59,5 @@ $(function() {
         $userIdInput.val('');
     });
 
-    socket.on('line', function(line) {
-        var el = '<li class="entry">' +
-                '<span class="time">' + line.brokerProperties.EnqueuedTimeUtc + '&nbsp;</span>' +
-                '<span class="userId">' + line.customProperties.userid + '&nbsp;</span>' +
-                '<span class="body">' + line.body + '</span></li>';
-        var $el = $(el);
-        console.log('line:', line);
-        $messages.append($el);
-        $messages[0].scrollTop = $messages[0].scrollHeight;
-    });
-
+    socket.on('line', addLine);
 });

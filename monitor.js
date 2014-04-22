@@ -4,10 +4,7 @@ module.exports = MonitorManager;
 
 var azure = require('azure');
 var Q = require('q');
-var Model = require('model.js');
-var HTTPStatus = require('http-status');
 var config = require('./config');
-var Deque = require('./deque');
 
 function MonitorManager(topicName, isServer, callback) {
     var self = this;
@@ -23,45 +20,13 @@ function MonitorManager(topicName, isServer, callback) {
     self.serviceBusService = azure.createServiceBusService();
     self.topicConfig = { MaxSizeInMegabytes: '1024', DefaultMessageTimeToLive: 'PT1M' };
 
-    self.userMonitoringExpirations = {'*':false};
+    self.userMonitoringExpirations = {};
+    self.userMonitoringExpirations[config.monitor_command_channel_name] = false;
+
     self.postPromiseChain = Q();
     self.registrationMonitor = null;
 
-    var checkCreateTopicIfNotExists = function(err) {
-        if (err) {
-            log.error(err);
-            if (err.statusCode === 409) {
-                Q.delay(1000)
-                 .then(function () {
-                     self.serviceBusService.createTopicIfNotExists(
-                         self.topicName,
-                         self.topicConfig,
-                         checkCreateTopicIfNotExists);
-                     });
-                return;
-            }
-
-            if (callback) callback(err);
-        }
-        else {
-            if (isServer) {
-                self.makeMonitor('*', function (err, monitor) {
-                    log.END(err);
-                    self.registrationMonitor = monitor;
-                    if (callback) callback(err);
-                    self.cleanup();
-                    self.commandLoop();
-                });
-            }
-            else {
-                if (callback) callback(null);
-            }
-        }
-    };
-
-    self.serviceBusService.createTopicIfNotExists(self.topicName, self.topicConfig, checkCreateTopicIfNotExists);
-
-    log.END();
+    self.createTopic(isServer, callback);
 }
 
 function Monitor(manager, name, userId) {
@@ -196,13 +161,13 @@ MonitorManager.prototype = {
         var self = this;
         var log = self.log.child('registerMonitor');
         log.BEGIN(monitor.userId, monitor.name);
-        if (monitor.userId == '*') {
+        if (monitor.userId == config.monitor_command_channel_name) {
             log.END();
             if (callback) callback(null);
             return;
         }
 
-        self.post('*', '+' + monitor.userId, function (err) {
+        self.post(config.monitor_command_channel_name, '+' + monitor.userId, function (err) {
             if (err) log.error('failed to post monitor command for', monitor.userId, err);
             log.END();
             if (callback) callback(err);
@@ -213,14 +178,14 @@ MonitorManager.prototype = {
         var self = this;
         var log = self.log.child('unregisterMonitor');
         log.BEGIN(monitor.userId, monitor.name);
-        if (monitor.userId == '*') {
+        if (monitor.userId == config.monitor_command_channel_name) {
             log.END();
             if (callback) callback(null);
             return;
         }
 
         self.post(monitor.userId, '*** monitoring stopped ***', function (err) {
-            self.post('*', '-' + monitor.userId, function (err) {
+            self.post(config.monitor_command_channel_name, '-' + monitor.userId, function (err) {
                 if (err) log.error('failed to post forget command for', monitor.userId, err);
                 log.debug('deleting subscription for', monitor.name);
                 self.serviceBusService.deleteSubscription(self.topicName, monitor.name, function (err) {
@@ -276,10 +241,12 @@ MonitorManager.prototype = {
         var log = self.log.child('readLoop ' + monitor.name);
         log.BEGIN();
         var proc = function () {
+            log.debug('calling receiveSubscriptionMessage');
             self.serviceBusService.receiveSubscriptionMessage(self.topicName, monitor.name,
                 function (err, found) {
                     if (err && err != 'No messages to receive') {
                         log.error(err);
+                        log.error('stopping read loop');
                         return;
                     }
 
@@ -289,6 +256,7 @@ MonitorManager.prototype = {
                             return;
                         }
                     }
+
                     proc();
                 });
         };
@@ -300,37 +268,52 @@ MonitorManager.prototype = {
         var log = self.log.child('commandLoop');
         log.BEGIN();
         self.readLoop(self.registrationMonitor, function(err, found) {
-            log.debug(err, found);
             if (err) {
-                log.error(err);
+
+                // readLoop stops when there is an error - restart ourselves.
+                //
                 self.commandLoop();
             }
             else if (found) {
                 var command = found.body[0];
                 var userId = found.body.slice(1);
+
+                // Monitoring activationg request - allow for a fixed interval
+                //
                 if (command == '+') {
                     var expiration = new Date();
-                    expiration.setMinutes(expiration.getMinutes() + 30);
+                    expiration.setMinutes(expiration.getMinutes() + config.monitor_duration_minutes);
                     log.debug('starting to monitor:', userId, 'expires:', expiration);
                     self.userMonitoringExpirations[userId] = expiration;
                     self.post(userId, '*** monitoring started ***');
                 }
+
+                // Monitoring termination request. Note this wil terminate multiple monitors for the same user ID.
+                //
                 else if (command == '-') {
                     log.debug('stop monitoring:', userId);
                     delete self.userMonitoringExpirations[userId];
                 }
+
                 else {
                     log.error('invalid monitor channel command:', command);
                 }
             }
 
+            // Keep the readLoop running.
+            //
             return true;
         });
+        log.END();
     },
 
     cleanup: function() {
         var self = this;
         var log = self.log.child('cleanup');
+
+        // Fetch the list of active subscriptions to our topic. Cull those that are older than twice the monitoring
+        // interval.
+        //
         self.serviceBusService.listSubscriptions(self.topicName, function (err, subs, response) {
             if (err) {
                 log.error('failed listSubscriptions:', err);
@@ -338,11 +321,11 @@ MonitorManager.prototype = {
             else {
                 log.debug('found', subs.length, 'subsciptions');
                 var cutoff = new Date();
-                cutoff.setHours(cutoff.getHours() - 2);
+                cutoff.setHours(cutoff.getMinutes() - 2 * config.monitor_duration_minutes);
                 for (var i = 0; i < subs.length; ++i) {
                     var name = subs[i].SubscriptionName;
                     var when = new Date(subs[i].AccessedAt);
-                    if (name == '*') {
+                    if (name == config.monitor_command_channel_name) {
                         log.debug('skipping own command monitor');
                         continue;
                     }
@@ -377,7 +360,45 @@ MonitorManager.prototype = {
                 }
             }
 
-            setTimeout(self.cleanup.bind(self), 10 * 60 * 1000); // every 10 minutes
+            setTimeout(self.cleanup.bind(self), config.monitor_cleanup_interval_minutes * 60 * 1000);
         });
+    },
+
+    createTopic: function(isServer, callback) {
+        var self = this;
+        var log = self.log.child('createTopic');
+        log.BEGIN('isServer:', isServer);
+        var proc = function() {
+            log.debug('calling createTopicIfNotExists');
+            self.serviceBusService.createTopicIfNotExists(self.topicName, self.topicConfig, function (err) {
+                if (err) {
+                    log.error('failed createTopicIfNotExists:', err);
+                    if (err.statusCode === 409) { // Busy - try again after 1 second.
+                        log.debug('trying again in 1 second');
+                        Q.delay(1000).then(proc);
+                        return;
+                    }
+                    log.END(err);
+                    if (callback) callback(err);
+                }
+                else if (isServer) {
+
+                    // Create the monitor for the command channel. This will listen for monitor start/stop commands.
+                    //
+                    log.debug('creating command channel monitor');
+                    self.makeMonitor(config.monitor_command_channel_name, function (err, monitor) {
+                        log.END(err);
+                        self.registrationMonitor = monitor;
+                        self.cleanup();
+                        self.commandLoop();
+                        if (callback) callback(err);
+                    });
+                }
+                else {
+                    if (callback) callback(null);
+                }
+            });
+        };
+        proc();
     }
 };
