@@ -151,7 +151,7 @@ App.prototype = {
 
 // Run if we are the main script
 //
-if (process.argv[1].indexOf('server.js') !== -1) {
+if (process.argv[1].indexOf('app.js') !== -1) {
     var log = config.log('main');
     var app = new App();
     var port = process.env.PORT || 4465;
