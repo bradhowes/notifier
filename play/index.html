@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Play</title>
+    <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.10.2/jquery-ui.min.js"></script>
+    <script src="http://malsup.github.io/jquery.form.js"></script>
+    <script src="main.js"></script>
+    <link rel="stylesheet" href="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.10.2/themes/smoothness/jquery-ui.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script>
+      $(function() { $("#tabs" ).tabs(); });
+    </script>
+  </head>
+  <body>
+    <div id="tabs">
+      <ul>
+        <li><a href="#tabs-1">Templates</a></li>
+        <li><a href="#tabs-2">Registrations</a></li>
+        <li><a href="#tabs-3">Notifier</a></li>
+      </ul>
+      <div id="tabs-1">
+        <div id="templates">
+          <input id="eventId" type="text" placeholder="Event ID" maxlength="4" class="userInput"/>
+          <input id="templateVersion" type="text" placeholder="Version" maxlength="32" class="userInput"/>
+          <input id="doClear" type="submit" value="Clear" class="button submit"/>&nbsp;
+          <input id="doQuery" type="submit" value="Query" class="button submit"/>&nbsp;
+          <input id="doAdd" type="submit" value="Add" class="button submit"/>&nbsp;
+          <br><br>
+          <input id="templateLanguage" type="text" placeholder="Language" maxlength="8" class="userInput"/>
+          <input id="route" type="text" placeholder="Context" maxlength="4" class="userInput"/>
+          <select id="service" class="button">
+            <option value=""></option>
+            <option value="APNS">APNs</option>
+            <option value="GCM">GCM</option>
+            <option value="WNS">WNS</option>
+          </select>
+          <br><br>
+          <fieldset>
+            <legend>Template Content</legend>
+            <div><textarea id="content" rows="4" class="userInput"></textarea></div>
+          </fieldset>
+        </div>
+      </div>
+      <div id="tabs-2">
+        <div id="registrations">
+          <input id="skypeId" type="text" placeholder="Skype ID" maxlength="32" class="userInput"/>
+          <input id="registrationId" type="text" placeholder="Reg ID" maxlength="32" class="userInput"/>
+          <input id="doClear" type="submit" value="Clear" class="button submit"/>&nbsp;
+          <input id="doQuery" type="submit" value="Query" class="button submit"/>&nbsp;
+          <input id="doAdd" type="submit" value="Add" class="button submit"/>&nbsp;
+          <br><br>
+          <input id="templateVersion" type="text" placeholder="Version" maxlength="32" class="userInput"/>
+          <input id="templateLanguage" type="text" placeholder="Language" maxlength="8" class="userInput"/>
+          <input id="route" type="text" placeholder="Context" maxlength="4" class="userInput"/>
+          <select id="service" class="button">
+            <option value=""></option>
+            <option value="APNS">APNs</option>
+            <option value="GCM">GCM</option>
+            <option value="WNS">WNS</option>
+          </select>
+          <br><br>
+          <fieldset>
+            <legend>Registration Token</legend>
+            <div><input id="token" type="text" placeholder="Token" maxlength="512" class="userInput token"/></div>
+            <br>
+            <div class="instructions">Unique address for push notifications to a device.</div>
+          </fieldset>
+        </div>
+      </div>
+      <div id="tabs-3">
+        <div id="notifier">
+          <input id="skypeId" type="text" placeholder="Skype ID" maxlength="32" class="userInput"/>
+          <input id="eventId" type="text" placeholder="Event ID" maxlength="4" class="userInput"/>
+          <input id="doClear" type="submit" value="Clear" class="button submit"/>&nbsp;
+          <input id="doPost" type="submit" value="Post" class="button submit"/>&nbsp;
+          <br><br>
+          <fieldset>
+            <legend>Substitution Parameters</legend>
+            <div><input id="params" type="text" placeholder="Parameters" maxlength="512" class="userInput
+            token"/></div>
+            <br>
+            <div class="instructions">Optional JSON definition of parameter names and values. Ex: {"FOO": "bar"}</div>
+        </div>
+      </div>
+    </div>
+    <div class="logArea">
+      <ul class="messages"><li>Testing</li></ul>
+    </div>
+  </body>
+</html>
