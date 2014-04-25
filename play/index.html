@@ -9,26 +9,81 @@
     <link rel="stylesheet" href="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.10.2/themes/smoothness/jquery-ui.min.css">
     <link rel="stylesheet" href="style.css">
     <script>
-      $(function() { $("#tabs" ).tabs(); });
+      (function ($) {
+          $(function () {$("#tabs" ).tabs();});
+      })(jQuery);
     </script>
   </head>
   <body>
     <div id="tabs">
       <ul>
-        <li><a href="#tabs-1">Templates</a></li>
-        <li><a href="#tabs-2">Registrations</a></li>
-        <li><a href="#tabs-3">Notifier</a></li>
+        <li><a href="#tabs-1">Applications</a></li>
+        <li><a href="#tabs-2">Templates</a></li>
+        <li><a href="#tabs-3">Registrations</a></li>
+        <li><a href="#tabs-4">Notifier</a></li>
       </ul>
       <div id="tabs-1">
+        <div id="applications">
+          <input id="appId" type="text" placeholder="App ID" size="32" maxlength="32" class="userInput"/>
+          <select id="service" class="button">
+                <option value=""></option>
+                <option value="APNS">APNs</option>
+                <option value="GCM">GCM</option>
+                <option value="WNS">WNS</option>
+          </select>&nbsp;
+          <input id="doClear" type="button" value="Clear" class="button submit"/>&nbsp;
+          <input id="doQuery" type="button" value="Query" class="button submit"/>&nbsp;
+          <input id="doAdd" type="button" value="Add" class="button submit"/>&nbsp;
+          <input id="doDelete" type="button" value="Delete" class="button submit"/>
+          <fieldset id="apns">
+            <legend>APNs Authentication</legend>
+            <div>
+              <input id="selectClientCertFile" type="button" value="Select…" class="button submit"/>
+              <input id="clientCertFile" type="file" style="display:none">
+              <textarea id="clientCert" rows="4" placeholder="Certificate" class="userInput"></textarea>
+            </div>
+            <br>
+            <div>
+              <input id="selectClientKeyFile" type="button" value="Select…" class="button submit"/>
+              <input id="clientKeyFile" type="file" style="display:none">
+              <textarea id="clientKey" rows="4" placeholder="Private Key" class="userInput"></textarea>
+            </div>
+            <div>
+              <input id="clientKeyPass" type="text" placeholder="Passphrase" size="32" maxlength="128"
+                     class="userInput"/>
+            </div>
+          </fieldset>
+          <fieldset id="gcm">
+            <legend>GCM Authentication</legend>
+            <div>
+              <input id="selectAuthorizationKeyFile" type="button" value="Select…" class="button submit"/>
+              <input id="authorizationKeyFile" type="file" style="display:none">
+              <textarea id="authorizationKey" rows="4" placeholder="Authorization Key" class="userInput"></textarea>
+            </div>
+          </fieldset>
+          <fieldset id="wns">
+            <legend>WNS Authentication</legend>
+            <input id="packageSID" type="text" placeholder="Package SID " size="64" maxlength="128" 
+                   class="userInput"/>
+            <input id="clientSecret" type="text" placeholder="Client Secret" size="64" maxlength="128" 
+                   class="userInput"/>
+          </fieldset>
+          <ul id="messages"></ul>
+        </div>
+      </div>
+      <div id="tabs-2">
         <div id="templates">
-          <input id="eventId" type="text" placeholder="Event ID" maxlength="4" class="userInput"/>
-          <input id="templateVersion" type="text" placeholder="Version" maxlength="32" class="userInput"/>
-          <input id="doClear" type="submit" value="Clear" class="button submit"/>&nbsp;
-          <input id="doQuery" type="submit" value="Query" class="button submit"/>&nbsp;
-          <input id="doAdd" type="submit" value="Add" class="button submit"/>&nbsp;
+          <input id="eventId" type="text" placeholder="Event ID" size="12" maxlength="32" class="userInput"/>
+          <input id="notificationId" type="text" placeholder="Notification ID" size="12" maxlength="32" 
+                 class="userInput"/>
+          <input id="doClear" type="button" value="Clear" class="button submit"/>&nbsp;
+          <input id="doQuery" type="button" value="Query" class="button submit"/>&nbsp;
+          <input id="doAdd" type="button" value="Add" class="button submit"/>&nbsp;
+          <input id="doDelete" type="button" value="Delete" class="button submit"/>&nbsp;
           <br><br>
-          <input id="templateLanguage" type="text" placeholder="Language" maxlength="8" class="userInput"/>
-          <input id="route" type="text" placeholder="Context" maxlength="4" class="userInput"/>
+          <input id="templateVersion" type="text" placeholder="Version" size="12" maxlength="32" class="userInput"/>
+          <input id="templateLanguage" type="text" placeholder="Language" size="12" maxlength="32" class="userInput"/>
+          <input id="route" type="text" placeholder="Route" size="12" maxlength="32" class="userInput"/>
           <select id="service" class="button">
             <option value=""></option>
             <option value="APNS">APNs</option>
@@ -40,19 +95,20 @@
             <legend>Template Content</legend>
             <div><textarea id="content" rows="4" class="userInput"></textarea></div>
           </fieldset>
+          <ul id="messages"></ul>
         </div>
       </div>
-      <div id="tabs-2">
+      <div id="tabs-3">
         <div id="registrations">
-          <input id="skypeId" type="text" placeholder="Skype ID" maxlength="32" class="userInput"/>
-          <input id="registrationId" type="text" placeholder="Reg ID" maxlength="32" class="userInput"/>
-          <input id="doClear" type="submit" value="Clear" class="button submit"/>&nbsp;
-          <input id="doQuery" type="submit" value="Query" class="button submit"/>&nbsp;
-          <input id="doAdd" type="submit" value="Add" class="button submit"/>&nbsp;
+          <input id="userId" type="text" placeholder="User ID" size="12" maxlength="128" class="userInput"/>
+          <input id="deviceId" type="text" placeholder="Device ID" size="12" maxlength="128" class="userInput"/>
+          <input id="doClear" type="button" value="Clear" class="button submit"/>&nbsp;
+          <input id="doQuery" type="button" value="Query" class="button submit"/>&nbsp;
+          <input id="doAdd" type="button" value="Add" class="button submit"/>&nbsp;
           <br><br>
-          <input id="templateVersion" type="text" placeholder="Version" maxlength="32" class="userInput"/>
-          <input id="templateLanguage" type="text" placeholder="Language" maxlength="8" class="userInput"/>
-          <input id="route" type="text" placeholder="Context" maxlength="4" class="userInput"/>
+          <input id="templateVersion" type="text" placeholder="Version" size="12" maxlength="32" class="userInput"/>
+          <input id="templateLanguage" type="text" placeholder="Language" size="12" maxlength="32" class="userInput"/>
+          <input id="route" type="text" placeholder="Route" size="12" maxlength="32" class="userInput"/>
           <select id="service" class="button">
             <option value=""></option>
             <option value="APNS">APNs</option>
@@ -61,31 +117,31 @@
           </select>
           <br><br>
           <fieldset>
-            <legend>Registration Token</legend>
+            <legend>Push Service Token</legend>
             <div><input id="token" type="text" placeholder="Token" maxlength="512" class="userInput token"/></div>
             <br>
             <div class="instructions">Unique address for push notifications to a device.</div>
           </fieldset>
+          <ul id="messages"></ul>
         </div>
       </div>
-      <div id="tabs-3">
+      <div id="tabs-4">
         <div id="notifier">
-          <input id="skypeId" type="text" placeholder="Skype ID" maxlength="32" class="userInput"/>
-          <input id="eventId" type="text" placeholder="Event ID" maxlength="4" class="userInput"/>
-          <input id="doClear" type="submit" value="Clear" class="button submit"/>&nbsp;
-          <input id="doPost" type="submit" value="Post" class="button submit"/>&nbsp;
+          <input id="userId" type="text" placeholder="User ID" size="8" maxlength="32" class="userInput"/>
+          <input id="eventId" type="text" placeholder="Event ID" size="8" maxlength="32" class="userInput"/>
+          <input id="doClear" type="button" value="Clear" class="button submit"/>&nbsp;
+          <input id="doPost" type="button" value="Post" class="button submit"/>&nbsp;
           <br><br>
           <fieldset>
             <legend>Substitution Parameters</legend>
             <div><input id="params" type="text" placeholder="Parameters" maxlength="512" class="userInput
-            token"/></div>
+                                                                                                token"/></div>
             <br>
             <div class="instructions">Optional JSON definition of parameter names and values. Ex: {"FOO": "bar"}</div>
+          </fieldset>
+          <ul id="messages"></ul>
         </div>
       </div>
-    </div>
-    <div class="logArea">
-      <ul class="messages"><li>Testing</li></ul>
     </div>
   </body>
 </html>

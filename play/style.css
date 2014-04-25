@@ -44,10 +44,10 @@ legend {
     color:#888888;
 }
 
-.messages {
+#messages {
     font-size: 120%;
-    margin: 0;
-    padding: 10px 0px 10px 0px;
+    margin: 10px 0px 0px 0px;
+    padding: 0px 0px 0px 0px;
 }
 
 ul {
@@ -99,4 +99,8 @@ ul {
 .submit:active:enabled {
     position:relative;
     top:2px;
+}
+
+.plusMinus {
+    width:40px;
 }

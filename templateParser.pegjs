@@ -1,7 +1,7 @@
 // -*- Mode: js -*-
 
 {
-    var Filters = require('./filters');
+    var Filters = require('../../../filters');
     var __filters__ = new Filters();
 }
 

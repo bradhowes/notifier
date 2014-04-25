@@ -4,8 +4,10 @@
 module.exports = TemplateCache;
 
 var config = require('./config');
-var TemplateParser = require('./templateParser');
 var NotificationRequest = require('./notificationRequest');
+var PEG = require('pegjs');
+var fs = require('fs');
+var TemplateParser = PEG.buildParser(fs.readFileSync('templateParser.pegjs', 'utf-8'));
 
 /**
  * TemplateCache constructor.

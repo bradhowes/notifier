@@ -5,10 +5,10 @@ SERVER="${NOTIFIER:-localhost:4465}"
 function usage
 {
     cat << +EOF+
-usage: addreg USER REGID TVERS TLANG SVC NAME TOKEN TTL [NAME TOKEN TTL]...
+usage: addreg USER DEVICE TVERS TLANG SVC NAME TOKEN TTL [NAME TOKEN TTL]...
 
 USER: user ID to register under
-REGID: unique registration ID to add/update [registrationId]
+DEVICE: unique device ID to add/update [deviceId]
 TVERS: template version to register for [templateVersion]
 TLANG: template langugage to register for [templateLanguage]
 SVC: notification service to use ("wns", "apns", "mpns") [service]
@@ -24,7 +24,7 @@ if (( $# < 8 )); then
 fi
 
 USERID="${1}"
-JSON="{\"registrationId\":\"${2}\",\"templateVersion\":\"${3}\",\"templateLanguage\":\"${4}\",\"service\":\"${5}\","
+JSON="{\"deviceId\":\"${2}\",\"templateVersion\":\"${3}\",\"templateLanguage\":\"${4}\",\"service\":\"${5}\","
 JSON="${JSON}\"routes\":["
 shift 5
 COMMA=""

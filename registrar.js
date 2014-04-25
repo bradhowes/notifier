@@ -65,7 +65,7 @@ function Registrar(registrationStore) {
      * A registration details the version of the notification templates to be used when generating notification
      * payloads, the language of the notifications to generate, and the delivery service to use for the notification.
      *
-     * - registrationId: the unique identifier associated with the device being registered. This must be unique across
+     * - deviceId: the unique identifier associated with the device being registered. This must be unique across
      *   all devices, but it should be constant for the same device.
      * - templateVersion: the version to look for when searching for templates to use for this device
      * - templateLanguage: the language to look for when searching for templates to use for this device
@@ -77,7 +77,7 @@ function Registrar(registrationStore) {
      */
     this.RegistrationModel = this.UserIdModel.extend(
         {
-            registrationId: {required:true, type:'string', minlength:1, maxlength:128},
+            deviceId: {required:true, type:'string', minlength:1, maxlength:128},
             templateVersion: {required:true, type:'string', minlength:1, maxlength:10},
             templateLanguage: {required:true, type:'string', minlength:2, maxlength:10},
             service: {required:true, type:'string', minlength:1, maxlength:10},
@@ -100,14 +100,14 @@ function Registrar(registrationStore) {
     /**
      * JSON schema for delete parameter definitions. Attributes:
      *
-     * - registrationId: the unique identifier associated with the device to be removed. See
+     * - deviceId: the unique identifier associated with the device to be removed. See
      *   {@link Registrar#RegistrationModel} for additional information.
      *
      * @type Model
      */
     this.DeleteKeyModel = this.UserIdModel.extend(
         {
-            registrationId: {type:'string', minlength:1, maxlength:128}
+            deviceId: {type:'string', minlength:1, maxlength:128}
         });
 
     this.log.END();
@@ -138,7 +138,7 @@ Registrar.prototype = {
      *
      * @example HTTP GET /john.doe
      *
-     * @example <code>{registrationId: "1234-56-7890", templateVersion: "3", templateLanguage: "en-US",
+     * @example <code>{deviceId: "1234-56-7890", templateVersion: "3", templateLanguage: "en-US",
      *  service: "apns",
      *  routes:[{name: "main", token: "unique main token", expiration: 86400},
      *          {name: "alt", token: "unique alt token", expiration: 86400}]}
@@ -188,7 +188,7 @@ Registrar.prototype = {
     /**
      * Add or update a registration for a given user.
      *
-     * @example <code>{registrationId: "1234-56-7890", templateVersion: "3", templateLanguage: "en-US",
+     * @example <code>{deviceId: "1234-56-7890", templateVersion: "3", templateLanguage: "en-US",
      *  service: "apns",
      *  routes:[{name: "main", token: "unique main token", secondsToLive: 86400},
      *          {name: "alt", token: "unique alt token", secondsToLive: 86400}]}
@@ -240,13 +240,13 @@ Registrar.prototype = {
     },
 
     /**
-     * Delete a registration or all registrations for a given user. If a JSON payload exits with a registrationId
-     * attribute, only delete the one entity matching the registrationId value. Otherwise, delete all registrations for
+     * Delete a registration or all registrations for a given user. If a JSON payload exits with a deviceId
+     * attribute, only delete the one entity matching the deviceId value. Otherwise, delete all registrations for
      * the user.
      *
      * @example <code>{}</code>
      *
-     * @example <code>{registrationId: "1234-56-7890"}</code>
+     * @example <code>{deviceId: "1234-56-7890"}</code>
      *
      * @param {Express.Request} req Describes the incoming HTTP request. Message body must be JSON that follows the
      * {@link Registrar#DeleteKeyModel} model.
@@ -265,9 +265,9 @@ Registrar.prototype = {
             userId: req.param('userId')
         };
 
-        var registrationId = req.param('registrationId');
-        if (typeof registrationId !== 'undefined') {
-            params.registrationId = registrationId;
+        var deviceId = req.param('deviceId');
+        if (typeof deviceId !== 'undefined') {
+            params.deviceId = deviceId;
         }
 
         log.info('params:', params);
@@ -289,14 +289,14 @@ Registrar.prototype = {
                 self.monitorManager.post(params.userId, 'removed registration(s)');
                 res.send(HTTPStatus.NO_CONTENT);
             }
-            log.END(params.userId, registrationId, duration, 'msec');
+            log.END(params.userId, deviceId, duration, 'msec');
         }
 
-        if (params.registrationId === undefined) {
+        if (params.deviceId === undefined) {
             this.registrationStore.delAll(params.userId, callback);
         }
         else {
-            this.registrationStore.del(params.userId, params.registrationId, callback);
+            this.registrationStore.del(params.userId, params.deviceId, callback);
         }
     }
 };

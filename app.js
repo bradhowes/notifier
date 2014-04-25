@@ -10,6 +10,8 @@ var express = require('express');
 var io = require('socket.io');
 var http = require('http');
 var https = require('https');
+
+// var Applications = require('./applications');
 var APNs = require('./APNs');
 var GCM = require('./GCM');
 var Notifier = require('./notifier');

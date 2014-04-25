@@ -82,7 +82,7 @@ RegistrationStore.prototype = {
      *
      * @param {String} partitionKey the partition where the registration resides
      *
-     * @param {String} registrationId the row key of the registration to delete
+     * @param {String} deviceId the row key of the registration to delete
      *
      * @param {function(err)} callback the function to call when done
      *
@@ -113,7 +113,7 @@ RegistrationStore.prototype = {
         log.BEGIN(registrationEntity);
 
         var registration = {
-            registrationId: new Buffer(registrationEntity.RowKey, 'base64').toString('ascii'),
+            deviceId: new Buffer(registrationEntity.RowKey, 'base64').toString('ascii'),
             templateVersion: registrationEntity.TemplateVersion.substr(1),
             templateLanguage: registrationEntity.TemplateLanguage,
             service: registrationEntity.Service,
@@ -235,7 +235,7 @@ RegistrationStore.prototype = {
         var partitionKey = this.makePartitionKey(registration.userId);
         log.debug('partitionKey:', partitionKey);
 
-        var rowKey = this.makeRowKey(registration.registrationId);
+        var rowKey = this.makeRowKey(registration.deviceId);
         log.debug('rowKey:', rowKey);
 
         self.store.queryEntity(self.tableName, partitionKey, rowKey, function (err, found) {
@@ -290,7 +290,7 @@ RegistrationStore.prototype = {
      * @param userId
      *   The user to look for.
      *
-     * @param registrationId
+     * @param deviceId
      *   The registration to delete.
      *
      * @param callback
@@ -299,10 +299,10 @@ RegistrationStore.prototype = {
      *
      * @private
      */
-    del: function (userId, registrationId, callback) {
+    del: function (userId, deviceId, callback) {
         var log = this.log.child('del');
-        log.BEGIN(userId, registrationId);
-        this._delEntity(this.makePartitionKey(userId), this.makeRowKey(registrationId), function (err) {
+        log.BEGIN(userId, deviceId);
+        this._delEntity(this.makePartitionKey(userId), this.makeRowKey(deviceId), function (err) {
             callback(err);
             log.END(err);
         });
@@ -314,7 +314,7 @@ RegistrationStore.prototype = {
      * @param userId
      *   The user to look for.
      *
-     * @param registrationId
+     * @param deviceId
      *   The registration to delete.
      *
      * @param callback
@@ -323,14 +323,14 @@ RegistrationStore.prototype = {
      *
      * @private
      */
-    delRoute: function (userId, registrationId, routeNameOrToken) {
+    delRoute: function (userId, deviceId, routeNameOrToken) {
         var log = this.log.child('delRoute');
-        log.BEGIN(userId, registrationId, routeToken);
+        log.BEGIN(userId, deviceId, routeToken);
 
         var partitionKey = this.makePartitionKey(userId);
         log.debug('partitionKey:', partitionKey);
 
-        var rowKey = this.makeRowKey(registrationId);
+        var rowKey = this.makeRowKey(deviceId);
         log.debug('rowKey:', rowKey);
 
         self.store.queryEntity(self.tableName, partitionKey, rowKey, function (err, entity) {
@@ -350,7 +350,7 @@ RegistrationStore.prototype = {
             }
 
             if (newRoutes.length === 0) {
-                self.del(userId, registrationId, function (err) {
+                self.del(userId, deviceId, function (err) {
                     log.END(err);
                 });
             }
