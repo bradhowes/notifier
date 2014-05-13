@@ -2,16 +2,16 @@
 module.exports = {
 
     // Azure Table Store settings
-    'azure_storage_account': 'brhnotifier',
-    'azure_storage_access_key': 'fqSjMPX7HzwmYtCASy5n3KajFJcNyVghbjvvOQl9b/2JEmoLm2ubvplaMIPLZmMHmO2eD4SgVKg3h9KhZz0w9A==',
+    'azure_storage_account': 'brhnotif',
+    'azure_storage_access_key': process.env.AZURE_STORAGE_ACCESS_KEY,
 
     // Azure ServiceBus settings
-    'azure_servicebus_namespace': 'brhnotifier',
-    'azure_servicebus_access_key': 'Dnpx4UaU1/uj8wZGuuzx//Ex+v2zzrD4CwPVxhqX9ec=',
+    'azure_servicebus_namespace': 'brhnotif',
+    'azure_servicebus_access_key': process.env.AZURE_SERVICEBUS_ACCESS_KEY,
 
     // Windows Notification Service (WNS)
-    'wns_client_secret': 'apqZLS7YyvZ3PdAWEnV0cR+PE0Wg1Kbs',
-    'wns_package_sid': 'ms-app://s-1-15-2-1999769064-1874154615-4172669911-680048040-2886621807-223654759-3790666136',
+    'wns_client_secret': process.env.WNS_CLIENT_SECRET,
+    'wns_package_sid': process.env.WNS_PACKAGE_SID,
 
     // Apple Push Notification Service (APNs)
     'apns_root_certificate_file': 'EntrustRootCertificationAuthority.pem',
@@ -19,5 +19,5 @@ module.exports = {
     'apns_client_certificate_file': 'apn-nhtest-dev.pem',
 
     // Google Cloud Messaging (GCM)
-    'gcm_authorization_key': 'AIzaSyCsxY-KyFfHHn_PCkPByHEwtgjV7eeN0Eg'
+    'gcm_authorization_key': process.env.GCM_AUTHORIZATION_KEY
 };

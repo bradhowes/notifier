@@ -5,8 +5,8 @@
  */
 module.exports = undefined;
 
-// Load in sensitive parameters
 var fs = require('fs');
+// Load in sensitive parameters
 var priv = require('./private/config');
 var LoggerUtils = require('./loggerUtils');
 
