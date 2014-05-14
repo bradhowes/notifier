@@ -35,6 +35,8 @@ do the following:
 
 # Code Documentation
 
+Online documentation can be found at [here](http://bradhowes.github.com/notifier/index.html).
+
 Local documentation may be generated via
 
 ```
