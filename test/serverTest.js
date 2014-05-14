@@ -10,7 +10,7 @@ var log4js = require('log4js');
 var pact = require('pact');
 var request = require('request');
 var vows = require('vows');
-var App = require('../server');
+var App = require('../app');
 
 var host = 'localhost';
 var port = 4465;
@@ -26,7 +26,7 @@ if (config.ssl_authentication_enabled) {
 var server = null;
 
 var validRegistration_WNS = {
-    registrationId: 'myregistration_WNS',
+    deviceId: 'myregistration_WNS',
     templateVersion: '3.0',
     templateLanguage: 'en-us',
     service: 'wns',
@@ -36,7 +36,7 @@ var validRegistration_WNS = {
 };
 
 var validRegistration_APNS = {
-    registrationId: 'myregistration_APNS',
+    deviceId: 'myregistration_APNS',
     templateVersion: '3.0',
     templateLanguage: 'en-us',
     service: 'apns',
@@ -188,7 +188,7 @@ suite.addBatch(
             ),
             'it should succeed with OK': statusCheck(HTTPStatus.OK)
         },
-        'invalid registration with missing registrationId': {
+        'invalid registration with missing deviceId': {
             topic: makeRequest(
                 {
                     path:'/registrations/br.howes2',
@@ -208,7 +208,7 @@ suite.addBatch(
                     path:'/registrations/br.howes2',
                     method: 'POST',
                     json: {
-                        registrationId: '123',
+                        deviceId: '123',
                         templateLanguage: 'en-us',
                         service: 'wns',
                         routes: [ { 'name': '*', 'token': '123', 'secondsToLive': 60 } ]
@@ -222,7 +222,7 @@ suite.addBatch(
                     path:'/registrations/br.howes2',
                     method: 'POST',
                     json: {
-                        registrationId: '123',
+                        deviceId: '123',
                         templateVersion: '1.0',
                         service: 'wns',
                         routes: [ { 'name': '*', 'token': '123', 'secondsToLive': 60 } ]
@@ -236,7 +236,7 @@ suite.addBatch(
                     path:'/registrations/br.howes2',
                     method: 'POST',
                     json: {
-                        registrationId: '123',
+                        deviceId: '123',
                         templateVersion: '1.0',
                         templateLanguage: 'en-us',
                         routes: [ { 'name': '*', 'token': '123', 'secondsToLive': 60 } ]
@@ -250,7 +250,7 @@ suite.addBatch(
                     path:'/registrations/br.howes2',
                     method: 'POST',
                     json: {
-                        registrationId: '123',
+                        deviceId: '123',
                         templateVersion: '1.0',
                         templateLanguage: 'en-us',
                         service: 'wns'
@@ -264,7 +264,7 @@ suite.addBatch(
                     path:'/registrations/br.howes2',
                     method: 'POST',
                     json: {
-                        registrationId: '123',
+                        deviceId: '123',
                         templateVersion: '1.0',
                         templateLanguage: 'en-us',
                         service: 'wns',
@@ -279,7 +279,7 @@ suite.addBatch(
                     path:'/registrations/br.howes2',
                     method: 'POST',
                     json: {
-                        registrationId: '123',
+                        deviceId: '123',
                         templateVersion: '1.0',
                         templateLanguage: 'en-us',
                         service: 'wns',
@@ -425,7 +425,7 @@ suite.addBatch(
                 {
                     path:'/registrations/br.howes2',
                     method: 'DELETE',
-                    json: {registrationId: "myregistration_WNS"}
+                    json: {deviceId: "myregistration_WNS"}
                 }
             ),
             'it should succeed with NO CONTENT': statusCheck(HTTPStatus.NO_CONTENT)
@@ -435,7 +435,7 @@ suite.addBatch(
                 {
                     path:'/registrations/br.howes2',
                     method: 'DELETE',
-                    json: {registrationId: "myregistration_APNS"}
+                    json: {deviceId: "myregistration_APNS"}
                 }
             ),
             'it should succeed with NO CONTENT': statusCheck(HTTPStatus.NO_CONTENT)

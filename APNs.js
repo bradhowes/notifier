@@ -33,6 +33,7 @@ function APNs(monitorManager) {
         {
             "cert": config.apns_client_certificate_file,
             "key": config.apns_client_private_key_file,
+            "passphrase": config.apns_passphrase.length ? config.apns_passphrase : null,
             "gateway": config.apns_service_host,
             "port": config.apns_service_port,
             "enhanced": true,

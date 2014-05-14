@@ -161,6 +161,8 @@ function Config () {
      */
     this.apns_client_certificate_file = 'private/apn-nhtest-dev.pem';
 
+    this.apns_passphrase = priv.apns_passphrase;
+
     /**
      * The Azure storage account to use for table stores.
      * @type {String}
@@ -188,6 +190,7 @@ function Config () {
     // Make sure our environment reflects these Azure settings.
     process.env.AZURE_STORAGE_ACCOUNT = this.azure_storage_account;
     process.env.AZURE_STORAGE_ACCESS_KEY = this.azure_storage_access_key;
+
     process.env.AZURE_SERVICEBUS_NAMESPACE = this.azure_servicebus_namespace;
     process.env.AZURE_SERVICEBUS_ACCESS_KEY = this.azure_servicebus_access_key;
 

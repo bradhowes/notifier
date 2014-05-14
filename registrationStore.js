@@ -82,7 +82,7 @@ RegistrationStore.prototype = {
      *
      * @param {String} partitionKey the partition where the registration resides
      *
-     * @param {String} deviceId the row key of the registration to delete
+     * @param {String} rowKey the row key of the registration to delete
      *
      * @param {function(err)} callback the function to call when done
      *
@@ -188,6 +188,8 @@ RegistrationStore.prototype = {
                 return;
             }
 
+            log.error('found:', regs);
+
             var registrations = [];
 
             if (regs.length === 0) {
@@ -291,7 +293,7 @@ RegistrationStore.prototype = {
      *   The user to look for.
      *
      * @param deviceId
-     *   The registration to delete.
+     *   The device entry to delete.
      *
      * @param callback
      *   Method to invoke when the deletion is done.

@@ -2,9 +2,6 @@
 
 var config = require('../config');
 
-process.env.AZURE_STORAGE_ACCOUNT = config.azure_storage_account;
-process.env.AZURE_STORAGE_ACCESS_KEY = config.azure_storage_access_key;
-
 var assert = require("assert");
 var vows = require("vows");
 
@@ -26,7 +23,7 @@ suite.addBatch({
 suite.addBatch({
     'add registration': {
         topic: function () {
-            store.set({userId:'br.howes', registrationId:'myregistration', templateVersion:'1.0',
+            store.set({userId:'br.howes', deviceId:'mydevice', templateVersion:'1.0',
                        templateLanguage:'en-us', service:'wns',
                        routes:[{'name':'*',
                                 'token':'123',
@@ -67,9 +64,10 @@ suite.addBatch({
 suite.addBatch({
     'delete registration': {
         topic: function () {
-            store.del('br.howes', 'myregistration', this.callback);
+            store.del('br.howes', 'mydevice', this.callback);
         },
         'succeeds without error': function (err, found) {
+            console.log('err:', err);
             assert.isNull(err);
         }
     }

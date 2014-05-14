@@ -6,5 +6,5 @@ wns_access_token_cache.js
 templateParser.js
 README.html
 /doc
-/private
+/private/raw_config.js
 /node_modules
