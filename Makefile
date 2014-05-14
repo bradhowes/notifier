@@ -1,9 +1,13 @@
 SOURCE=		APNs.js \
+			GCM.js \
+			WNS.js \
+			app.js \
+			applications.js \
 			config.js \
 			deque.js \
 			filters.js \
-			GCM.js \
 			loggerUtils.js \
+			monitor.js \
 			notificationRequest.js \
 			notificationRequestTracker.js \
 			notifier.js \
@@ -11,15 +15,13 @@ SOURCE=		APNs.js \
 			registrar.js \
 			registrationFilter.js \
 			registrationStore.js \
-			server.js \
+			templateCache.js \
 			templateManager.js \
 			templateStore.js \
-			templateCache.js \
-			WNS.js
 
 .PHONY: doc
 
-all: tests docs templateParser.js
+all: tests docs templateParser.js README.html
 
 templateParser.js: templateParser.pegjs
 	node_modules/pegjs/bin/pegjs $^ $@

@@ -11,8 +11,22 @@ Currently there is only support for Microsoft WNS, Apple's APNs, and Google's GC
 
 # Configuration
 
-See the config.js file. Note that some sensitive settings must be added to a private/config.js file before things will
-work, in particular the notification services and Azure Table Store access.
+See the `config.js` file. Note that some sensitive settings must be added to a `private/config.js` file before things
+will work, in particular the notification services and Azure Table Store access. To do this in a secure way, you must
+do the following:
+
+* Choose a password that you will use to encrypt sensitive data
+* Copy `private/raw_config_template.js` to `private/raw_config.js`
+* Edit `private/raw_config.js` so that it contains values that pertain to your Azure environment, APNs credentials,
+  etc.
+* Run `node gen_config.js PASSWORD` where PASSWORD is what you chose above
+* You can delete `private/raw_config.js` now and safely commit everything else
+* In Azure portal, add an environment variable for the Web Service with the name `CONFIG_PASSWORD` and the value of the
+  password you chose. If running localy, just set an environment variable before running node:
+
+    ```
+    % CONFIG_PASSWORD="PASSWORD" node app.js
+    ```
 
 # Running
 ```
