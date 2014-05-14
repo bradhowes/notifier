@@ -42,6 +42,8 @@
 				
 					<li><a href="../symbols/App.html">App</a></li>
 				
+					<li><a href="../symbols/Applications.html">Applications</a></li>
+				
 					<li><a href="../symbols/Config.html">Config</a></li>
 				
 					<li><a href="../symbols/Deque.html">Deque</a></li>
@@ -87,7 +89,7 @@
 			Documentation generator: <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0<br />
 			Template: <a href="http://www.thebrightlines.com/2010/05/06/new-template-for-jsdoctoolkit-codeview/" target="_blank">Codeview</a> 1.2<br />
 			Generated on:
-			<time datetime='2012-7-15' pubdate>2012-7-15 17:20</time>
+			<time datetime='2014-4-14' pubdate>2014-4-14 11:36</time>
 		</footer>
 	</div>
 </div>
@@ -263,6 +265,26 @@ device token is no longer valid.</div>
 												<td class="attributes">&nbsp;</td>
 												<td class="nameDescription">
 													<div class="fixedFont">
+													<b><a href="../symbols/Config.html#azure_servicebus_access_key">azure_servicebus_access_key</a></b>
+													</div>
+													<div class="description"><p>The access key for the above Azure ServiceBus namespace.</div>
+												</td>
+											</tr>
+										
+											<tr>
+												<td class="attributes">&nbsp;</td>
+												<td class="nameDescription">
+													<div class="fixedFont">
+													<b><a href="../symbols/Config.html#azure_servicebus_namespace">azure_servicebus_namespace</a></b>
+													</div>
+													<div class="description"><p>The Azure ServiceBus namespace to use.</div>
+												</td>
+											</tr>
+										
+											<tr>
+												<td class="attributes">&nbsp;</td>
+												<td class="nameDescription">
+													<div class="fixedFont">
 													<b><a href="../symbols/Config.html#azure_storage_access_key">azure_storage_access_key</a></b>
 													</div>
 													<div class="description"><p>The access key for the above Azure storage account</p></div>
@@ -306,6 +328,47 @@ device token is no longer valid.</div>
 													<b><a href="../symbols/Config.html#log">log</a></b>
 													</div>
 													<div class="description"><p>Shortcut to log4js.getLogger procedure.</div>
+												</td>
+											</tr>
+										
+											<tr>
+												<td class="attributes">&nbsp;</td>
+												<td class="nameDescription">
+													<div class="fixedFont">
+													<b><a href="../symbols/Config.html#monitor_cleanup_interval_minutes">monitor_cleanup_interval_minutes</a></b>
+													</div>
+													<div class="description"><p>The interval in minutes between invocation of MonitorManager.cleanup function, which culls stale topic
+subscriptions in Azure ServiceBus.</div>
+												</td>
+											</tr>
+										
+											<tr>
+												<td class="attributes">&nbsp;</td>
+												<td class="nameDescription">
+													<div class="fixedFont">
+													<b><a href="../symbols/Config.html#monitor_command_channel_name">monitor_command_channel_name</a></b>
+													</div>
+													<div class="description"><p>The name of the command channel to use to advertise and listen for monitor changes.</div>
+												</td>
+											</tr>
+										
+											<tr>
+												<td class="attributes">&nbsp;</td>
+												<td class="nameDescription">
+													<div class="fixedFont">
+													<b><a href="../symbols/Config.html#monitor_duration_minutes">monitor_duration_minutes</a></b>
+													</div>
+													<div class="description"><p>The number of minutes that a monitoring request will be valid.</div>
+												</td>
+											</tr>
+										
+											<tr>
+												<td class="attributes">&nbsp;</td>
+												<td class="nameDescription">
+													<div class="fixedFont">
+													<b><a href="../symbols/Config.html#monitor_topic_name">monitor_topic_name</a></b>
+													</div>
+													<div class="description"><p>The name of the ServiceBus topic to create and use for monitoring.</div>
 												</td>
 											</tr>
 										
@@ -436,16 +499,6 @@ device token is no longer valid.</div>
 													<b><a href="../symbols/Config.html#wns_host">wns_host</a></b>
 													</div>
 													<div class="description"><p>FQDN of the host to use to deliver WNS notification payloads.</div>
-												</td>
-											</tr>
-										
-											<tr>
-												<td class="attributes">&nbsp;</td>
-												<td class="nameDescription">
-													<div class="fixedFont">
-													<b><a href="../symbols/Config.html#wns_package_name">wns_package_name</a></b>
-													</div>
-													<div class="description"><p>The package name associated with the Windows application</p></div>
 												</td>
 											</tr>
 										
@@ -717,6 +770,50 @@ device token is no longer valid.</p>
 								
 								<div class="hr"></div>
 							
+								<div class="fixedFont heading" id="azure_servicebus_access_key">
+									<span class='lighter'>
+									
+									</span>
+									
+									
+									
+									<b>azure_servicebus_access_key</b>							
+								</div>
+								
+								<div class="description">
+									<p>The access key for the above Azure ServiceBus namespace.</p>
+									
+									
+									
+								</div>
+								
+								
+									
+								
+								<div class="hr"></div>
+							
+								<div class="fixedFont heading" id="azure_servicebus_namespace">
+									<span class='lighter'>
+									
+									</span>
+									
+									
+									
+									<b>azure_servicebus_namespace</b>							
+								</div>
+								
+								<div class="description">
+									<p>The Azure ServiceBus namespace to use.</p>
+									
+									
+									
+								</div>
+								
+								
+									
+								
+								<div class="hr"></div>
+							
 								<div class="fixedFont heading" id="azure_storage_access_key">
 									<span class='lighter'>
 									
@@ -817,6 +914,96 @@ device token is no longer valid.</p>
 								
 								<div class="description">
 									<p>Shortcut to log4js.getLogger procedure. Allows other modules to do <code>config.log('moduleName')</code></p>
+									
+									
+									
+								</div>
+								
+								
+									
+								
+								<div class="hr"></div>
+							
+								<div class="fixedFont heading" id="monitor_cleanup_interval_minutes">
+									<span class='lighter'>
+									
+									</span>
+									
+									
+									
+									<b>monitor_cleanup_interval_minutes</b>							
+								</div>
+								
+								<div class="description">
+									<p>The interval in minutes between invocation of MonitorManager.cleanup function, which culls stale topic
+subscriptions in Azure ServiceBus.</p>
+									
+									
+									
+								</div>
+								
+								
+									
+								
+								<div class="hr"></div>
+							
+								<div class="fixedFont heading" id="monitor_command_channel_name">
+									<span class='lighter'>
+									
+									</span>
+									
+									
+									
+									<b>monitor_command_channel_name</b>							
+								</div>
+								
+								<div class="description">
+									<p>The name of the command channel to use to advertise and listen for monitor changes. This should <em>not</em> match a
+valid user ID.</p>
+									
+									
+									
+								</div>
+								
+								
+									
+								
+								<div class="hr"></div>
+							
+								<div class="fixedFont heading" id="monitor_duration_minutes">
+									<span class='lighter'>
+									
+									</span>
+									
+									
+									
+									<b>monitor_duration_minutes</b>							
+								</div>
+								
+								<div class="description">
+									<p>The number of minutes that a monitoring request will be valid.</p>
+									
+									
+									
+								</div>
+								
+								
+									
+								
+								<div class="hr"></div>
+							
+								<div class="fixedFont heading" id="monitor_topic_name">
+									<span class='lighter'>
+									
+									</span>
+									
+									
+									
+									<b>monitor_topic_name</b>							
+								</div>
+								
+								<div class="description">
+									<p>The name of the ServiceBus topic to create and use for monitoring.</p>
 									
 									
 									
@@ -1109,28 +1296,6 @@ matches fields such as: @@ABC@@, @@FooBar=default value@@</p>
 								
 								<div class="description">
 									<p>FQDN of the host to use to deliver WNS notification payloads.</p>
-									
-									
-									
-								</div>
-								
-								
-									
-								
-								<div class="hr"></div>
-							
-								<div class="fixedFont heading" id="wns_package_name">
-									<span class='lighter'>
-									
-									</span>
-									
-									
-									
-									<b>wns_package_name</b>							
-								</div>
-								
-								<div class="description">
-									<p>The package name associated with the Windows application</p>
 									
 									
 									

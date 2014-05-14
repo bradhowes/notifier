@@ -42,6 +42,8 @@
 				
 					<li><a href="../symbols/App.html">App</a></li>
 				
+					<li><a href="../symbols/Applications.html">Applications</a></li>
+				
 					<li><a href="../symbols/Config.html">Config</a></li>
 				
 					<li><a href="../symbols/Deque.html">Deque</a></li>
@@ -87,7 +89,7 @@
 			Documentation generator: <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0<br />
 			Template: <a href="http://www.thebrightlines.com/2010/05/06/new-template-for-jsdoctoolkit-codeview/" target="_blank">Codeview</a> 1.2<br />
 			Generated on:
-			<time datetime='2012-7-15' pubdate>2012-7-15 17:20</time>
+			<time datetime='2014-4-14' pubdate>2014-4-14 11:36</time>
 		</footer>
 	</div>
 </div>
@@ -367,7 +369,7 @@ operations.</p></dd>
 									<p>JSON schema for delete parameter definitions. Attributes:</p>
 
 <ul>
-<li>registrationId: the unique identifier associated with the device to be removed. See
+<li>deviceId: the unique identifier associated with the device to be removed. See
 <a href="../symbols/Registrar.html#RegistrationModel">Registrar#RegistrationModel</a> for additional information.</li>
 </ul>
 									
@@ -397,7 +399,7 @@ A registration details the version of the notification templates to be used when
 payloads, the language of the notifications to generate, and the delivery service to use for the notification.</p>
 
 <ul>
-<li>registrationId: the unique identifier associated with the device being registered. This must be unique across
+<li>deviceId: the unique identifier associated with the device being registered. This must be unique across
 all devices, but it should be constant for the same device.</li>
 <li>templateVersion: the version to look for when searching for templates to use for this device</li>
 <li>templateLanguage: the language to look for when searching for templates to use for this device</li>
@@ -503,8 +505,8 @@ route is used for a notification depends on if the route name associates with a 
 										</div>
 										
 										<div class="description">
-											<p>Delete a registration or all registrations for a given user. If a JSON payload exits with a registrationId
-attribute, only delete the one entity matching the registrationId value. Otherwise, delete all registrations for
+											<p>Delete a registration or all registrations for a given user. If a JSON payload exits with a deviceId
+attribute, only delete the one entity matching the deviceId value. Otherwise, delete all registrations for
 the user.</p>
 											
 											
@@ -516,7 +518,7 @@ the user.</p>
 											
 												<pre class="code"><code>{}</code></pre>
 											
-												<pre class="code"><code>{registrationId: "1234-56-7890"}</code></pre>
+												<pre class="code"><code>{deviceId: "1234-56-7890"}</code></pre>
 											
 										
 										
@@ -575,7 +577,7 @@ the user.</p>
 											
 												<pre class="code">HTTP GET /john.doe</pre>
 											
-												<pre class="code"><code>{registrationId: "1234-56-7890", templateVersion: "3", templateLanguage: "en-US",
+												<pre class="code"><code>{deviceId: "1234-56-7890", templateVersion: "3", templateLanguage: "en-US",
  service: "apns",
  routes:[{name: "main", token: "unique main token", expiration: 86400},
          {name: "alt", token: "unique alt token", expiration: 86400}]}
@@ -644,7 +646,7 @@ the user ID to use, and it must adhere to the <a href="../symbols/Registrar.html
 														<span class="light fixedFont">{Express.App}</span> <b>app</b>
 														
 													</dt>
-													<dd><p>The application to route HTTP request.</p></dd>
+													<dd><p>The application to route HTTP requests.</p></dd>
 												
 											</dl>
 										
@@ -676,7 +678,7 @@ the user ID to use, and it must adhere to the <a href="../symbols/Registrar.html
 										
 										
 											
-												<pre class="code"><code>{registrationId: "1234-56-7890", templateVersion: "3", templateLanguage: "en-US",
+												<pre class="code"><code>{deviceId: "1234-56-7890", templateVersion: "3", templateLanguage: "en-US",
  service: "apns",
  routes:[{name: "main", token: "unique main token", secondsToLive: 86400},
          {name: "alt", token: "unique alt token", secondsToLive: 86400}]}

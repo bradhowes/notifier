@@ -42,6 +42,8 @@
 				
 					<li><a href="../symbols/App.html">App</a></li>
 				
+					<li><a href="../symbols/Applications.html">Applications</a></li>
+				
 					<li><a href="../symbols/Config.html">Config</a></li>
 				
 					<li><a href="../symbols/Deque.html">Deque</a></li>
@@ -87,7 +89,7 @@
 			Documentation generator: <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0<br />
 			Template: <a href="http://www.thebrightlines.com/2010/05/06/new-template-for-jsdoctoolkit-codeview/" target="_blank">Codeview</a> 1.2<br />
 			Generated on:
-			<time datetime='2012-7-15' pubdate>2012-7-15 17:20</time>
+			<time datetime='2014-4-14' pubdate>2014-4-14 11:36</time>
 		</footer>
 	</div>
 </div>
@@ -137,7 +139,7 @@
 									<td class="attributes">&nbsp;</td>
 									<td class="nameDescription" >
 										<div class="fixedFont">
-											<b><a href="../symbols/APNs.html#constructor">APNs</a></b>()
+											<b><a href="../symbols/APNs.html#constructor">APNs</a></b>(monitorManager)
 										</div>
 										<div class="description"><p>APNs constructor.</div>
 									</td>
@@ -221,17 +223,6 @@
 											<tr
 												 class='item0'
 											>
-												<td class="attributes">&lt;inner&gt; &nbsp;</td>
-												<td class="nameDescription">
-													<div class="fixedFont"><b><a href="../symbols/APNs.html#-errorCallback">errorCallback</a></b>(errNum, notification)
-													</div>
-													<div class="description"><p>Error callback invoked whenever an error response comes over the connection.</div>
-												</td>
-											</tr>
-										
-											<tr
-												 class='item1'
-											>
 												<td class="attributes">&nbsp;</td>
 												<td class="nameDescription">
 													<div class="fixedFont"><b><a href="../symbols/APNs.html#feedbackCallback">feedbackCallback</a></b>(timestamp, device)
@@ -241,7 +232,7 @@
 											</tr>
 										
 											<tr
-												 class='item2'
+												 class='item1'
 											>
 												<td class="attributes">&nbsp;</td>
 												<td class="nameDescription">
@@ -277,7 +268,7 @@
 							</h2>
 							
 							<div class="fixedFont">
-								<b>APNs</b>()
+								<b>APNs</b>(monitorManager)
 							</div>
 							
 							<div class="description">
@@ -287,6 +278,17 @@
 							
 							
 						
+							
+								<dl class="detailList params">
+									<dt class="heading">Parameters:</dt>
+									
+										<dt>
+											 <b>monitorManager</b>
+											
+										</dt>
+										<dd></dd>
+									
+								</dl>
 							
 							
 							
@@ -371,53 +373,6 @@
 									<li 
 										 class='item0'
 									>
-										<div class="fixedFont heading" id="-errorCallback">
-											<span class='lighter'>
-											&lt;inner&gt; 
-											</span>
-											
-											
-											
-											<b>errorCallback</b>(errNum, notification)
-										</div>
-										
-										<div class="description">
-											<p>Error callback invoked whenever an error response comes over the connection. If the notification object is
-valid and has a callback associated with it, invoke the callback.</p>
-											
-											
-											
-											
-										</div>
-										
-										
-										
-										
-											<dl class="detailList params">
-												<dt class="heading">Parameters:</dt>
-												
-													<dt>
-														<span class="light fixedFont">{Number}</span> <b>errNum</b>
-														
-													</dt>
-													<dd><p>numeric response returned by APNs server before it closed the connection</p></dd>
-												
-													<dt>
-														<span class="light fixedFont">{apn.Notification}</span> <b>notification</b>
-														
-													</dt>
-													<dd><p>the Notification instance that triggered he error</p></dd>
-												
-											</dl>
-										
-										
-										
-										<div class="hr"></div>
-									</li>
-								
-									<li 
-										 class='item1'
-									>
 										<div class="fixedFont heading" id="feedbackCallback">
 											<span class='lighter'>
 											
@@ -464,7 +419,7 @@ forget the registration associated with the device.</p>
 									</li>
 								
 									<li 
-										 class='item2'
+										 class='item1'
 									>
 										<div class="fixedFont heading" id="sendNotification">
 											<span class='lighter'>

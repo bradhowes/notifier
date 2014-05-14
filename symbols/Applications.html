@@ -4,7 +4,7 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
-		<title>TemplateManager | JsDoc Reference</title>
+		<title>Applications | JsDoc Reference</title>
 
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 		<meta name="mobileoptimized" content="0" />
@@ -102,13 +102,13 @@
 			<header>
 				<h1 class="classTitle">
 					
-					Class <span>TemplateManager</span>
+					Class <span>Applications</span>
 				</h1>
 				
 				<div class="intro">
 					<p class="description summary">
-						A TemplateManager stores and retrieves notification template definitions. It relies on a TemplateStore object to
-provide the actual storage.
+						Applications allows for querying, updating, and deleting of application info. An application defines the credentials
+to use to talk to a notification service such as APNs or WNS.
 					</p>
 						
 					
@@ -116,7 +116,7 @@ provide the actual storage.
 							
 							
 							
-								<li>Defined in: <a href="../symbols/src/templateManager.js.html">templateManager.js</a></li>
+								<li>Defined in: <a href="../symbols/src/applications.js.html">applications.js</a></li>
 							
 							
 						</ul>
@@ -127,7 +127,7 @@ provide the actual storage.
 			
 				<section>
 					<div class="props">
-						<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class TemplateManager.">
+						<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class Applications.">
 							<caption class="sectionTitle">Class Summary</caption>
 							<thead>
 								<tr>
@@ -140,9 +140,9 @@ provide the actual storage.
 									<td class="attributes">&nbsp;</td>
 									<td class="nameDescription" >
 										<div class="fixedFont">
-											<b><a href="../symbols/TemplateManager.html#constructor">TemplateManager</a></b>(templateStore)
+											<b><a href="../symbols/Applications.html#constructor">Applications</a></b>(applicationsStore)
 										</div>
-										<div class="description"><p>TemplateManager constructor.</div>
+										<div class="description"><p>Applications constructor.</div>
 									</td>
 								</tr>
 							</tbody>
@@ -157,7 +157,7 @@ provide the actual storage.
 					
 						<nav>
 							<div class="props">
-								<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class TemplateManager.">
+								<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class Applications.">
 									<caption class="sectionTitle">Field Summary</caption>
 									
 									<thead>
@@ -173,9 +173,9 @@ provide the actual storage.
 												<td class="attributes">&nbsp;</td>
 												<td class="nameDescription">
 													<div class="fixedFont">
-													<b><a href="../symbols/TemplateManager.html#FindKeyModel">FindKeyModel</a></b>
+													<b><a href="../symbols/Applications.html#APNsModel">APNsModel</a></b>
 													</div>
-													<div class="description"><p>JSON schema for query to locate a specific template.</div>
+													<div class="description"><p>JSON schema for APNs credentials.</div>
 												</td>
 											</tr>
 										
@@ -183,9 +183,9 @@ provide the actual storage.
 												<td class="attributes">&nbsp;</td>
 												<td class="nameDescription">
 													<div class="fixedFont">
-													<b><a href="../symbols/TemplateManager.html#TemplateContentModel">TemplateContentModel</a></b>
+													<b><a href="../symbols/Applications.html#AppIdModel">AppIdModel</a></b>
 													</div>
-													<div class="description"><p>JSON schema for template contents.</div>
+													<div class="description"><p>JSON schema for appId values.</div>
 												</td>
 											</tr>
 										
@@ -193,9 +193,9 @@ provide the actual storage.
 												<td class="attributes">&nbsp;</td>
 												<td class="nameDescription">
 													<div class="fixedFont">
-													<b><a href="../symbols/TemplateManager.html#TemplateDefinitionModel">TemplateDefinitionModel</a></b>
+													<b><a href="../symbols/Applications.html#GCMModel">GCMModel</a></b>
 													</div>
-													<div class="description"><p>JSON schema for template definitions.</div>
+													<div class="description"><p>JSON schema for GCM credential.</div>
 												</td>
 											</tr>
 										
@@ -203,9 +203,9 @@ provide the actual storage.
 												<td class="attributes">&nbsp;</td>
 												<td class="nameDescription">
 													<div class="fixedFont">
-													<b><a href="../symbols/TemplateManager.html#TemplateKeyModel">TemplateKeyModel</a></b>
+													<b><a href="../symbols/Applications.html#WNSModel">WNSModel</a></b>
 													</div>
-													<div class="description"><p>JSON schema for a unique template key.</div>
+													<div class="description"><p>JSON schema for WNS credentials.</div>
 												</td>
 											</tr>
 										
@@ -230,7 +230,7 @@ provide the actual storage.
 						
 						
 							<nav>
-								<table class="summaryTable" id="MethodsList" cellspacing="0" summary="A summary of the methods documented in the class TemplateManager.">
+								<table class="summaryTable" id="MethodsList" cellspacing="0" summary="A summary of the methods documented in the class Applications.">
 									<thead>
 										<tr>
 											<th scope="col">Method Attributes</th>
@@ -246,9 +246,9 @@ provide the actual storage.
 											>
 												<td class="attributes">&nbsp;</td>
 												<td class="nameDescription">
-													<div class="fixedFont"><b><a href="../symbols/TemplateManager.html#del">del</a></b>(req, res)
+													<div class="fixedFont"><b><a href="../symbols/Applications.html#del">del</a></b>(req, res)
 													</div>
-													<div class="description"><p>Delete a template from the template store.</div>
+													<div class="description"><p>Delete a registration or all registrations for a given user.</div>
 												</td>
 											</tr>
 										
@@ -257,9 +257,9 @@ provide the actual storage.
 											>
 												<td class="attributes">&nbsp;</td>
 												<td class="nameDescription">
-													<div class="fixedFont"><b><a href="../symbols/TemplateManager.html#get">get</a></b>(req, res)
+													<div class="fixedFont"><b><a href="../symbols/Applications.html#get">get</a></b>(req, res)
 													</div>
-													<div class="description"><p>Get one or more existing templates that match a given key.</div>
+													<div class="description"><p>Obtain the current settings for a given appId.</div>
 												</td>
 											</tr>
 										
@@ -268,9 +268,9 @@ provide the actual storage.
 											>
 												<td class="attributes">&nbsp;</td>
 												<td class="nameDescription">
-													<div class="fixedFont"><b><a href="../symbols/TemplateManager.html#route">route</a></b>(app)
+													<div class="fixedFont"><b><a href="../symbols/Applications.html#route">route</a></b>(app)
 													</div>
-													<div class="description"><p>Add Express routes for the Registrar API.</div>
+													<div class="description"><p>Add Express routes for the Applications API.</div>
 												</td>
 											</tr>
 										
@@ -279,9 +279,9 @@ provide the actual storage.
 											>
 												<td class="attributes">&nbsp;</td>
 												<td class="nameDescription">
-													<div class="fixedFont"><b><a href="../symbols/TemplateManager.html#set">set</a></b>(req, res)
+													<div class="fixedFont"><b><a href="../symbols/Applications.html#set">set</a></b>(req, res)
 													</div>
-													<div class="description"><p>Add or update a template with a given key.</div>
+													<div class="description"><p>Add or update a registration for a given user.</div>
 												</td>
 											</tr>
 										
@@ -311,11 +311,11 @@ provide the actual storage.
 							</h2>
 							
 							<div class="fixedFont">
-								<b>TemplateManager</b>(templateStore)
+								<b>Applications</b>(applicationsStore)
 							</div>
 							
 							<div class="description">
-								<p>TemplateManager constructor.</p>
+								<p>Applications constructor.</p>
 								
 							</div>
 							
@@ -326,10 +326,11 @@ provide the actual storage.
 									<dt class="heading">Parameters:</dt>
 									
 										<dt>
-											<span class="light fixedFont">{<a href="../symbols/TemplateStore.html">TemplateStore</a>}</span>  <b>templateStore</b>
+											<span class="light fixedFont">{ApplicationsStore}</span>  <b>applicationsStore</b>
 											
 										</dt>
-										<dd><p>the TemplateStore instance to rely on for persistent data operations.</p></dd>
+										<dd><p>the ApplicationsStore instance to rely on for persistent data
+operations.</p></dd>
 									
 								</dl>
 							
@@ -351,25 +352,24 @@ provide the actual storage.
 							</h2>
 							
 							
-								<div class="fixedFont heading" id="FindKeyModel">
+								<div class="fixedFont heading" id="APNsModel">
 									<span class='lighter'>
 									
 									</span>
 									
+									<span class="light">{Model}</span>
 									
-									
-									<b>FindKeyModel</b>							
+									<b>APNsModel</b>							
 								</div>
 								
 								<div class="description">
-									<p>JSON schema for query to locate a specific template. Attributes:</p>
+									<p>JSON schema for APNs credentials.</p>
 
 <ul>
-<li>eventId: the notification event identifier associated with the template</li>
-<li>route: the of the route associated with the template.</li>
-<li>templateVersion: the version of the template to locate</li>
-<li>templateLanguage: the language of the template to locate</li>
-<li>service: the OS-specific service that the template applies to</li>
+<li>certificate: the public certificate to use when connecting to APNs</li>
+<li>privateKey: the private key to use when connecting to APNs</li>
+<li>passphrase: the passphrase of the privateKey</li>
+<li>useSandbox: true if connecting to the sandbox APNs service. Otherwise, connect to the production one.</li>
 </ul>
 									
 									
@@ -381,21 +381,21 @@ provide the actual storage.
 								
 								<div class="hr"></div>
 							
-								<div class="fixedFont heading" id="TemplateContentModel">
+								<div class="fixedFont heading" id="AppIdModel">
 									<span class='lighter'>
 									
 									</span>
 									
+									<span class="light">{Model}</span>
 									
-									
-									<b>TemplateContentModel</b>							
+									<b>AppIdModel</b>							
 								</div>
 								
 								<div class="description">
-									<p>JSON schema for template contents. Attributes:</p>
+									<p>JSON schema for appId values. Contains just one value:</p>
 
 <ul>
-<li>content: the template content of the notification that will be sent to devices.</li>
+<li>appId: the application to operate on</li>
 </ul>
 									
 									
@@ -407,21 +407,21 @@ provide the actual storage.
 								
 								<div class="hr"></div>
 							
-								<div class="fixedFont heading" id="TemplateDefinitionModel">
+								<div class="fixedFont heading" id="GCMModel">
 									<span class='lighter'>
 									
 									</span>
 									
+									<span class="light">{Model}</span>
 									
-									
-									<b>TemplateDefinitionModel</b>							
+									<b>GCMModel</b>							
 								</div>
 								
 								<div class="description">
-									<p>JSON schema for template definitions. Derived from the <a href="../symbols/TemplateManager.html#TemplateKeyModel">TemplateManager#TemplateKeyModel</a>. Attributes:</p>
+									<p>JSON schema for GCM credential.</p>
 
 <ul>
-<li>template: the template content of the notification that will be sent to devices.</li>
+<li>authorizationKey: the key obtained from GCM to use when submitting push requests</li>
 </ul>
 									
 									
@@ -433,21 +433,22 @@ provide the actual storage.
 								
 								<div class="hr"></div>
 							
-								<div class="fixedFont heading" id="TemplateKeyModel">
+								<div class="fixedFont heading" id="WNSModel">
 									<span class='lighter'>
 									
 									</span>
 									
+									<span class="light">{Model}</span>
 									
-									
-									<b>TemplateKeyModel</b>							
+									<b>WNSModel</b>							
 								</div>
 								
 								<div class="description">
-									<p>JSON schema for a unique template key. Derives from <a href="../symbols/TemplateManager.html#FindKeyModel">TemplateManager#FindKeyModel</a>. Attributes:</p>
+									<p>JSON schema for WNS credentials.</p>
 
 <ul>
-<li>notificationId: the unique identifier associated with this template</li>
+<li>packageSID: the package SID obtained from Windows Store to use when authenticating with WNS.</li>
+<li>clientSecret: the client secret obtained from Windows Store to use when authenticating with WNS.</li>
 </ul>
 									
 									
@@ -491,24 +492,9 @@ provide the actual storage.
 										</div>
 										
 										<div class="description">
-											<p>Delete a template from the template store. Expects the following parameters:</p>
-
-<ul>
-<li>eventId: the notification event identifier associated with the template</li>
-<li>notificationId: the unique identifier associated with the template</li>
-<li>route: the of the route associated with the template.</li>
-<li>templateVersion: the version of the template to locate</li>
-<li>templateLanguage: the language of the template to locate</li>
-<li>service: the OS-specific service that the template applies to</li>
-</ul>
-
-<p>HTTP Responses:</p>
-
-<ul>
-<li>400 BAD REQUEST: missing or invalid template attribute(s)</li>
-<li>404 NOT FOUND: unable to find the template to delete</li>
-<li>204 NO CONTENT: found and deleted the template</li>
-</ul>
+											<p>Delete a registration or all registrations for a given user. If a JSON payload exits with a deviceId
+attribute, only delete the one entity matching the deviceId value. Otherwise, delete all registrations for
+the user.</p>
 											
 											
 											
@@ -516,22 +502,35 @@ provide the actual storage.
 										</div>
 										
 										
+											
+												<pre class="code"><code>{}</code></pre>
+											
+												<pre class="code"><code>{deviceId: "1234-56-7890"}</code></pre>
+											
+										
 										
 										
 											<dl class="detailList params">
 												<dt class="heading">Parameters:</dt>
 												
 													<dt>
-														<b>req</b>
+														<span class="light fixedFont">{Express.Request}</span> <b>req</b>
 														
 													</dt>
-													<dd><p>Contents of the incoming request.</p></dd>
+													<dd><p>Describes the incoming HTTP request. Message body must be JSON that follows the
+<a href="../symbols/Registrar.html#DeleteKeyModel">Registrar#DeleteKeyModel</a> model.</p></dd>
 												
 													<dt>
-														<b>res</b>
+														<span class="light fixedFont">{Express.Response}</span> <b>res</b>
 														
 													</dt>
-													<dd><p>Response generator for the request.</p></dd>
+													<dd><p>HTTP response generator for the request. Outputs JSON if no error.</p>
+
+<ul>
+<li>204 NO CONTENT: found and deleted the registration(s)</li>
+<li>400 BAD REQUEST: missing or invalid attribute(s)</li>
+<li>404 NOT FOUND: unable to locate any registration to delete</li>
+</ul></dd>
 												
 											</dl>
 										
@@ -554,24 +553,7 @@ provide the actual storage.
 										</div>
 										
 										<div class="description">
-											<p>Get one or more existing templates that match a given key. The key is made up of the following parameters:</p>
-
-<ul>
-<li>eventId: the notification event identifier associated with the template</li>
-<li>route: the of the route associated with the template.</li>
-<li>templateVersion: the version of the template to locate</li>
-<li>templateLanguage: the language of the template to locate</li>
-<li>service: the OS-specific service that the template applies to</li>
-</ul>
-
-<p>HTTP Responses:</p>
-
-<ul>
-<li>400 BAD REQUEST: missing or invalid query attribute(s)</li>
-<li>500 INTERNAL SERVER ERROR: unable to process the request for some reason</li>
-<li>404 NOT FOUND: no templates were found for the given key attributes</li>
-<li>200 OK: one or more templates were found</li>
-</ul>
+											<p>Obtain the current settings for a given appId.</p>
 											
 											
 											
@@ -579,22 +561,33 @@ provide the actual storage.
 										</div>
 										
 										
+											
+												<pre class="code">HTTP GET /foobar</pre>
+											
+										
 										
 										
 											<dl class="detailList params">
 												<dt class="heading">Parameters:</dt>
 												
 													<dt>
-														<b>req</b>
+														<span class="light fixedFont">{Express.Request}</span> <b>req</b>
 														
 													</dt>
-													<dd><p>Contents of the incoming request.</p></dd>
+													<dd><p>Describes the incoming HTTP request. Message body is ignored; the URL must contain
+the user ID to use, and it must adhere to the <a href="../symbols/Registrar.html#UserIdModel">Registrar#UserIdModel</a> model.</p></dd>
 												
 													<dt>
-														<b>res</b>
+														<span class="light fixedFont">{Express.Response}</span> <b>res</b>
 														
 													</dt>
-													<dd><p>Response generator for the request. Any templates found will be returned in JSON output.</p></dd>
+													<dd><p>HTTP response generator for the request. Outputs JSON if no error.</p>
+
+<ul>
+<li>200 OK if one or more registrations were found</li>
+<li>400 BAD REQUEST if missing or invalid query attribute(s)</li>
+<li>404 NOT FOUND if no templates were found for the given key attributes</li>
+</ul></dd>
 												
 											</dl>
 										
@@ -617,7 +610,7 @@ provide the actual storage.
 										</div>
 										
 										<div class="description">
-											<p>Add Express routes for the Registrar API.</p>
+											<p>Add Express routes for the Applications API.</p>
 											
 											
 											
@@ -634,7 +627,7 @@ provide the actual storage.
 														<span class="light fixedFont">{Express.App}</span> <b>app</b>
 														
 													</dt>
-													<dd><p>the application to route</p></dd>
+													<dd><p>The application to route HTTP requests.</p></dd>
 												
 											</dl>
 										
@@ -657,25 +650,7 @@ provide the actual storage.
 										</div>
 										
 										<div class="description">
-											<p>Add or update a template with a given key. Expects the following parameters:</p>
-
-<ul>
-<li>eventId: the notification event identifier associated with the template</li>
-<li>notificationId: the unique identifier associated with the template</li>
-<li>route: the name of the route associated with the template.</li>
-<li>templateVersion: the version of the template to locate</li>
-<li>templateLanguage: the language of the template to locate</li>
-<li>service: the OS-specific service that the template applies to</li>
-<li>template: JSON object that defines the template payload</li>
-</ul>
-
-<p>HTTP Responses:</p>
-
-<ul>
-<li>400 BAD REQUEST: missing or invalid template attribute(s)</li>
-<li>500 INTERNAL SERVER ERROR: unable to process the request for some reason</li>
-<li>200 OK: one or moret templates were found</li>
-</ul>
+											<p>Add or update a registration for a given user.</p>
 											
 											
 											
@@ -683,22 +658,36 @@ provide the actual storage.
 										</div>
 										
 										
+											
+												<pre class="code"><code>{deviceId: "1234-56-7890", templateVersion: "3", templateLanguage: "en-US",
+ service: "apns",
+ routes:[{name: "main", token: "unique main token", secondsToLive: 86400},
+         {name: "alt", token: "unique alt token", secondsToLive: 86400}]}
+</code></pre>
+											
+										
 										
 										
 											<dl class="detailList params">
 												<dt class="heading">Parameters:</dt>
 												
 													<dt>
-														<b>req</b>
+														<span class="light fixedFont">{Express.Request}</span> <b>req</b>
 														
 													</dt>
-													<dd><p>Contents of the incoming request.</p></dd>
+													<dd><p>Describes the incoming HTTP request. Message body must be JSON that follows the
+<a href="../symbols/Registrar.html#RegistrationModel">Registrar#RegistrationModel</a> model.</p></dd>
 												
 													<dt>
-														<b>res</b>
+														<span class="light fixedFont">{Express.Response}</span> <b>res</b>
 														
 													</dt>
-													<dd><p>Response generator for the request.</p></dd>
+													<dd><p>HTTP response generator for the request. Outputs JSON if no error.</p>
+
+<ul>
+<li>200 OK: successfully processed request</li>
+<li>400 BAD REQUEST: missing or invalid attribute(s)</li>
+</ul></dd>
 												
 											</dl>
 										

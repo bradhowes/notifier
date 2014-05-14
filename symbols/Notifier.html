@@ -42,6 +42,8 @@
 				
 					<li><a href="../symbols/App.html">App</a></li>
 				
+					<li><a href="../symbols/Applications.html">Applications</a></li>
+				
 					<li><a href="../symbols/Config.html">Config</a></li>
 				
 					<li><a href="../symbols/Deque.html">Deque</a></li>
@@ -87,7 +89,7 @@
 			Documentation generator: <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0<br />
 			Template: <a href="http://www.thebrightlines.com/2010/05/06/new-template-for-jsdoctoolkit-codeview/" target="_blank">Codeview</a> 1.2<br />
 			Generated on:
-			<time datetime='2012-7-15' pubdate>2012-7-15 17:20</time>
+			<time datetime='2014-4-14' pubdate>2014-4-14 11:36</time>
 		</footer>
 	</div>
 </div>
@@ -105,7 +107,9 @@
 				
 				<div class="intro">
 					<p class="description summary">
-						A Notifier pairs notification templates to user registrations and emits those that match.
+						A Notifier pairs notification templates to user registrations and emits those that match. One notification event can
+spawn multiple actual notification deliveries depending on what registrations are present for the user and what
+templates map to a notification event ID.
 					</p>
 						
 					
@@ -137,7 +141,7 @@
 									<td class="attributes">&nbsp;</td>
 									<td class="nameDescription" >
 										<div class="fixedFont">
-											<b><a href="../symbols/Notifier.html#constructor">Notifier</a></b>(templateStore, registrationStore, senders)
+											<b><a href="../symbols/Notifier.html#constructor">Notifier</a></b>(templateStore, registrationStore, senders, monitorManager)
 										</div>
 										<div class="description"><p>Notifier constructor</p></div>
 									</td>
@@ -170,9 +174,79 @@
 												<td class="attributes">&nbsp;</td>
 												<td class="nameDescription">
 													<div class="fixedFont">
+													<b><a href="../symbols/Notifier.html#FilterModel">FilterModel</a></b>
+													</div>
+													<div class="description"><p>JSON schema for filter values.</div>
+												</td>
+											</tr>
+										
+											<tr>
+												<td class="attributes">&nbsp;</td>
+												<td class="nameDescription">
+													<div class="fixedFont">
+													<b><a href="../symbols/Notifier.html#LogReceiptModel">LogReceiptModel</a></b>
+													</div>
+													<div class="description"><p>JSON schema for a logReceipt call.</div>
+												</td>
+											</tr>
+										
+											<tr>
+												<td class="attributes">&nbsp;</td>
+												<td class="nameDescription">
+													<div class="fixedFont">
 													<b><a href="../symbols/Notifier.html#PostModel">PostModel</a></b>
 													</div>
-													<div class="description"><p>JSON schema for a notification posting.</div>
+													<div class="description"><p>JSON schema for a notification posting request.</div>
+												</td>
+											</tr>
+										
+											<tr>
+												<td class="attributes">&nbsp;</td>
+												<td class="nameDescription">
+													<div class="fixedFont">
+													<b><a href="../symbols/Notifier.html#postTracker">postTracker</a></b>
+													</div>
+													<div class="description"><p>PostTracker instance that remembers notification requests by sequenceId value.</div>
+												</td>
+											</tr>
+										
+											<tr>
+												<td class="attributes">&nbsp;</td>
+												<td class="nameDescription">
+													<div class="fixedFont">
+													<b><a href="../symbols/Notifier.html#registrationStore">registrationStore</a></b>
+													</div>
+													<div class="description"><p>The backing store for registrations.</div>
+												</td>
+											</tr>
+										
+											<tr>
+												<td class="attributes">&nbsp;</td>
+												<td class="nameDescription">
+													<div class="fixedFont">
+													<b><a href="../symbols/Notifier.html#senders">senders</a></b>
+													</div>
+													<div class="description"><p>Mapping of service tags ("wns", "apns", "gcm") to objects that can deliver a notification to a device.</div>
+												</td>
+											</tr>
+										
+											<tr>
+												<td class="attributes">&nbsp;</td>
+												<td class="nameDescription">
+													<div class="fixedFont">
+													<b><a href="../symbols/Notifier.html#sequenceId">sequenceId</a></b>
+													</div>
+													<div class="description"><p>Sequence ID for tracking.</div>
+												</td>
+											</tr>
+										
+											<tr>
+												<td class="attributes">&nbsp;</td>
+												<td class="nameDescription">
+													<div class="fixedFont">
+													<b><a href="../symbols/Notifier.html#templateStore">templateStore</a></b>
+													</div>
+													<div class="description"><p>The backing store for templates.</div>
 												</td>
 											</tr>
 										
@@ -213,28 +287,6 @@
 											>
 												<td class="attributes">&nbsp;</td>
 												<td class="nameDescription">
-													<div class="fixedFont"><b><a href="../symbols/Notifier.html#deliver">deliver</a></b>(service, request)
-													</div>
-													<div class="description"><p>Deliver a generated notification to a specific service.</div>
-												</td>
-											</tr>
-										
-											<tr
-												 class='item1'
-											>
-												<td class="attributes">&nbsp;</td>
-												<td class="nameDescription">
-													<div class="fixedFont"><b><a href="../symbols/Notifier.html#logReceipt">logReceipt</a></b>(req, res)
-													</div>
-													<div class="description"><p>Log the receipt of a notification from an external device.</div>
-												</td>
-											</tr>
-										
-											<tr
-												 class='item2'
-											>
-												<td class="attributes">&nbsp;</td>
-												<td class="nameDescription">
 													<div class="fixedFont"><b><a href="../symbols/Notifier.html#postNotification">postNotification</a></b>(req, res)
 													</div>
 													<div class="description"><p>Post a notification to a user.</div>
@@ -242,7 +294,7 @@
 											</tr>
 										
 											<tr
-												 class='item3'
+												 class='item1'
 											>
 												<td class="attributes">&nbsp;</td>
 												<td class="nameDescription">
@@ -278,7 +330,7 @@
 							</h2>
 							
 							<div class="fixedFont">
-								<b>Notifier</b>(templateStore, registrationStore, senders)
+								<b>Notifier</b>(templateStore, registrationStore, senders, monitorManager)
 							</div>
 							
 							<div class="description">
@@ -310,6 +362,12 @@
 										</dt>
 										<dd><p>a mapping of notification service tags to objects that provide a sendNotification method</p></dd>
 									
+										<dt>
+											 <b>monitorManager</b>
+											
+										</dt>
+										<dd></dd>
+									
 								</dl>
 							
 							
@@ -330,6 +388,69 @@
 							</h2>
 							
 							
+								<div class="fixedFont heading" id="FilterModel">
+									<span class='lighter'>
+									
+									</span>
+									
+									<span class="light">{Model}</span>
+									
+									<b>FilterModel</b>							
+								</div>
+								
+								<div class="description">
+									<p>JSON schema for filter values. A filter allows one to limit which registrations will be used for notification
+delivery. The attribute names closely match those in <a href="../symbols/Registrar.html#RegistrationModel">Registrar#RegistrationModel</a>, though route
+attributes appear with a 'route' prefix. Each attribute has as its value an array which contains one or values
+that determine which registration values are acceptable for use in a delivery.</p>
+
+<ul>
+<li>registrationId: array of acceptable registrationId values</li>
+<li>templateVersion: array of acceptable template version values</li>
+<li>templateLanguage: array of acceptable template language values</li>
+<li>service: array of acceptable notification deliver service values</li>
+<li>routeName: array of acceptable route name values</li>
+<li>routeToken: array of acceptable route token values</li>
+</ul>
+
+<p>All attributes are optional.</p>
+									
+									
+									
+								</div>
+								
+								
+									
+								
+								<div class="hr"></div>
+							
+								<div class="fixedFont heading" id="LogReceiptModel">
+									<span class='lighter'>
+									
+									</span>
+									
+									
+									
+									<b>LogReceiptModel</b>							
+								</div>
+								
+								<div class="description">
+									<p>JSON schema for a logReceipt call.</p>
+
+<ul>
+<li>sequenceId: the sequence ID associated with the notification request</li>
+<li>when: the timestamp when the notification arrived at a client</li>
+</ul>
+									
+									
+									
+								</div>
+								
+								
+									
+								
+								<div class="hr"></div>
+							
 								<div class="fixedFont heading" id="PostModel">
 									<span class='lighter'>
 									
@@ -341,7 +462,131 @@
 								</div>
 								
 								<div class="description">
-									<p>JSON schema for a notification posting.</p>
+									<p>JSON schema for a notification posting request. A notification goes to a specific user. The request may contain
+a mapping of template placeholder names to runtime values. This mapping is used during notification payload
+generation, where a template placeholder gets substituted with a value from the substitutions mapping. Finally,
+there may be a filter definition (see <a href="../symbols/Notifier.html#FilterModel">Notifier#FilterModel</a>) that will restrict notification delivery to
+a subset of the registrations for the user.</p>
+
+<ul>
+<li>userId: the user to notify</li>
+<li>eventId: the event ID to notify about</li>
+<li>substitutions: the optional mapping used to perform template placeholder substitution</li>
+<li>filter: an optional filter definition to restrict registration use</li>
+</ul>
+									
+									
+									
+								</div>
+								
+								
+									
+								
+								<div class="hr"></div>
+							
+								<div class="fixedFont heading" id="postTracker">
+									<span class='lighter'>
+									
+									</span>
+									
+									
+									
+									<b>postTracker</b>							
+								</div>
+								
+								<div class="description">
+									<p>PostTracker instance that remembers notification requests by sequenceId value. Used by the logReceipt method to
+calculate notification round-trip times.</p>
+									
+									
+									
+								</div>
+								
+								
+									
+								
+								<div class="hr"></div>
+							
+								<div class="fixedFont heading" id="registrationStore">
+									<span class='lighter'>
+									
+									</span>
+									
+									<span class="light">{<a href="../symbols/RegistrationStore.html">RegistrationStore</a>}</span>
+									
+									<b>registrationStore</b>							
+								</div>
+								
+								<div class="description">
+									<p>The backing store for registrations. Notifier asks it for registrations associated with a given user ID. Also,
+if a notification sender object encounters a registration that is no longer active, it will be used to remove
+the registration.</p>
+									
+									
+									
+								</div>
+								
+								
+									
+								
+								<div class="hr"></div>
+							
+								<div class="fixedFont heading" id="senders">
+									<span class='lighter'>
+									
+									</span>
+									
+									<span class="light">{Hash}</span>
+									
+									<b>senders</b>							
+								</div>
+								
+								<div class="description">
+									<p>Mapping of service tags ("wns", "apns", "gcm") to objects that can deliver a notification to a device.</p>
+									
+									
+									
+								</div>
+								
+								
+									
+								
+								<div class="hr"></div>
+							
+								<div class="fixedFont heading" id="sequenceId">
+									<span class='lighter'>
+									
+									</span>
+									
+									<span class="light">{Integer}</span>
+									
+									<b>sequenceId</b>							
+								</div>
+								
+								<div class="description">
+									<p>Sequence ID for tracking. This value is added to all substitution maps under the name "SEQUENCE_ID"</p>
+									
+									
+									
+								</div>
+								
+								
+									
+								
+								<div class="hr"></div>
+							
+								<div class="fixedFont heading" id="templateStore">
+									<span class='lighter'>
+									
+									</span>
+									
+									<span class="light">{<a href="../symbols/TemplateStore.html">TemplateStore</a>}</span>
+									
+									<b>templateStore</b>							
+								</div>
+								
+								<div class="description">
+									<p>The backing store for templates. Notifier asks it for templates associated with a given event ID.</p>
 									
 									
 									
@@ -373,98 +618,6 @@
 									<li 
 										 class='item0'
 									>
-										<div class="fixedFont heading" id="deliver">
-											<span class='lighter'>
-											
-											</span>
-											
-											
-											
-											<b>deliver</b>(service, request)
-										</div>
-										
-										<div class="description">
-											<p>Deliver a generated notification to a specific service.</p>
-											
-											
-											
-											
-										</div>
-										
-										
-										
-										
-											<dl class="detailList params">
-												<dt class="heading">Parameters:</dt>
-												
-													<dt>
-														<span class="light fixedFont">{String}</span> <b>service</b>
-														
-													</dt>
-													<dd><p>the notification service tag</p></dd>
-												
-													<dt>
-														<span class="light fixedFont">{<a href="../symbols/NotificationRequest.html">NotificationRequest</a>}</span> <b>request</b>
-														
-													</dt>
-													<dd><p>description of the request to send</p></dd>
-												
-											</dl>
-										
-										
-										
-										<div class="hr"></div>
-									</li>
-								
-									<li 
-										 class='item1'
-									>
-										<div class="fixedFont heading" id="logReceipt">
-											<span class='lighter'>
-											
-											</span>
-											
-											
-											
-											<b>logReceipt</b>(req, res)
-										</div>
-										
-										<div class="description">
-											<p>Log the receipt of a notification from an external device.</p>
-											
-											
-											
-											
-										</div>
-										
-										
-										
-										
-											<dl class="detailList params">
-												<dt class="heading">Parameters:</dt>
-												
-													<dt>
-														<span class="light fixedFont">{Request}</span> <b>req</b>
-														
-													</dt>
-													<dd><p>incoming HTTP request settings and values. Input must conform to the LogReceiptModel.</p></dd>
-												
-													<dt>
-														<span class="light fixedFont">{Response}</span> <b>res</b>
-														
-													</dt>
-													<dd><p>outgoing HTTP response values</p></dd>
-												
-											</dl>
-										
-										
-										
-										<div class="hr"></div>
-									</li>
-								
-									<li 
-										 class='item2'
-									>
 										<div class="fixedFont heading" id="postNotification">
 											<span class='lighter'>
 											
@@ -490,16 +643,23 @@
 												<dt class="heading">Parameters:</dt>
 												
 													<dt>
-														<span class="light fixedFont">{Request}</span> <b>req</b>
+														<span class="light fixedFont">{Express.Request}</span> <b>req</b>
 														
 													</dt>
-													<dd><p>incoming HTTP request settings and values</p></dd>
+													<dd><p>Describes the incoming HTTP request. Message body must be JSON that follows the
+<a href="../symbols/Notifier.html#PostModel">Notifier#PostModel</a> model.</p></dd>
 												
 													<dt>
-														<span class="light fixedFont">{Response}</span> <b>res</b>
+														<span class="light fixedFont">{Express.Response}</span> <b>res</b>
 														
 													</dt>
-													<dd><p>outgoing HTTP response values</p></dd>
+													<dd><p>HTTP response generator for the request. Outputs JSON if no error.</p>
+
+<ul>
+<li>204 NO CONTENT: accepted request and queued notification delivery</li>
+<li>400 BAD REQUEST: missing or invalid attribute(s)</li>
+<li>500 INTERNAL SERVER ERROR: unable to obtain registrations and/or templates to work with</li>
+</ul></dd>
 												
 											</dl>
 										
@@ -509,7 +669,7 @@
 									</li>
 								
 									<li 
-										 class='item3'
+										 class='item1'
 									>
 										<div class="fixedFont heading" id="route">
 											<span class='lighter'>
@@ -539,7 +699,7 @@
 														<span class="light fixedFont">{Express.App}</span> <b>app</b>
 														
 													</dt>
-													<dd><p>the application to route</p></dd>
+													<dd><p>the application to route HTTP requests.</p></dd>
 												
 											</dl>
 										
